@@ -70,15 +70,13 @@ class SpotifyLogin extends Component {
           <SpotifyLogo style={Object.assign({}, styles.logo, logoColor)}/>
           <img src={displayPicture} alt="" style={styles.dp}/>
         </div>
-        { !tokenPresent &&
+        { !tokenValid &&
           <a href="http://localhost:4000/login">
-            {tokenValid
+            {tokenPresent
               ? `spotify auth timed out login again`
-              : `login to spotify`}           
+              : `login to spotify`}    
           </a>
-        }
-
-       
+        }      
 
       </div>
     )
