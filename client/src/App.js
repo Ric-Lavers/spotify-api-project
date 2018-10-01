@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import notFound from './images/img_not_available.png'
 import SpotifyLogin from './components/SpotifyLogin'
 import PopularityMeter from './images/svgs/PopularityMeter'
 import Loading from './images/svgs/Loading'
@@ -71,13 +72,19 @@ class App extends Component {
     let albumPromises =  tracks.map( async(track, i) => {
       let {id} = track.album
       let album =  await getAlbumInfo(token, id)
+      
+      
+      let album_md_img = track.album.images.length === 0
+        ? (notFound, console.log( track ))
+        : track.album.images.length >= 1 
+          ? track.album.images[1].url
+          : track.album.images[0].url
+
       Object.assign(tracks[i], {
         label: album.label,
         album_name: track.album.name,
         album_release_date: track.album.release_date,
-        album_md_img: track.album.images.length <= 1 
-          ? track.album.images[1].url
-          : track.album.images[0].url,
+        album_md_img
       })
     })
     return albumPromises
@@ -101,7 +108,6 @@ class App extends Component {
   }
 
 
-
   handleChange = ({name, value}) => {
     let newValue = value.replace(/https:\/\/open.spotify.com\/track\//g, '').split('\n')
     this.setState({[name]: newValue})
@@ -121,8 +127,8 @@ class App extends Component {
 
   render() {
     let { tracks, playlistItems, fetching } = this.state
-    console.log('playlistItems', playlistItems )
-    console.log( "tracks: ", tracks )
+    // console.log('playlistItems', playlistItems )
+    // console.log( "tracks: ", tracks )
 
     if (this.state.loading) {
       return <h1>loading...</h1>

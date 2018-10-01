@@ -28,6 +28,35 @@ export const getPlaylistInfo = async(spotifyToken, ids) => {
     return error
   }
 }
+ export const getUsersTopArtists = async(spotifyToken, params) => {
+   try {
+     let res = await fetch('https://api.spotify.com/v1/me/top/artists', {
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      })
+    })
+    return res.json()
+   } catch (error) {
+    console.log( error.message )
+    return error
+   }
+ }
+ export const getUsersTopAlbums = async(spotifyToken, params) => {
+   try {
+     let res = await fetch('https://api.spotify.com/v1/me/top/albums', {
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      })
+    })
+    return res.json()
+   } catch (error) {
+    console.log( error.message )
+    return error
+   }
+ }
+
 /* 
 export const getAlbumInfo = (spotifyToken, id) => {
   fetch(`https://api.spotify.com/v1/albums/${id}`,{
