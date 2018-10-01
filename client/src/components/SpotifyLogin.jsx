@@ -49,10 +49,13 @@ class SpotifyLogin extends Component {
           : null
         this.setState({ tokenValid: true, display_name, displayPicture, email })
       } catch (error) {
+        // the token has timed out
         this.setState({ tokenValid: false })
+
       }
      
     } else {
+      window.location.href = 'http://localhost:4000/login'
       this.setState({tokenPresent: false})
     }
     
@@ -65,6 +68,8 @@ class SpotifyLogin extends Component {
       : (tokenPresent && tokenValid)
         ? {fill: 'blue', stroke: 'blue'}
         : {fill: 'red', stroke: 'red'}
+
+
 
     return (
       <div>

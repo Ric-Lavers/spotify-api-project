@@ -37,6 +37,7 @@ class App extends Component {
   }
 
   _getUsersPlaylists = async() => {
+    console.log( "here" )
     try {
       const playlists = await getUserPlaylists()
       console.log( playlists )
@@ -47,6 +48,7 @@ class App extends Component {
         }))
       })
     } catch (error) {
+      console.log( "error" )
       console.log( error.message )
     }
   }
@@ -58,8 +60,7 @@ class App extends Component {
       let data = await getPlaylistsTracks(playListId)
       let tracks = data.items.map(item => item.track)
       let albumPromises = this.addInfoToTracks(tracks)
-      Promise.all(albumPromises).then(data => {
-        console.log( "about to setstate" )
+      Promise.all(albumPromises).then(() => {
         this.setState({tracks})
       })
     } catch(err) {}
@@ -90,17 +91,13 @@ class App extends Component {
       let data = await getPlaylistInfo(token, this.state.spotifyIds )
       let { tracks } = data
       let albumPromises = this.addInfoToTracks(tracks)
-      Promise.all(albumPromises).then(data => {
-        console.log( "about to setstate" )
+      Promise.all(albumPromises).then( () => {
         this.setState({tracks})
       })
     } catch (error) {
-      
-    }
-    
+      console.error(error.message)
+    } 
   }
-
-
 
   handleChange = ({name, value}) => {
     let newValue = value.replace(/https:\/\/open.spotify.com\/track\//g, '').split('\n')
@@ -109,24 +106,21 @@ class App extends Component {
 
   componentDidMount(){
     const address = window.location.href
-    console.log( address )
     if ( address.includes('access_token=') ) {
       const token = address.replace('http://localhost:3000/?access_token=', '')
       console.log('got token')
       localStorage.spotifyToken = token
       this._getUsersPlaylists()
     }
-    this.setState({loading: false})
+    this.setState({loading: false})    
   }
 
   render() {
     let { tracks, playlistItems, fetching } = this.state
-    console.log('playlistItems', playlistItems )
-    console.log( "tracks: ", tracks )
-
     if (this.state.loading) {
       return <h1>loading...</h1>
     }
+
 
     return (
       <div className="App">
@@ -187,6 +181,7 @@ class App extends Component {
           </div>
           )
         }
+        {JSON.stringify(this.state)}
       </div>
     );
   }
