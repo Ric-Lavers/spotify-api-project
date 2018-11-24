@@ -87,6 +87,7 @@
 
 }
 
+/* SIDEBAR */
 .login {
   @include g-i;
 
@@ -102,6 +103,13 @@
     margin-bottom: 7px;
   }
 }
+.keys {
+  
+  .select{
+    color: #140;
+  }
+}
+/* main - CONTENT */
 .paste {
   @include g-i;
 }
