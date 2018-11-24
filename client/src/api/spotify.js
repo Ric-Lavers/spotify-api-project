@@ -139,6 +139,79 @@ export const getRecentlyPlayed = async(  ) => {
 //   return albumPromises
 // }
 
+export const controls = async (action, body={}) => {
+  const spotifyToken = localStorage.spotifyToken
+  const method = action === 'play' ? 'PUT' : 'POST'
+  try {
+    await fetch(`https://api.spotify.com/v1/me/player/${action}`,{
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      }),
+      method: method,
+      body: JSON.stringify({...body})
+    })
+    return true
+  } catch (error) {
+    console.log(error.message)
+    return error
+  }
+}
+export const play = async ( body={}) => {
+  const spotifyToken = localStorage.spotifyToken
+  try {
+    await fetch(`https://api.spotify.com/v1/me/player/play`,{
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      }),
+      method: 'PUT',
+      body: JSON.stringify({...body})
+    })
+    return true
+  } catch (error) {
+    console.log(error.message)
+    return error
+  }
+}
+export const seek = async ( queries={}) => {
+  const spotifyToken = localStorage.spotifyToken
+  let query = new URLSearchParams(queries).toString()
+  try {
+    await fetch(`https://api.spotify.com/v1/me/player/seek?${query}`,{
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      }),
+      method: 'PUT',
+      // query: JSON.stringify({...queries})
+    })
+    return true
+  } catch (error) {
+    console.log(error.message)
+    return error
+  }
+}
+export const currentPlaying = async () => {
+  const spotifyToken = localStorage.spotifyToken
+  try {
+    let res = await fetch(`https://api.spotify.com/v1/me/player/currently-playing`,{
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      })
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error.message)
+    return error
+  }
+}
+
+
+
+
+
 
 export default {
   checkToken,
