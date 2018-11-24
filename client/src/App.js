@@ -134,18 +134,20 @@ class App extends Component {
         <div>
           <h1>title</h1>
         </div>
-        <div>
-          <h2>login</h2>
-        </div>
-        <div>
-          <h2>playlists</h2>
-        </div>
-        <div>
-          <h2>Paste Song Ids</h2>
-        </div>
-        <div>
-          <h3>Song</h3>
-        </div>
+        <>
+          <div>
+            <h2>login</h2>
+          </div>
+          <div>
+            <h2>playlists</h2>
+          </div>
+          <div>
+            <h2>Paste Song Ids</h2>
+          </div>
+          <div>
+            <h3>Song</h3>
+          </div>
+        </>
       </div>
         <h1>Spotify playlists</h1>
         {!this.state.loading &&
