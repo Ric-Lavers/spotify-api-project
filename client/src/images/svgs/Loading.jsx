@@ -1,7 +1,8 @@
 import React from 'react'
 import '../../styles/svgs.css'
+import './Loading.css'
 
-const LoadingSvg = () =>
+const LoadingSvg = ({variation}) =>
   <svg
     xmlns = "http://www.w3.org/2000/svg"
     viewBox = "0 0 1000 40" 
@@ -80,5 +81,9 @@ const LoadingSvg = () =>
       values="4;9;4"
       />
   </svg>
+
+LoadingSvg.defaultProp = {
+  variation: 0.5
+}
 
 export default LoadingSvg

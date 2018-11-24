@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './App.css';
+import './styles/App.scss';
 
 import SpotifyLogin from './components/SpotifyLogin'
 import PopularityMeter from './images/svgs/PopularityMeter'
@@ -130,6 +130,23 @@ class App extends Component {
 
     return (
       <div className="App">
+      <div className="page home" >
+        <div>
+          <h1>title</h1>
+        </div>
+        <div>
+          <h2>login</h2>
+        </div>
+        <div>
+          <h2>playlists</h2>
+        </div>
+        <div>
+          <h2>Paste Song Ids</h2>
+        </div>
+        <div>
+          <h3>Song</h3>
+        </div>
+      </div>
         <h1>Spotify playlists</h1>
         {!this.state.loading &&
           <SpotifyLogin />
