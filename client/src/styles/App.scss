@@ -1,3 +1,5 @@
+
+
 .App {
   text-align: center;
 }
@@ -10,40 +12,114 @@
 }
 
 .page {
-  div {
-    border: 1px solid #ddd
-  };
-  height:100vh ;//width:
+  // div {
+  //   border: 1px solid #ddd
+  // };
+  min-height: 100vh;
+  height:100% ;//width:
 
 
   display: grid;
-  grid-gap: 10px;
+  grid-gap: 21px;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 140px 70px ;
   grid-template-areas:
   "header header  header"
-  "...    ...     ..."
+  "__    __     __"
   "sidebar content content";
+  // "login paste paste"
+  // "playlists songs songs"
   color: white;
   
   background-image: url(https://avatars3.githubusercontent.com/u/30609773?s=400&u=d7c90a1cd3515e74284b7a1119a4daee3249df7d&v=4)
 
 }
 
-.header {
-  grid-area: header;
-}
-.sidebar {
-  grid-area: sidebar;
-}
-.content {
-  grid-area: content;
+@mixin g-a {
+  background-color: rgba(black, 0.3);
+  display: flex;
+  flex-direction: column;
+  div {
+    border: 1px solid #ddd
+  };
 }
 
-.login {}
-.playlists {}
-.paste {}
-.song {}
+@mixin pointer {
+  cursor: pointer;
+}
+@mixin lists {
+  list-style-type: square;
+}
+
+@mixin g-i {
+  background-color: rgba(black, 0.4);
+  div {
+    border: 1px solid #320;
+    // border-bottom-width: 0px;
+  };
+  margin-bottom: 7px;
+}
+.__ {
+  grid-area: __;
+  display: flex;
+  align-items: center;
+  margin-top:5px;
+}
+.header {
+  @include g-a;
+  grid-area: header;
+
+  justify-content: space-between;
+}
+.sidebar {
+  @include g-a;
+  grid-area: sidebar;
+  a:active {
+    color: #fff;
+  }
+  a:visited {
+    color: #ddd
+  }
+}
+.content {
+  @include g-a;
+  grid-area: content;
+
+}
+
+.login {
+  @include g-i;
+
+}
+.playlists {
+  @include g-i;
+  .item {
+    @include pointer;
+    @include lists;
+    text-align: left;
+    color: #FFFEBF;
+
+    margin-bottom: 7px;
+  }
+}
+.paste {
+  @include g-i;
+}
+.songs {
+  @include g-i;
+  h3 {
+
+  }
+
+  
+  .song__info {
+
+    
+    
+  }
+  @import 'songs';
+}
+
 
 
 

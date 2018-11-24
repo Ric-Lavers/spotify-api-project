@@ -92,3 +92,62 @@ export const getPlaylistsTracks = async(playlistId) => {
     return error
   }
 }
+
+export const getRecentlyPlayed = async(  ) => {
+  const spotifyToken = localStorage.spotifyToken
+  try {
+    let res= await fetch(`https://api.spotify.com/v1/me/player/recently-played`,{
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      })
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error.message)
+    return error
+  }
+}
+
+// export const handleGetPlaylistTrackIds = async(playListId) => {
+//   try {
+//     let data = await getPlaylistsTracks(playListId)
+//     let tracks = data.items.map(item => item.track)
+//     let albumPromises = await addInfoToTracks(tracks)
+//     Promise.all(albumPromises).then(data => {
+//       console.log( "promises resolved" )
+//       return( Promise(data) )
+//     })
+//   } catch(err) {}
+// }
+
+// const addInfoToTracks = async (tracks) => {
+//   const token = localStorage.spotifyToken
+//   let albumPromises =  tracks.map( async(track, i) => {
+//     let {id} = track.album
+//     let album =  await getAlbumInfo(token, id)
+//     Object.assign(tracks[i], {
+//       label: album.label,
+//       album_name: track.album.name,
+//       album_release_date: track.album.release_date,
+//       album_md_img: track.album.images.length <= 1 
+//         ? track.album.images[1].url
+//         : track.album.images[0].url,
+//     })
+//     return track
+//   })
+//   return albumPromises
+// }
+
+
+export default {
+  checkToken,
+  getPlaylistInfo,
+  getAlbumInfo,
+  getAlbumInfo,
+  getUserPlaylists,
+  getPlaylistsTracks,
+  getRecentlyPlayed,
+  
+  // handleGetPlaylistTrackIds,
+}

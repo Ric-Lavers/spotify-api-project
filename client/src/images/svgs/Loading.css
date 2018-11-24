@@ -1,7 +1,7 @@
 
 .loading {
   stroke-width: 5px;
-  /* animation: stroke 2s infinite; */
+  animation: stroke 2s infinite;
 }
 
 @keyframes stroke {
