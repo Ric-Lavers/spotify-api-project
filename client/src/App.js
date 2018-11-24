@@ -131,23 +131,29 @@ class App extends Component {
     return (
       <div className="App">
       <div className="page home" >
-        <div>
+
+        <div className="header" >
           <h1>title</h1>
         </div>
-        <>
+
+        <div className="sidebar" >
           <div>
             <h2>login</h2>
           </div>
           <div>
             <h2>playlists</h2>
           </div>
-          <div>
-            <h2>Paste Song Ids</h2>
-          </div>
-          <div>
-            <h3>Song</h3>
-          </div>
-        </>
+        </div>
+
+        <div className="content" >
+            <div>
+              <h2>Paste Song Ids</h2>
+            </div>
+            <div>
+              <h3>Song/s</h3>
+            </div>
+        </div>
+
       </div>
         <h1>Spotify playlists</h1>
         {!this.state.loading &&

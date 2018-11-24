@@ -10,11 +10,40 @@
 }
 
 .page {
-  display: grid;
+  div {
+    border: 1px solid #ddd
+  };
+  height:100vh ;//width:
 
+
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 140px 70px ;
+  grid-template-areas:
+  "header header  header"
+  "...    ...     ..."
+  "sidebar content content";
   color: white;
   
   background-image: url(https://avatars3.githubusercontent.com/u/30609773?s=400&u=d7c90a1cd3515e74284b7a1119a4daee3249df7d&v=4)
 
-
 }
+
+.header {
+  grid-area: header;
+}
+.sidebar {
+  grid-area: sidebar;
+}
+.content {
+  grid-area: content;
+}
+
+.login {}
+.playlists {}
+.paste {}
+.song {}
+
+
+
