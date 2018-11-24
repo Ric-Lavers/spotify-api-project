@@ -4,10 +4,27 @@ import { controls, currentPlaying, seek} from '../api/spotify'
 
 const AudioControls = () => {
   let [audioIs, setAudio] = useState('')
-  let [ currentSong, setSong ] = useState({})
+  let [ currentSong, setSong ] = useState(null)
   let [ isFetching, setFetching ] = useState(false)
   let [ rangeValue, setRange ] = useState(50)
 
+  // useEffect( async () => {
+  //   if ( isFetching ) return
+  //   setFetching(true)
+  //   try {
+  //     let playingNow = await currentPlaying()
+  //     setSong(playingNow)
+  //     let duration_ms = playingNow.item.duration_ms
+  //     let progress_ms = playingNow.progress_ms
+  //     console.log('useEffect',playingNow,progress_ms/ duration_ms * 100)
+  //     setRange(progress_ms/ duration_ms * 100)
+  //   } catch (error) {
+      
+  //   }
+  //   setFetching(false)
+    
+    
+  // }, [ rangeValue ] )
 
   const handleClick = async (e, action) => {
     e.preventDefault()
@@ -40,17 +57,19 @@ const AudioControls = () => {
     setFetching(true)
 
     let playingNow = await currentPlaying()
-    setSong(playingNow)
+    playingNow ? setSong(playingNow) : setSong(null)
 
     setFetching(false)
   }
 
   const handleSeek = async () => {
+    if ( !currentSong ) return;
+
     let duration_ms = currentSong.item.duration_ms
     let progress_ms = currentSong.progress_ms
 
     let position_ms = Math.floor(duration_ms * (rangeValue / 100) )
-    
+    // setRange(progress_ms/ duration_ms * 100)
     await seek({
       position_ms: position_ms 
     })

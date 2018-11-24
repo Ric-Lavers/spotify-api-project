@@ -89,13 +89,15 @@ class App extends Component {
     let albumPromises =  tracks.map( async(track, i) => {
       let {id} = track.album
       let album =  await getAlbumInfo(token, id)
+      let album_md_img: {}
+      if ( track.album.images.length ) {
+        album_md_img = track.album.images.length === 2? track.album.images[1].url : track.album.images[0].url;
+      }
       Object.assign(tracks[i], {
         label: album.label,
         album_name: track.album.name,
         album_release_date: track.album.release_date,
-        album_md_img: track.album.images.length <= 1 
-          ? track.album.images[1].url
-          : track.album.images[0].url,
+        album_md_img,
       })
     })
     return albumPromises
@@ -218,9 +220,8 @@ class App extends Component {
           </Fragment>
         </div>
         <div className="__" >
-  {fetching ? 
-          <Loading/> :
-          <small>BQCOTRwogpi1Gozm6Juf_bjPxE-KpqDf5nxiilzSOSRVzSQ-I2hBi_HtPK3u_lE6mZhjIWjanc-9nEq3W7I0J69iVhNuxYTAdKQWNCdnLwdTHrmFx8bqETDYOLHdHmrvcSEOXkp1iXsTj55P21imUi1RTPqoK3yrIr74-Y6tyI_P5vBIsQd82xAeiGuyzyVpaxxHAD1aIgJ-YF7bcnJegNPX6hoP3Brw_mDALDuTjw3tQXgzw-rdpOkDnMy5qpN45qcctcJz8n7gVWPL4-j52FdVq8g</small>
+  {fetching && 
+          <Loading/> 
         }
         </div>
         <div className="sidebar" >
