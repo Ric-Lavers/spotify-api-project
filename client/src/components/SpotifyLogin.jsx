@@ -66,6 +66,9 @@ class SpotifyLogin extends Component {
         ? {fill: 'blue', stroke: 'blue'}
         : {fill: 'red', stroke: 'red'}
 
+    if ( this.props.isLoading ) {
+      return <p>...loading</p>
+  }
     return (
       <div>
         <div> 
@@ -76,7 +79,7 @@ class SpotifyLogin extends Component {
         </div>
         <p>{display_name?display_name:email}</p>
         { !tokenValid &&
-          <a href="http://localhost:4000/login">
+          <a href={"http://" + 'localhost:4000' +"/login"}>
             {tokenPresent
               ? `spotify auth timed out login again`
               : `login to spotify`}    

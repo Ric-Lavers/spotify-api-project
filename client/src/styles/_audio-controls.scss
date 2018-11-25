@@ -1,0 +1,33 @@
+.audio-controls {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+
+  padding:21px;
+  .icon {
+    color: #fff;
+    
+  }
+  .touched {
+    animation: touched 1s ;
+  }
+  .play {
+
+  }
+  .next {
+
+  }
+  .previous {
+
+  }
+  
+  @keyframes touched {
+    0% { color: #fff }
+    50% { color: #140 }
+    100% { color: #fff }
+  }
+}
+
+.seek {
+  width: 100%;
+}
