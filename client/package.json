@@ -10,7 +10,8 @@
     "react-select": "^2.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start:prod": "REACT_APP_ENV=PROD react-scripts start",
+    "start:dev": "REACT_APP_ENV=DEVreact-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

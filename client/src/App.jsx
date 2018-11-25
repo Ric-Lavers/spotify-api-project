@@ -39,6 +39,7 @@ const styles = {
     cursor: 'pointer',
   }
 }
+
 class App extends Component {
 
   state={
