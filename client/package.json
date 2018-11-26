@@ -3,15 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "flow-bin": "^0.86.0",
     "node-sass": "^4.10.0",
     "react": "^16.7@latest",
     "react-dom": "^16.7@latest",
     "react-scripts": "^2.1.1",
-    "react-select": "^2.1.2"
+    "react-select": "^2.1.2",
+    "tiny-warning": "^1.0.0"
   },
   "scripts": {
     "start:prod": "REACT_APP_ENV=PROD react-scripts start",
-    "start:dev": "REACT_APP_ENV=DEVreact-scripts start",
+    "start:dev": "REACT_APP_ENV=DEV react-scripts start",
+    "start": "REACT_APP_ENV=DEV react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

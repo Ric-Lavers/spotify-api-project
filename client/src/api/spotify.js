@@ -1,3 +1,32 @@
+//@flow
+
+
+/* 
+  * Params can be genre, year, artist, album
+*/
+export const searchSpotify = async( query, type, params={} ) => {
+ 
+  const spotifyToken = localStorage.spotifyToken
+  const encodedParams = encodeURIComponent( Object.keys(params).map( key =>  `${key}:${params[key]}`).join(' '))
+  const search = new URLSearchParams({ q: query }).toString()
+  try {
+    if (!params.type) {
+      throw "no type included"
+    }
+    let res = await fetch(`https://api.spotify.com/v1/search?${search}&type=${type}`, {
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      })
+    })
+    return res.json()
+  } catch (error) {
+    console.log( error.message )
+    return error
+  }
+}
+
+
 
 export const checkToken = async(spotifyToken) => {
   try {
@@ -47,7 +76,8 @@ export const getAlbumInfo = (spotifyToken, id) => {
   })
 } */
 
-export const getAlbumInfo = async(spotifyToken, id) => {
+export const getAlbumInfo = async( id) => {
+  let spotifyToken = localStorage.spotifyToken
   try {
     let res= await fetch(`https://api.spotify.com/v1/albums/${id}`,{
       headers: new Headers({
@@ -224,3 +254,11 @@ export default {
   
   // handleGetPlaylistTrackIds,
 }
+
+// href: string
+// // items: (2) [{…}, {…}]
+// limit: number
+// next: null
+// offset: number
+// previous: null
+// total: number
