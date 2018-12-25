@@ -112,36 +112,38 @@
   .SelectContainer{
     //...
   }
-  
-  .react-select-container{
+}
+.react-select-container{
+  div {
+    border-width: 0px 
+  }
+  color: #880;
+  .react-select__menu {
+    background-color: rgba(black, 0.6);
+  }
+  .react-select__control {
+    background-color: rgba(black, 0.5);;
+  }
+  .react-select__placeholder {
+    border: 0px solid transparent;
+    // border: 1px dashed white;
+    margin-left: 35px;
+  }
+  .react-select__indicators {
+    // border: 0px solid transparent;
+    // background-color: rgba(white, 1);
+    background-color: rgba(#320, 0.7);
+    svg {
+      fill: rgba(#320, 1);
+      fill: rgba(white, 1);
+    }
+  }
+  .react-select__input {
+    text-align: left;
+    padding-left:7px;
+    min-width: 21px;
     color: #880;
-    .react-select__menu {
-      background-color: rgba(black, 0.6);
-    }
-    .react-select__control {
-      background-color: rgba(black, 0.5);;
-    }
-    .react-select__placeholder {
-      border: 0px solid transparent;
-      // border: 1px dashed white;
-      margin-left: 35px;
-    }
-    .react-select__indicators {
-      // border: 0px solid transparent;
-      // background-color: rgba(white, 1);
-      background-color: rgba(#320, 0.7);
-      svg {
-        fill: rgba(#320, 1);
-        fill: rgba(white, 1);
-      }
-    }
-    .react-select__input {
-      text-align: left;
-      padding-left:7px;
-      min-width: 21px;
-      color: #880;
-      border: 0px solid transparent;
-    }
+    border: 0px solid transparent;
   }
 }
 

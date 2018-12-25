@@ -1,14 +1,17 @@
 //@flow
 
-
+const spotifyToken = localStorage.spotifyToken
+ 
 /* 
-  * Params can be genre, year, artist, album
+  * Params can be genre, year, artist, album, label
+
 */
 export const searchSpotify = async( query, type, params={} ) => {
- 
-  const spotifyToken = localStorage.spotifyToken
+
+  
   const encodedParams = encodeURIComponent( Object.keys(params).map( key =>  `${key}:${params[key]}`).join(' '))
-  const search = new URLSearchParams({ q: query }).toString()
+  const search = new URLSearchParams({ q: query+encodedParams }).toString()
+
   try {
     if (!params.type) {
       throw "no type included"
@@ -25,6 +28,9 @@ export const searchSpotify = async( query, type, params={} ) => {
     return error
   }
 }
+/* sort by year
+albums.items.map(({artists, name, type, release_date}) => ({name, artists : artists[0].name, type,release_date})).sort((a,b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime()
+*/
 
 
 

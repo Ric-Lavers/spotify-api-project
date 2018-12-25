@@ -19,3 +19,9 @@ const extractFieldsFromObject = ( releases, fields=[] ) => {
     ) 
   })
 }
+
+
+/* 
+  * cycle through array
+*/
+const cycle = (num, array) => array[num % array.length]

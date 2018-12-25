@@ -17,6 +17,7 @@ import {
 import SelectContainer from './components/SelectContainer'
 import AudioControls from './components/AudioControls'
 import DiscogsSearchResults from './components/DiscogsSearchResults'
+import SearchSpotify from './components/SearchSpotify'
 
 export const trackKeys = [
   "name",
@@ -261,6 +262,7 @@ class App extends Component {
 
           <div className="keys" >
             <SelectContainer
+              
               placeholder={"apply filters"}
               isLoading={this.state.loading}
               className="react-select-container"
@@ -284,7 +286,9 @@ class App extends Component {
 
         <div className="content" >
             <div className="paste" >
+              <SearchSpotify/>
               <h2>Paste Song Ids</h2>
+
         <Fragment>
               <form 
                 onSubmit={this.handleSubmit}

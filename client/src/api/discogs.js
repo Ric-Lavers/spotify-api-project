@@ -23,6 +23,7 @@ export const labelReleases = async(labelId, queryObj: labelReleasesQueryObj ) =>
     }
   }
 
+  
 type labelReleasesQueryObj = {
   page: number,
   per_page: number,

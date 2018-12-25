@@ -1,3 +1,4 @@
+//@flow
 import React, { useEffect, useState } from 'react'
 import { searchDiscogs, labelReleases } from '../api/discogs'
 import { searchSpotify, getAlbumInfo } from '../api/spotify'
@@ -7,20 +8,17 @@ import { search } from '../mocks/discogsMocks'
 const DiscogsSearchResults = ({ query, setTracks }) => {
   const [ labels, setLabels ] = useState([])
 
-
-  const _searchDiscogs = async query => {
-    try {
-      const res = await searchDiscogs({ q: query, type: 'label' })
-      let { results, pagination } = res
-      setLabels( results.slice(0, 10).map( ({title, thumb, id }) => ({ title, thumb, id }) ) )
-    } catch (error) {
-      console.error(error.message)
-    }
-  } 
-
-  useEffect( () => {
+  useEffect( async () => {
+    console.log(query)
     if (query && query.length){
-      _searchDiscogs(query)
+      try {
+        const res = await searchDiscogs({ q: query, type: 'label' })
+        console.log(res)
+        let { results, pagination } = res
+        setLabels( results.slice(0, 10).map( ({title, thumb, id }) => ({ title, thumb, id }) ) )
+      } catch (error) {
+        console.error(error.message)
+      }
     }
   }, [ query ] )
 
@@ -28,59 +26,22 @@ const DiscogsSearchResults = ({ query, setTracks }) => {
     console.log(labelId)
 
     try {
-      // * get all label releases by discogs labelId
+      // find all labels releases by id
       const { releases, pagination } = await labelReleases( labelId )
-      // see discongs.js for flow type  id, artist, thumb, title, year
-      let albumTitles = releases.map( ({ title, year }) => ({ title, year }) )
+      // releases Array<labelReleasesDiscogs>
+      let albums = releases.map( ({ id, artist, thumb, title, year}) => ({ id, artist, thumb, title, year }) )
 
-      const getAlbums = async (albumTitles) => {
-        const albumPromises = albumTitles.map( ({ title, year }) => searchSpotify(title, {type: 'album'}, year) )
-    
-        let albums = await Promise.all(albumPromises)
-        console.log('albums', albums)
-        return albums
-          .flatMap( i => i.albums.items)
-          .filter(i=> i.artists
-            .map(j=> j.name)
-          )
-      }
-       
-      const getMoreAlbumInfo = async (albumIds) => {
-        let albumsInfoPromise =  albumIds.map( albumId => getAlbumInfo(albumId))
-
-        let albumInfo = await Promise.all(albumsInfoPromise)
-        let richTracks = albumInfo
-          .filter(album => album.label.includes(query))
-          .map( album => {
-          console.log(album)
-          return album.tracks.items.map( track => ({ ...album, ...track }) )
-        })
-        console.log('richTracks_interal', richTracks)
-        return richTracks
-      }
-
-      let albums = await getAlbums(albumTitles)
-
-      let richTracks = await getMoreAlbumInfo(albums.map(i => i.id))
-      console.log('richTracks',richTracks)
-      setTracks(richTracks.flatMap(i => i))
-// return
-/*
-      // spotify can only search by one type at a time * so album is the chosen
-      const albumPromises = albumTitles.map( title => searchSpotify(title, {type: 'album'}) )
-
+      const albumPromises = albums.map( ({ title }) => searchSpotify(title, {type: 'album'}) )
       Promise.all(albumPromises).then(data => {
         // console.log(data, title)
-        let albums = data
+        albums = data
           .flatMap( i => i.albums.items)
           .filter(i=> i.artists.map(j=> j.name)
             //.includes(title)
           )
           // console.log({albums})
         return albums
-      })
-      //
-      .then( albums => {
+      }).then( albums => {
         let tracks;
 
         const labels = albums.map(async (i) => {
@@ -97,7 +58,7 @@ const DiscogsSearchResults = ({ query, setTracks }) => {
           //   album_release_date: i.album_release_date,
           //   // album_md_img,
           //   }) )
-console.log(tracks.length && tracks)
+console.log(tracks)
           return ({...i, label})
         })
         Promise.all(labels).then(fullAlbums => {
@@ -110,7 +71,6 @@ console.log(tracks.length && tracks)
         })
         
       })
-      */
     } catch (error) {
       console.error(error.message)
     }
@@ -119,8 +79,7 @@ console.log(tracks.length && tracks)
 
   return (
     <div className="DiscogsSearchResults" >
-      {labels.length &&
-        <h2>Possible Labels</h2>}
+      <h2>Labels</h2>
       {
         labels
           .filter( ({ thumb }) => !!thumb )
@@ -133,6 +92,19 @@ console.log(tracks.length && tracks)
       }
     </div>
   )
+}
+
+type labelReleasesDiscogs = {
+    thumb: string,
+    title: string,
+    user_data: object,
+    master_url: object,
+    uri: string,
+    cover_image: string,
+    resource_url: string,
+    master_id: object,
+    type: string,
+    id: number,
 }
 
 export default DiscogsSearchResults
