@@ -8,20 +8,21 @@ const spotifyToken = localStorage.spotifyToken
 */
 export const searchSpotify = async( query, type, params={} ) => {
 
-  
   const encodedParams = encodeURIComponent( Object.keys(params).map( key =>  `${key}:${params[key]}`).join(' '))
   const search = new URLSearchParams({ q: query+encodedParams }).toString()
 
   try {
-    if (!params.type) {
-      throw "no type included"
-    }
+    // if (!params.type) {
+    //   throw "no type included"
+    // }
+    console.log(`https://api.spotify.com/v1/search?${search}&type=${type}`)
     let res = await fetch(`https://api.spotify.com/v1/search?${search}&type=${type}`, {
       headers: new Headers({
         'Authorization': `Bearer ${spotifyToken}`, 
         'Content-Type': 'application/json'
       })
     })
+
     return res.json()
   } catch (error) {
     console.log( error.message )
@@ -177,7 +178,7 @@ export const getRecentlyPlayed = async(  ) => {
 
 export const controls = async (action, body={}) => {
   const spotifyToken = localStorage.spotifyToken
-  const method = action === 'play' ? 'PUT' : 'POST'
+  const method = ( action === 'play' || action === 'pause') ? 'PUT' : 'POST'
   try {
     await fetch(`https://api.spotify.com/v1/me/player/${action}`,{
       headers: new Headers({
@@ -193,6 +194,7 @@ export const controls = async (action, body={}) => {
     return error
   }
 }
+
 export const play = async ( body={}) => {
   const spotifyToken = localStorage.spotifyToken
   try {
@@ -228,6 +230,7 @@ export const seek = async ( queries={}) => {
     return error
   }
 }
+
 export const currentPlaying = async () => {
   const spotifyToken = localStorage.spotifyToken
   try {

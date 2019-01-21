@@ -54,7 +54,7 @@ class App extends Component {
     ],
     tracks: [],
     playlistItems: [],
-    filters: [],
+    filters: JSON.parse(localStorage.getItem('filters')) || [],
     searchDiscogsQuery: "Warp Records",
   }
   handleAlbumQuery = query => {
@@ -132,7 +132,7 @@ class App extends Component {
     
   }
   playSong = async(body) => {
-    console.log("play",JSON.stringify(body, null, 2))
+    // console.log("play",JSON.stringify(body, null, 2))
     
     await play(body)
     
@@ -269,7 +269,13 @@ class App extends Component {
               classNamePrefix="react-select"
               isMulti 
               value={this.state.filters}
-              onChange={(option)=> this.setState({filters: option})}
+              onChange={
+                (option)=> this.setState( () => ({filters: option})
+                , () => {
+                  localStorage.setItem(
+                    'filters',
+                    JSON.stringify(this.state.filters) )})
+              }
               options={
                 trackKeys.map( key => ({value: key, label: key}) )
               }

@@ -6,6 +6,10 @@ const options = [
   'label', 'artist', 'album', 'track', 'year', 'playlist'
 ]
 
+const types =  [
+  'artist', 'album', 'track', 'playlist'
+]
+
 const SearchSpotify = () => {
   let [searchObj, setInput] = useState(() => {
     let obj = {}
@@ -13,17 +17,19 @@ const SearchSpotify = () => {
     return obj
   })
   let [type, setType] = useState(null)
+  let [searchTerm, setTerm] = useState(null)
 
   // let [values, setValues]= useState([])
 
   const getTracks = useCallback( async() => {
-    let query = searchObj.filter(Boolean)
-    // let data = await searchSpotify(`label:${input}`, values.map(i => i.value).join(','), )
+    // let queryObj = searchObj.keys.filter(Boolean)
+    let data = await searchSpotify( searchObj, type )
 
   }, [setInput] )
 
   const handleChange =  ( { name, value, checked } ) => {
     
+
     if ( checked ) {
       setType( name )
       return
@@ -49,21 +55,42 @@ const SearchSpotify = () => {
         }}
         options={options.map( o => ({value: o, label: o}) )}
       /> */}
-      <form onChange={({ target }) => handleChange(target)} style={{ padding: '0 25%' }} >
+      <table onChange={({ target }) => handleChange(target)} >
+      
+        <tr >
+          <td> search </td>
+          <td>
+            <input
+              onChange={({ target }) => setTerm(target.value)}
+              type="text"
+              name='searchTerm'
+              value={searchTerm}
+            />
+          </td>
+        </tr>
       {
         options.map( option =>  
-          <label style={{ color: 'white', padding: 7,  display: 'flex', justifyContent: 'space-between' }} >
-            <input type="checkbox" name={option} checked={type === option } />
-            <div> { option }</div>
-            <input
-              
-              type="text"
-              name={option}
-              value={searchObj[option]}
-            />
-          </label>
+          <tr >
+            <td>
+            {types.includes(option) && 
+              <input
+                type="checkbox"
+                name={option}
+                checked={type === option }
+              />
+            }
+            </td>
+            <td> { option }</td>
+            <td>
+              <input
+                type="text"
+                name={option}
+                value={searchObj[option]}
+              />
+            </td>
+          </tr>
       )}
-      </form>
+      </table>
 
       <input onClick={getTracks} type="submit"/>
         <span>{ JSON.stringify(searchObj) }</span>

@@ -6,16 +6,18 @@ import { searchSpotify, getAlbumInfo } from '../api/spotify'
 import { search } from '../mocks/discogsMocks'
 
 const DiscogsSearchResults = ({ query, setTracks }) => {
-  const [ labels, setLabels ] = useState([])
+  const [ labels, setLabels ] = useState([])// labelReleasesDiscogs
 
   useEffect( async () => {
-    console.log(query)
     if (query && query.length){
       try {
         const res = await searchDiscogs({ q: query, type: 'label' })
-        console.log(res)
         let { results, pagination } = res
-        setLabels( results.slice(0, 10).map( ({title, thumb, id }) => ({ title, thumb, id }) ) )
+
+      setLabels(
+        results
+          .slice(0, 10)
+          .map( ({title, thumb, id }) => ({ title, thumb, id }) ) )
       } catch (error) {
         console.error(error.message)
       }
@@ -29,17 +31,21 @@ const DiscogsSearchResults = ({ query, setTracks }) => {
       // find all labels releases by id
       const { releases, pagination } = await labelReleases( labelId )
       // releases Array<labelReleasesDiscogs>
-      let albums = releases.map( ({ id, artist, thumb, title, year}) => ({ id, artist, thumb, title, year }) )
+      let albums = 
+        releases
+          .map( ({ id, artist, thumb, title, year}) => ({ id, artist, thumb, title, year }) )
+return
+      const albumPromises = albums.map( ({ title }) =>
+        searchSpotify(title, 'album') 
+      )
 
-      const albumPromises = albums.map( ({ title }) => searchSpotify(title, {type: 'album'}) )
       Promise.all(albumPromises).then(data => {
-        // console.log(data, title)
+        // console.log("...albumPromises).then(data", data);
+        
         albums = data
           .flatMap( i => i.albums.items)
           .filter(i=> i.artists.map(j=> j.name)
-            //.includes(title)
           )
-          // console.log({albums})
         return albums
       }).then( albums => {
         let tracks;
@@ -58,7 +64,7 @@ const DiscogsSearchResults = ({ query, setTracks }) => {
           //   album_release_date: i.album_release_date,
           //   // album_md_img,
           //   }) )
-console.log(tracks)
+
           return ({...i, label})
         })
         Promise.all(labels).then(fullAlbums => {

@@ -4,6 +4,20 @@
 .App {
   text-align: center;
 }
+table {
+  padding: 0 25%;
+}
+tr {
+  color: white;
+  padding: 7;
+  display: flex;
+  justify-content: space-between;
+}
+td {
+  min-width: 28px;
+  text-align: left;
+  
+}
 
 .flex {
   display: flex;
