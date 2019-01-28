@@ -5,15 +5,15 @@ import { searchSpotify, getAlbumInfo } from '../api/spotify'
 
 import { search } from '../mocks/discogsMocks'
 
-const DiscogsSearchResults = ({ query, setTracks }) => {
+const DiscogsSearchResults = ({ query, setTracks, type="label" }) => {
   const [ labels, setLabels ] = useState([])// labelReleasesDiscogs
 
   useEffect( async () => {
     if (query && query.length){
       try {
-        const res = await searchDiscogs({ q: query, type: 'label' })
+        const res = await searchDiscogs({ q: query, type })
         let { results, pagination } = res
-
+      console.log('DiscogsSearchResults')
       setLabels(
         results
           .slice(0, 10)

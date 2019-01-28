@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { controls, currentPlaying, seek} from '../api/spotify'
+import { controls, currentPlaying, seek } from '../api/spotify'
 import SpotifyHelpers from '../helpers/spotify'
 
 

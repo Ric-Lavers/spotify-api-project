@@ -10,6 +10,7 @@ import {
   getAlbumInfo,
   getUserPlaylists,
   getPlaylistsTracks,
+  searchSpotify,
 
   play,
 } from './api/spotify'
@@ -18,6 +19,7 @@ import SelectContainer from './components/SelectContainer'
 import AudioControls from './components/AudioControls'
 import DiscogsSearchResults from './components/DiscogsSearchResults'
 import SearchSpotify from './components/SearchSpotify'
+import { log } from 'handlebars';
 
 export const trackKeys = [
   "name",
@@ -55,12 +57,23 @@ class App extends Component {
     tracks: [],
     playlistItems: [],
     filters: JSON.parse(localStorage.getItem('filters')) || [],
-    searchDiscogsQuery: "Warp Records",
+    searchDiscogsQuery: {
+      q: "Warp Records",
+      type: 'label',
+    },
   }
   handleAlbumQuery = query => {
-    console.log(query)
-    this.setState({searchDiscogsQuery: query})
+    console.log(query, 'label')
+
+    // this.setState({searchDiscogsQuery: query})
   }
+  handleLabelQuery = async (label, type='album') => {
+    console.log( label )
+    this.setState({searchDiscogsQuery: {q: `label:${label}`, type}})
+    let res = await searchSpotify(`label:${label}`, type, {limit: 50})
+
+  }
+
 
   _getUsersPlaylists = async() => {
     try {
@@ -172,7 +185,7 @@ class App extends Component {
             )
         case 'label': 
           return(
-            <span onClick={() => this.handleAlbumQuery(track[key]) } >{key}: {track[key]}</span>
+            <span onClick={() => this.handleLabelQuery(track[key]) } >{key}: {track[key]}</span>
             
           )
               
@@ -283,7 +296,8 @@ class App extends Component {
             <AudioControls/>
           </div>
           <DiscogsSearchResults 
-            query={this.state.searchDiscogsQuery}
+            query={this.state.searchDiscogsQuery.q}
+            type={this.state.searchDiscogsQuery.type}
             setTracks={(tracks) => this.setState({tracks: tracks})}
           />
           </Fragment>

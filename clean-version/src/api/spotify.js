@@ -1,7 +1,6 @@
 //@flow
 
 const spotifyToken = localStorage.spotifyToken
- 
 /* 
   * Params can be genre, year, artist, album, label
 
@@ -251,7 +250,6 @@ export const currentPlaying = async () => {
 export default {
   checkToken,
   getPlaylistInfo,
-  getAlbumInfo,
   getAlbumInfo,
   getUserPlaylists,
   getPlaylistsTracks,

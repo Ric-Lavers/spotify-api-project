@@ -1,0 +1,41 @@
+
+.audio-controls {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+
+  background-color: rgba(black, 0.9);
+
+  padding: $lg;
+
+  .icon {
+    text-align: center;
+  }
+  .arrow-right {
+    width: 0; 
+    height: 0; 
+    border-top: $md solid transparent;
+    border-bottom: $md solid transparent;
+    border-left: $lg solid transparent;
+    border-left-color: $spotify-green;
+  }
+  .square {
+    width: 0; 
+    height: 0; 
+    border: $md solid $spotify-white;
+  }
+
+  .touched {
+    animation: touched 1s ;
+  }
+  
+  @keyframes touched {
+    0% { color: #fff }
+    50% { color: #140 }
+    100% { color: #fff }
+  }
+}
+
+.seek {
+  width: 100%;
+}
