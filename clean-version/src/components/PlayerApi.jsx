@@ -37,12 +37,12 @@ const Button = ({ lastTouch, text, action, onClick }) =>
 
 /* 
   * The Audio controls has the following features;
-    * play / pause
-    * previous / next 
+    *[x] play / pause
+    *[x] previous / next 
     * scrub track
     * show track position
-    * on successful API button flashes success color
-    * on unsuccessful API button flashes fail color
+    *[x] on successful API button flashes success color
+    *[x] on unsuccessful API button flashes fail color
 */
 const PlayerAPI = () => {
   let [ isPlay, setPlay ] = useState( false )
@@ -97,20 +97,6 @@ const PlayerAPI = () => {
           lastTouch={lastTouch}
           onClick={handleClick}
         />
-       {/*  <Button
-          className={classNames("icon", {'touched': lastTouch.previous})}
-          onClick={() => handleClick('previous')}
-        > prev </Button>
-        <Button
-          className={classNames("icon", {
-            'arrow-right': lastTouch.play, 'square': lastTouch.pause
-          })}
-          onClick={ () => handleClick( isPlay ? 'play' : 'pause' ) } 
-        >{isPlay ? 'play' : 'pause'}</Button>
-        <Button
-          className={classNames("icon", {'touched': lastTouch.next})}
-          onClick={() => handleClick('next')}
-        > next </Button> */}
       </div>
 
       <input onChange={findCurrentPosition} onMouseUp={handleSeek} className="icon seek" type="range" min='0' max='100' value={rangeValue} />
