@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import posed from 'react-pose';
+import classNames from 'classnames';
 
+import { controls, play } from '../api/spotify'
 import variables from '../styles/variables';
 import './PlayerApi'
 
@@ -23,8 +25,15 @@ const styles = {
   }
 }
 
-const Button = posed.div(styles);
-
+// const Button = posed.div(styles);
+const Button = ({ lastTouch, text, action, onClick }) => 
+  <div
+    className={classNames("icon",
+      {[lastTouch[action]?'touched-success':'touched-error']: (typeof lastTouch[action] === 'boolean')}
+    )}
+    onClick={() => onClick(action)}
+  >{ text }</div>
+  
 
 /* 
   * The Audio controls has the following features;
@@ -37,25 +46,71 @@ const Button = posed.div(styles);
 */
 const PlayerAPI = () => {
   let [ isPlay, setPlay ] = useState( false )
+  let [ lastTouch, setTouch  ] = useState( { init: null } )
 
   let handleSeek, rangeValue
 
-
-  const handleClick = (e, props) => {
-    console.log( e.target, props )
-    setPlay( !isPlay )
+  const setLastTouch = (action, isSuccess) => {
+    setTouch({ [action]: isSuccess})
+    setTimeout( () => {
+      setTouch({ init: null })
+    }, 1000  )
   }
+
+
+  const handleClick = async action => {
+    let isSuccess = await controls( action )
+    
+    switch ( action ) {
+      case 'play':
+      case 'pause':
+        isSuccess && setPlay( !isPlay )
+      case 'previous':
+      case 'next':
+        setLastTouch( action, isSuccess )
+        break;
+      default:
+        break;
+    }
+  }
+
   const findCurrentPosition = (e, props) => console.log( e.target, props )
 
   return (
     <div> 
       <div className="audio-controls">
-        <Button 
-          pose={ isPlay ? 'arrowRight' : 'square' }
-          className="icon"
-          onClick={ handleClick } 
-        >{isPlay ? 'arrowRight' : 'square'}</Button>
-
+        <Button
+          text="prev"
+          action="previous"
+          lastTouch={lastTouch}
+          onClick={handleClick}
+        />
+        <Button
+          text={isPlay ? 'play' : 'pause'}
+          action={isPlay ? 'play' : 'pause'}
+          lastTouch={lastTouch}
+          onClick={handleClick}
+        />
+        <Button
+          text="next"
+          action="next"
+          lastTouch={lastTouch}
+          onClick={handleClick}
+        />
+       {/*  <Button
+          className={classNames("icon", {'touched': lastTouch.previous})}
+          onClick={() => handleClick('previous')}
+        > prev </Button>
+        <Button
+          className={classNames("icon", {
+            'arrow-right': lastTouch.play, 'square': lastTouch.pause
+          })}
+          onClick={ () => handleClick( isPlay ? 'play' : 'pause' ) } 
+        >{isPlay ? 'play' : 'pause'}</Button>
+        <Button
+          className={classNames("icon", {'touched': lastTouch.next})}
+          onClick={() => handleClick('next')}
+        > next </Button> */}
       </div>
 
       <input onChange={findCurrentPosition} onMouseUp={handleSeek} className="icon seek" type="range" min='0' max='100' value={rangeValue} />
@@ -63,15 +118,6 @@ const PlayerAPI = () => {
     </div>
   )
 }
-
-// <a
-//   className={`icon previous`}
-//   onClick={(e) => handleClick(e, 'previous')}
-//   href="">
-//     previous
-// </a>
-// <a className={`icon next`}
-//           onClick={(e) => handleClick(e, 'next')} href="">next</a>
 
 // {!!currentSong 
 //   &&  <SongDetails details={currentSong.item} />

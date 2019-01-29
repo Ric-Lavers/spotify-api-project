@@ -175,7 +175,7 @@ export const controls = async (action, body={}) => {
   const spotifyToken = localStorage.spotifyToken
   const method = ( action === 'play' || action === 'pause') ? 'PUT' : 'POST'
   try {
-    await fetch(`https://api.spotify.com/v1/me/player/${action}`,{
+    const res = await fetch(`https://api.spotify.com/v1/me/player/${action}`,{
       headers: new Headers({
         'Authorization': `Bearer ${spotifyToken}`, 
         'Content-Type': 'application/json'
@@ -183,10 +183,13 @@ export const controls = async (action, body={}) => {
       method: method,
       body: JSON.stringify({...body})
     })
+    if ( !res.ok ) {
+      throw res
+    }
     return true
   } catch (error) {
-    console.log(error.message)
-    return error
+    console.log('controls failed', error.message)
+    return false
   }
 }
 

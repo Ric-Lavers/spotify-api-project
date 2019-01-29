@@ -1,8 +1,9 @@
 
 .audio-controls {
   cursor: pointer;
+  width: 300px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 
   background-color: rgba(black, 0.9);
 
@@ -10,6 +11,9 @@
 
   .icon {
     text-align: center;
+    border: 1px solid rgba($spotify-white, 0.6 );
+    color: rgba($spotify-white, 0.8 );
+    padding: $sm;
   }
   .arrow-right {
     width: 0; 
@@ -26,12 +30,23 @@
   }
 
   .touched {
-    animation: touched 1s ;
+    animation: touched-success 1s ;
+  }
+  .touched-success {
+    animation: touched-success 1s ;
+  }
+  .touched-error {
+    animation: touched-error 1s ;
   }
   
-  @keyframes touched {
+  @keyframes touched-success {
     0% { color: #fff }
     50% { color: #140 }
+    100% { color: #fff }
+  }
+  @keyframes touched-error {
+    0% { color: #fff }
+    50% { color: $error }
     100% { color: #fff }
   }
 }
