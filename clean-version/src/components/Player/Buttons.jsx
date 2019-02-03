@@ -14,9 +14,9 @@ const PlayerButtons = () => {
       case 'pause':
         isSuccess && togglePlay()
         break
-      case 'previous':
-      case 'next':
-        break;
+      // case 'previous':
+      // case 'next':
+      //   break;
       default:
         break;
     }

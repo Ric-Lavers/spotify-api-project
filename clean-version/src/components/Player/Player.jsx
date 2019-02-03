@@ -1,6 +1,7 @@
-import React, { useState, useMemo, useContext } from 'react';
-import Test, { CurrentPlayingContext } from '../../context'
+import React, { useState, useEffect, useMemo, useContext } from 'react';
+// import Test, { CurrentPlayingContext } from '../../context'
 
+import { currentPlaying } from '../../api/spotify'
 import ControlButtons from './Buttons'
 import Progress from './Progress'
 
@@ -15,20 +16,33 @@ import Progress from './Progress'
     *[x] on unsuccessful API button flashes fail color
 */
 const PlayerAPI = () => {
-  
-  let handleSeek, rangeValue
-  // let [count, setCount] = useContext( CurrentPlayingContext )
-  const findCurrentPosition = (e, props) => console.log( e.target, props )
+  const [ song, setSong ] = useState(0)
+  const [ isFetching, setFetching ] = useState( false )
+
+  useEffect(() => {
+    let polling = setInterval( setCurrentPlaying, 3000 )
+    return () => clearInterval(polling)
+  },[])
 
 
+  const setCurrentPlaying = async () => {
+    if ( isFetching ) return
+    setFetching(true)
+    try {
+      let playingNow = await currentPlaying()
+      setSong(playingNow)
 
+    } catch (error) {
+      console.error(error.message)
+    }
+    setFetching(false)
+  }
 
   return (
     <div className="audio-controls"> 
       <ControlButtons />
-      <Progress/>
+      <Progress song={song} />
 
-  
     </div>
   )
 }

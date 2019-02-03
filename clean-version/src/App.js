@@ -4,23 +4,22 @@ import logo from './logo.svg';
 import './App.css';
 import './styles/index.scss';
 import SpotifyLogin from './components/SpotifyLogin';
-import PlayerAPI from './components/Player/Player';
+import Player from './components/Player/Player';
 
-import Count from './Count';
 import CurrentPlaying, { CurrentPlayingContext } from './context'
 
 const App = () => {
 
-  const [ count, setCount ] = useState(0)
+  const [ show, setShow ] = useState(true)
  
   return (
     <div className="App">
     <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={logo} className="App-logo" alt="logo" onClick={() => setShow(!show)}/>
         <SpotifyLogin/>
-        <CurrentPlaying>
-          <PlayerAPI/>
-        </CurrentPlaying>
+        {show &&
+        <Player/>}
+        
       </header>
     </div>
   );

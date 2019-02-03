@@ -13,7 +13,6 @@ export const Button = ({ lastTouch, text, action, onClick, wasPressed, touched }
   }
 
   return useMemo(() => {
-    console.count( 'Presentional Button' )
     return(
       <div
         className={classNames("icon", successClass)}
