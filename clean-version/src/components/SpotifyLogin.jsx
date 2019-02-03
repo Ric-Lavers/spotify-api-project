@@ -14,6 +14,9 @@ if (process.env.REACT_APP_ENV === 'PROD') {
 const { colors } = variables;
 
 const styles = {
+  container: {
+    margin: variables.sizes.md,
+  },
   logo: {
     backgroundColor: 'white',
     fill: colors.success,
@@ -34,6 +37,11 @@ const styles = {
   avartarContainer: {
     display: 'flex',
     position: 'relative',
+  },
+  noLinkStyle: {
+    cursor: 'pointer',
+    color: 'inherit',
+    textDecoration: 'inherit',
   }
 }
 
@@ -45,6 +53,7 @@ class SpotifyLogin extends Component {
 
     display_name: null,
     display_picture:  null,
+    spotifyLink: "",
   }
 
   componentDidMount() {
@@ -59,7 +68,7 @@ class SpotifyLogin extends Component {
     if ( address.includes('access_token=') ) {
       let token=  new URLSearchParams(window.location.search).get('access_token')
 
-      console.log('got token')
+      console.log('got token', token)
       localStorage.spotifyToken = token
       window.location.replace( window.origin )
     }
@@ -69,12 +78,12 @@ class SpotifyLogin extends Component {
     if (spotifyToken){
       this.setState({tokenPresent: true})
       try {// set User
-        let { display_name, email, images } = await checkToken( spotifyToken )
+        let { display_name, email, images, external_urls } = await checkToken( spotifyToken )
         let display_picture = images.length !== 0
           ? images[0].url
           : null
 
-        this.setState({ tokenValid: true, display_name, display_picture, email })
+        this.setState({ tokenValid: true, display_name, display_picture, email, spotifyLink: external_urls.spotify })
         return true
       } catch (error) { // timed out
         this.setState({ tokenValid: false })
@@ -101,25 +110,26 @@ class SpotifyLogin extends Component {
       display_picture,
       display_name,
       email,
+      spotifyLink,
     } = this.state
     const { isLoading } = this.props
 
     const logoColor = this.findLogoColor(tokenPresent, tokenValid)
-console.log(tokenValid , display_picture)
+
     if ( isLoading ) {
       return <p>...loading</p>
     }
 
     return (
-      <div id="spotify-login" >
+      <div id="spotify-login" style={styles.container} >
         <div>
           <SpotifyLogo style={{ ...styles.logo, ...logoColor }}/>
     { tokenValid && display_picture &&
             <img src={display_picture} alt="display picture" style={styles.dp}/>}
         </div>
-        <p>
+        <a href={spotifyLink} style={styles.noLinkStyle} >
           {display_name?display_name:email}
-        </p>
+        </a>
     { !tokenValid &&
         <a href={REACT_APP_LOGIN_URL}>
           {tokenPresent

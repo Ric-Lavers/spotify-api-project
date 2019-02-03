@@ -13,7 +13,6 @@ const DiscogsSearchResults = ({ query, setTracks, type="label" }) => {
       try {
         const res = await searchDiscogs({ q: query, type })
         let { results, pagination } = res
-      console.log('DiscogsSearchResults')
       setLabels(
         results
           .slice(0, 10)

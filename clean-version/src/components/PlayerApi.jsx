@@ -1,39 +1,8 @@
-import React, { useState } from 'react';
-import posed from 'react-pose';
-import classNames from 'classnames';
+import React, { useState, useMemo } from 'react';
 
-import { controls, play } from '../api/spotify'
-import variables from '../styles/variables';
-import './PlayerApi'
+import { controls } from '../api/spotify'
+import Button, {Button as ButtonPres} from './common/Button'
 
-const { colors, sizes, spotify } = variables;
-
-const styles = {
-  arrowRight:  {
-    width: 0,
-    height: 0,
-    border: `${sizes.md}px solid transparent`,
-    borderTopWidth: sizes.md,
-    borderBottomWidth: sizes.md,
-    borderLeftWidth: sizes.lg,
-    borderLeftColor: colors.spotify.green,
-  },
-  square: {
-    width: 0,
-    height: 0,
-    border: `${sizes.md}px solid ${colors.spotify.white}`,
-  }
-}
-
-// const Button = posed.div(styles);
-const Button = ({ lastTouch, text, action, onClick }) => 
-  <div
-    className={classNames("icon",
-      {[lastTouch[action]?'touched-success':'touched-error']: (typeof lastTouch[action] === 'boolean')}
-    )}
-    onClick={() => onClick(action)}
-  >{ text }</div>
-  
 
 /* 
   * The Audio controls has the following features;
@@ -51,6 +20,7 @@ const PlayerAPI = () => {
   let handleSeek, rangeValue
 
   const setLastTouch = (action, isSuccess) => {
+    console.log(action)
     setTouch({ [action]: isSuccess})
     setTimeout( () => {
       setTouch({ init: null })
@@ -74,6 +44,8 @@ const PlayerAPI = () => {
     }
   }
 
+
+
   const findCurrentPosition = (e, props) => console.log( e.target, props )
 
   return (
@@ -92,6 +64,26 @@ const PlayerAPI = () => {
           onClick={handleClick}
         />
         <Button
+          text="next"
+          action="next"
+          lastTouch={lastTouch}
+          onClick={handleClick}
+        />
+      </div>
+      <div className="audio-controls">
+        <ButtonPres
+          text="prev"
+          action="previous"
+          lastTouch={lastTouch}
+          onClick={handleClick}
+        />
+        <ButtonPres
+          text={isPlay ? 'play' : 'pause'}
+          action={isPlay ? 'play' : 'pause'}
+          lastTouch={lastTouch}
+          onClick={handleClick}
+        />
+        <ButtonPres
           text="next"
           action="next"
           lastTouch={lastTouch}
