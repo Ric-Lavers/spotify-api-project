@@ -1,10 +1,13 @@
 import { useState, useCallback } from 'react'
 
 const useToggle = intialValue => {
-  const [ toggleValue, setToggleValue ] = useState( intialValue )
-  const toggler = useCallback( () => setToggleValue(!toggleValue) )
-  
-  return [ toggleValue, toggler ]
+  const [ value, setValue ] = useState( intialValue )
+
+  const toggler = useCallback( () => {
+    setValue(!value) 
+  })
+
+  return [ value, toggler ]
 }
 
 export default useToggle;

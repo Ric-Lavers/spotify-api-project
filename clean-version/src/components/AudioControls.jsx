@@ -15,7 +15,7 @@ const AudioControls = () => {
     
     setInterval( setCurrentPlaying, 5000 )
     
-    return ( setCurrentPlaying )
+    return clearInterval( setCurrentPlaying )
   }, [] )
 
 

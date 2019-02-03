@@ -1,15 +1,12 @@
 
-.audio-controls {
-  cursor: pointer;
-  width: 300px;
+
+@mixin audio-buttons {
   display: flex;
   justify-content: space-between;
-
-  background-color: rgba(black, 0.9);
-
-  padding: $lg;
+  margin: $md;
 
   .icon {
+    cursor: pointer;
     text-align: center;
     border: 1px solid rgba($spotify-white, 0.6 );
     color: rgba($spotify-white, 0.8 );
@@ -49,8 +46,26 @@
     50% { color: $error }
     100% { color: #fff }
   }
+
 }
 
-.seek {
-  width: 100%;
+
+@mixin seek {
+  
+}
+
+
+.audio-controls {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(black, 0.9);
+
+  padding: $lg;
+  .audio-buttons {
+    @include audio-buttons;
+  }
+  @include seek;
+
 }

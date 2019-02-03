@@ -1,34 +1,45 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import classNames from 'classnames'
 
-export const Button = ({ lastTouch, text, action, onClick }) =>{ 
-  const wasLastAction = lastTouch[action]
-  
-  return useMemo(() => {
-    console.count( 'Presenational Button' )
-    const isValid = typeof wasLastAction === 'boolean'
+export const Button = ({ lastTouch, text, action, onClick, wasPressed, touched }) => {
+  const [ successClass, setSuccess ] = useState('')
 
+  const handleClick = () => {
+    const isSuccess = onClick(action) ? 'touched-success' : 'touched-error'
+    setSuccess( isSuccess )
+    setTimeout( () => {
+      setSuccess('')
+    }, 1000 )
+  }
+
+  return useMemo(() => {
+    console.count( 'Presentional Button' )
     return(
       <div
-        className={classNames("icon",{
-          'touched-success': wasLastAction && isValid,
-          'touched-error': !wasLastAction && isValid
-        })}
-        onClick={() => onClick(action)}
+        className={classNames("icon", successClass)}
+        onClick={handleClick}
       >{ text }</div>
-    )}, [ wasLastAction ]
+    )}, [ successClass ]
   )}
 
 
 class ButtonClass extends React.Component {
 
-  shouldComponentUpdate( nextProps ) {
-    const { action, lastTouch } = this.props
-    return nextProps.lastTouch[action] !== lastTouch[action]
+  state = {
+    isSuccess: ''
+  }
+
+  handleClick = () => {
+    const isSuccess = this.props.onClick(this.props.action) ? 'touched-success' : 'touched-error'
+    this.setState({ isSuccess })
+    setTimeout( () => {
+      this.setState({ isSuccess: '' })
+    }, 1000 )
   }
 
   render(){
-    const { lastTouch, text, action, onClick } = this.props;
+    const { lastTouch, text, action, onClick, isValid } = this.props;
+    const { isSuccess } = this.state;
 console.count( 'Class Button' )
     return (
       <div
@@ -36,9 +47,7 @@ console.count( 'Class Button' )
           {[lastTouch[action]?'touched-success':'touched-error']: (typeof lastTouch[action] === 'boolean')}
         )}
         onClick={() => onClick(action)}
-      >
-        { text }
-      </div>
+      >{ text } </div>
       )
   }
 }

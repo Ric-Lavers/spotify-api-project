@@ -1,23 +1,29 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
+
 import logo from './logo.svg';
 import './App.css';
 import './styles/index.scss';
 import SpotifyLogin from './components/SpotifyLogin';
-import PlayerAPI from './components/PlayerApi';
+import PlayerAPI from './components/Player/Player';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+import Count from './Count';
+import CurrentPlaying, { CurrentPlayingContext } from './context'
 
-          <SpotifyLogin/>
+const App = () => {
+
+  const [ count, setCount ] = useState(0)
+ 
+  return (
+    <div className="App">
+    <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <SpotifyLogin/>
+        <CurrentPlaying>
           <PlayerAPI/>
-        </header>
-      </div>
-    );
-  }
+        </CurrentPlaying>
+      </header>
+    </div>
+  );
 }
 
 export default App;
