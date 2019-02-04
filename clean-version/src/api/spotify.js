@@ -1,5 +1,5 @@
 //@flow
-
+import { LOGIN_URL } from  '../helpers'
 const spotifyToken = localStorage.spotifyToken
 /* 
   * Params can be genre, year, artist, album, label
@@ -30,7 +30,10 @@ albums.items.map(({artists, name, type, release_date}) => ({name, artists : arti
 
 
 
-export const checkToken = async(spotifyToken) => {
+export const checkToken = async(
+  spotifyToken=localStorage.spotifyToken,
+  redirect=false
+  ) => {
   try {
     let res = await fetch('https://api.spotify.com/v1/me', {
       headers: new Headers({
@@ -41,6 +44,9 @@ export const checkToken = async(spotifyToken) => {
     return res.json()
   } catch (error) {
     console.log( error.message )
+    if ( redirect ) {
+      window.location.replace(LOGIN_URL)
+    }
     return error
   }
 }
@@ -238,16 +244,17 @@ export const currentPlaying = async () => {
         'Content-Type': 'application/json'
       })
     })
-    return res.json()
+    if ( !res.ok ) {
+      throw res
+    }
+    const data = res.json()
+    return data
   } catch (error) {
     console.log(error.message)
-    return error
+    checkToken(undefined, true)
+    return null
   }
 }
-
-
-
-
 
 
 export default {

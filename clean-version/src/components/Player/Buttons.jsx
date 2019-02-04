@@ -1,6 +1,6 @@
 import React from 'react'
 import { useToggle }from '../../hooks'
-import { Button } from '../common/Button'
+import Button from '../common/PlayerButton'
 import { controls } from '../../api/spotify'
 
 const PlayerButtons = ({ is_playing=true }) => {

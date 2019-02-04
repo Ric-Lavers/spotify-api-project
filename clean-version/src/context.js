@@ -14,6 +14,7 @@ const Test = ({ children }) => {
 
 
   const setCurrentPlaying = async () => {
+    if ( isFetching ) return;
     setFetching(true)
     try {
       let playingNow = await currentPlaying()

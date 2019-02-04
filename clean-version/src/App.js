@@ -6,7 +6,7 @@ import './styles/index.scss';
 import SpotifyLogin from './components/SpotifyLogin';
 import Player from './components/Player/Player';
 
-import CurrentPlaying, { CurrentPlayingContext } from './context'
+// import CurrentPlaying, { CurrentPlayingContext } from './context'
 
 const App = () => {
 
@@ -15,10 +15,11 @@ const App = () => {
   return (
     <div className="App">
     <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" onClick={() => setShow(!show)}/>
-        <SpotifyLogin/>
-        {show &&
-        <Player/>}
+      <SpotifyLogin/>
+      <img src={logo} className="App-logo" alt="logo"
+        onClick={() => setShow(!show)}/>
+  {show &&
+      <Player/>}
         
       </header>
     </div>

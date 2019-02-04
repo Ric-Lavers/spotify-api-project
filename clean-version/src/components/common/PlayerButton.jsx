@@ -1,7 +1,7 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo, useState } from 'react'
 import classNames from 'classnames'
 
-export const Button = ({ lastTouch, text, action, onClick, wasPressed, touched }) => {
+const PlayerButton = ({ lastTouch, text, action, onClick, wasPressed, touched }) => {
   const [ successClass, setSuccess ] = useState('')
 
   const handleClick = () => {
@@ -21,7 +21,7 @@ export const Button = ({ lastTouch, text, action, onClick, wasPressed, touched }
     )}, [ successClass ]
   )}
 
-
+/* 
 class ButtonClass extends React.Component {
 
   state = {
@@ -49,6 +49,6 @@ console.count( 'Class Button' )
       >{ text } </div>
       )
   }
-}
+} */
 
-export default ButtonClass;
+export default PlayerButton;

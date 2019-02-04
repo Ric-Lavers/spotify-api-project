@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 // import  { CurrentPlayingContext } from '../../context'
 import { seek } from '../../api/spotify'
 
@@ -19,16 +19,6 @@ const Progress = ({ song }) => {
     setRange ( findRange(song) )
   }, [ song.progress_ms ])
   
-
-  const findPosition = currentSong => {
-    if (!currentSong) return;
-    let { duration_ms } = currentSong.item
-    let { progress_ms } = song
-
-    return (
-      Math.floor( duration_ms * (findRange(currentSong) / 100) )
-    )
-  }
   
   const handleSeek = async (e) => {
     if ( !song ) return;

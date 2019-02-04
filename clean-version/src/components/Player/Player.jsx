@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useMemo, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 // import Test, { CurrentPlayingContext } from '../../context'
 
 import { currentPlaying } from '../../api/spotify'
 import ControlButtons from './Buttons'
 import Progress from './Progress'
 import Details from './Details'
-
 
 /* 
   * The Audio controls has the following features;
@@ -21,7 +20,6 @@ const PlayerAPI = () => {
   const [ isFetching, setFetching ] = useState( false )
 
   useEffect(() => {
-    // setCurrentPlaying()
     let polling = setInterval( setCurrentPlaying, 3000 )
     return () => clearInterval(polling)
   })
@@ -30,17 +28,12 @@ const PlayerAPI = () => {
   const setCurrentPlaying = async () => {
     if ( isFetching ) return
     setFetching(true)
-    try {
-      let playingNow = await currentPlaying()
-      setSong(playingNow)
-
-    } catch (error) {
-      console.error(error.message)
-    }
+    let playingNow = await currentPlaying()
+    setSong(playingNow)
     setFetching(false)
   }
 
-  return song ?(
+  return song ? (
     <div className="audio-controls"> 
       <Details song={song} />
       <ControlButtons is_playing={song.is_playing} />

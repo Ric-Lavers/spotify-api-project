@@ -4,7 +4,7 @@ import { SpotifyHelpers } from '../../helpers'
 
 const Details = ({ song }) => {
   if ( !song ){ return null }
-
+  
   const {
     item: {
       name,
@@ -13,7 +13,7 @@ const Details = ({ song }) => {
     }
   } = song
 
-  return ( 
+  return song ? ( 
     <>
       <h3>{name} - {album.name}</h3>
       <h4>
@@ -21,7 +21,7 @@ const Details = ({ song }) => {
         {` ( ${album.release_date} )`}
       </h4>
     </>
-  )
+  ): null
 }
 
 export default Details

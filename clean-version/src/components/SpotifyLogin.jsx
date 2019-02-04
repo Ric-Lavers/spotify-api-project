@@ -125,7 +125,7 @@ class SpotifyLogin extends Component {
         <div>
           <SpotifyLogo style={{ ...styles.logo, ...logoColor }}/>
     { tokenValid && display_picture &&
-            <img src={display_picture} alt="display picture" style={styles.dp}/>}
+            <img src={display_picture} alt="display" style={styles.dp}/>}
         </div>
         <a href={spotifyLink} style={styles.noLinkStyle} >
           {display_name?display_name:email}
