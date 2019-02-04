@@ -5,6 +5,8 @@
 
   background-color: rgba(black, 0.9);
 
+  
+
   padding:21px;
   .icon {
     color: #fff;
@@ -13,15 +15,7 @@
   .touched {
     animation: touched 1s ;
   }
-  .play {
-
-  }
-  .next {
-
-  }
-  .previous {
-
-  }
+  
   
   @keyframes touched {
     0% { color: #fff }

@@ -232,11 +232,13 @@ export const currentPlaying = async () => {
   try {
     let res = await fetch(`https://api.spotify.com/v1/me/player/currently-playing`,{
       headers: new Headers({
+        method: 'GET',
         'Authorization': `Bearer ${spotifyToken}`, 
         'Content-Type': 'application/json'
       })
     })
-    return res.json()
+    console.log( "here" )
+    return res
   } catch (error) {
     console.log(error.message)
     return error
@@ -256,7 +258,7 @@ export default {
   getUserPlaylists,
   getPlaylistsTracks,
   getRecentlyPlayed,
-  
+  currentPlaying,
   // handleGetPlaylistTrackIds,
 }
 
