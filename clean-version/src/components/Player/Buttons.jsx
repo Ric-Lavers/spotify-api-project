@@ -3,8 +3,8 @@ import { useToggle }from '../../hooks'
 import { Button } from '../common/Button'
 import { controls } from '../../api/spotify'
 
-const PlayerButtons = () => {
-  let [ isPlay, togglePlay ] = useToggle(false)
+const PlayerButtons = ({ is_playing=true }) => {
+  let [ isPlay, togglePlay ] = useToggle(!is_playing)
 
   const handleClick = async action => {
     let isSuccess = await controls( action )

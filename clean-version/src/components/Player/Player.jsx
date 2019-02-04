@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { currentPlaying } from '../../api/spotify'
 import ControlButtons from './Buttons'
 import Progress from './Progress'
+import Details from './Details'
 
 
 /* 
@@ -16,13 +17,14 @@ import Progress from './Progress'
     *[x] on unsuccessful API button flashes fail color
 */
 const PlayerAPI = () => {
-  const [ song, setSong ] = useState(0)
+  const [ song, setSong ] = useState(null)
   const [ isFetching, setFetching ] = useState( false )
 
   useEffect(() => {
+    // setCurrentPlaying()
     let polling = setInterval( setCurrentPlaying, 3000 )
     return () => clearInterval(polling)
-  },[])
+  })
 
 
   const setCurrentPlaying = async () => {
@@ -38,13 +40,14 @@ const PlayerAPI = () => {
     setFetching(false)
   }
 
-  return (
+  return song ?(
     <div className="audio-controls"> 
-      <ControlButtons />
+      <Details song={song} />
+      <ControlButtons is_playing={song.is_playing} />
       <Progress song={song} />
 
     </div>
-  )
+  ): null
 }
 
 // {!!currentSong 
