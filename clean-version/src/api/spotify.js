@@ -1,5 +1,6 @@
 //@flow
 import { LOGIN_URL } from  '../helpers'
+
 const spotifyToken = localStorage.spotifyToken
 /* 
   * Params can be genre, year, artist, album, label

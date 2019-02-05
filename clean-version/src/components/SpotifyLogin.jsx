@@ -3,13 +3,7 @@ import React, { Component } from 'react'
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
 import { checkToken } from '../api/spotify'
 import variables from '../styles/variables';
-
-let REACT_APP_LOGIN_URL;
-if (process.env.REACT_APP_ENV === 'PROD') {
-  REACT_APP_LOGIN_URL= process.env.REACT_APP_LOGIN_URL_PROD
-}else {
-  REACT_APP_LOGIN_URL= process.env.REACT_APP_LOGIN_URL_DEV || 'http://localhost:4000/login'
-}
+import { LOGIN_URL } from '../helpers'
 
 const { colors } = variables;
 
@@ -91,7 +85,7 @@ class SpotifyLogin extends Component {
      
     } else { // no token
       this.setState({tokenPresent: false})
-      window.location.href = REACT_APP_LOGIN_URL
+      window.location.href = LOGIN_URL
     } 
   }
 
@@ -131,7 +125,7 @@ class SpotifyLogin extends Component {
           {display_name?display_name:email}
         </a>
     { !tokenValid &&
-        <a href={REACT_APP_LOGIN_URL}>
+        <a href={LOGIN_URL}>
           {tokenPresent
             ? `spotify auth timed out login again`
             : `login to spotify`}    

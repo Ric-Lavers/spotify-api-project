@@ -18,7 +18,7 @@ const PlayerButton = ({ lastTouch, text, action, onClick, wasPressed, touched })
         className={classNames("icon", successClass)}
         onClick={handleClick}
       >{ text }</div>
-    )}, [ successClass ]
+    )}, [ successClass, text ]
   )}
 
 /* 

@@ -4,7 +4,8 @@ import Button from '../common/PlayerButton'
 import { controls } from '../../api/spotify'
 
 const PlayerButtons = ({ is_playing=true }) => {
-  let [ isPlay, togglePlay ] = useToggle(!is_playing)
+  // console.log( {is_playing} )
+  let [ _, togglePlay ] = useToggle(is_playing)
 
   const handleClick = async action => {
     let isSuccess = await controls( action )
@@ -32,8 +33,8 @@ const PlayerButtons = ({ is_playing=true }) => {
         onClick={handleClick}
       />
       <Button
-        text={isPlay ? 'play' : 'pause'}
-        action={isPlay ? 'play' : 'pause'}
+        text={is_playing ? 'pause' : 'play'}
+        action={is_playing ? 'pause' : 'play'}
         onClick={handleClick}
       />
       <Button

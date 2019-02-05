@@ -5,8 +5,8 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "node-sass": "^4.11.0",
-    "react": "^16@latest",
-    "react-dom": "^16@latest",
+    "react": "^16@next",
+    "react-dom": "^16@next",
     "react-pose": "^4.0.6",
     "react-scripts": "2.1.3"
   },
