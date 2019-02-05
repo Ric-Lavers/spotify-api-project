@@ -12,7 +12,7 @@ export const searchSpotify = async( query, type, params={} ) => {
   const search = new URLSearchParams({ q: query+encodedParams }).toString()
 
   try {
-    console.log(`https://api.spotify.com/v1/search?${search}&type=${type}`)
+    
     let res = await fetch(`https://api.spotify.com/v1/search?${search}&type=${type}`, {
       headers: new Headers({
         'Authorization': `Bearer ${spotifyToken}`, 

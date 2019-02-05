@@ -34,11 +34,11 @@ const PlayerAPI = () => {
   }
 
   return song ? (
-    <div className="audio-controls"> 
+    <div className="audio-controls" style={{position: 'relative', backgroundImage: `url(${song.item.album.images[1].url})`, backgroundSize: 'cover'}}> 
+      <div style={{position: "absolute", top: 0, bottom: 0, left: 0, right: 0, backgroundColor: 'black', opacity: 0.3}} />
       <Details song={song} />
       <ControlButtons is_playing={song.is_playing} />
       <Progress song={song} />
-
     </div>
   ): null
 }
