@@ -1,5 +1,6 @@
 //@flow
 import { LOGIN_URL } from  '../helpers'
+import { throwError } from 'rxjs';
 
 const spotifyToken = localStorage.spotifyToken
 /* 
@@ -141,10 +142,16 @@ export const getRecentlyPlayed = async(  ) => {
         'Content-Type': 'application/json'
       })
     })
+    if ( !res.ok  ) {
+      throw Error( ' res not ok ' )
+    }
+    if ( typeof res !== 'object' ) {
+      throw Error( 'nothing is playing' )
+    }
     return res.json()
   } catch (error) {
     console.log(error.message)
-    return error
+    return null
   }
 }
 

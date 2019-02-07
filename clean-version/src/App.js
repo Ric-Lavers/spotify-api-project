@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { play } from './api/spotify'
 import logo from './logo.svg';
 import './App.css';
 import './styles/index.scss';
@@ -19,9 +20,10 @@ const App = () => {
       <img src={logo} className="App-logo" alt="logo"
         onClick={() => setShow(!show)}/>
   {show &&
-      <Player/>}
+      <Player visable={show} />}
         
       </header>
+      <p onClick={() => play({"context_uri": "spotify:album:6uSZWWohd10kPpyFWx6xz9"})}>play errors</p>
     </div>
   );
 }
