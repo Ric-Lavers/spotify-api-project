@@ -67,5 +67,6 @@
     @include audio-buttons;
   }
   @include seek;
+  @import 'search-bar';
 
 }

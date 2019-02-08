@@ -6,6 +6,7 @@ import ControlButtons from './Buttons'
 import Progress from './Progress'
 import Details from './Details'
 import LoadingSvg from '../../images/custom-svgs/Loading'
+import Search from './Search'
 
 /* 
   * The Audio controls has the following features;
@@ -43,6 +44,7 @@ const PlayerAPI = ({ visable }) => {
         <Details song={song} />
         <ControlButtons is_playing={song.is_playing} />
         <Progress song={song} />
+        {<Search />}
       </>:
       <LoadingSvg/>}
     </div>

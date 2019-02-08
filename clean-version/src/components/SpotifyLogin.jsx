@@ -64,7 +64,7 @@ class SpotifyLogin extends Component {
 
       console.log('got token', token)
       localStorage.spotifyToken = token
-      window.location.replace( window.origin )
+      // window.location.replace( window.origin )
     }
   }
 
@@ -116,6 +116,12 @@ class SpotifyLogin extends Component {
 
     return (
       <div id="spotify-login" style={styles.container} >
+      { !tokenValid &&
+        <a href={LOGIN_URL}>
+          {tokenPresent
+            ? `spotify auth timed out login again`
+            : `login to spotify`}    
+        </a>}  
         <div>
           <SpotifyLogo style={{ ...styles.logo, ...logoColor }}/>
     { tokenValid && display_picture &&
@@ -124,12 +130,6 @@ class SpotifyLogin extends Component {
         <a href={spotifyLink} style={styles.noLinkStyle} >
           {display_name?display_name:email}
         </a>
-    { !tokenValid &&
-        <a href={LOGIN_URL}>
-          {tokenPresent
-            ? `spotify auth timed out login again`
-            : `login to spotify`}    
-        </a>}      
       </div>
     )
   }
