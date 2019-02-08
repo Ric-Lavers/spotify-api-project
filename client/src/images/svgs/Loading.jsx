@@ -1,12 +1,12 @@
 import React from 'react'
-import '../../styles/svgs.css'
+// import '../../styles/svgs.css'
+import './Loading.scss'
 
-const LoadingSvg = () =>
+const LoadingSvg = ({variation}) =>
   <svg
     xmlns = "http://www.w3.org/2000/svg"
     viewBox = "0 0 1000 40" 
     width="100%"
-    // style={{ strokeWidth: 5 }}
     className="loading"
   >
     <line
@@ -80,5 +80,9 @@ const LoadingSvg = () =>
       values="4;9;4"
       />
   </svg>
+
+LoadingSvg.defaultProp = {
+  variation: 0.5
+}
 
 export default LoadingSvg
