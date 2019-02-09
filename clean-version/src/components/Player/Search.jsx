@@ -1,29 +1,39 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { useToggle } from '../../hooks'
 
 import { searchSpotify } from '../../api/spotify.js'
-import { SpotifyHelpers } from '../../helpers'
+import { Utils } from '../../helpers'
 import SearchIcon from '../../images/custom-svgs/SearchIcon'
 import Results from './SearchResults'
 
-const types = [ 'track', 'artist', 'album', 'playlist' ]
+export const types = [ 'track', 'artist', 'album', 'playlist' ]
+
+const useType = () => {
+	const [ type, setType ]  = useState( sessionStorage.searchTermType || types[0] )
+
+	const setAndStoreType = newType => {
+		sessionStorage.setItem( 'searchTermType', newType )
+		setType( newType )
+	}
+	return [ type, setAndStoreType ]
+}
 
 const Search = () => {
+
 	const [ searchText, setSearch ] = useState("")
-	const [ type, setType ]  = useState( types[0] )
+	const [ type, setType ]  = useType()
 	const [ isFetching, setFetching] = useState( false )
 	const [ data, setData ] = useState( null )
 	const [ searchLabel, toggleLabel ] = useToggle( false )
-	const resultsRef = useRef(null)
 
 	const handleChange = ({ value }) => setSearch( value )
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 		setFetching(true)
 		const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type )
-		if (res){
+		if (res ){
 			setData( res )
-			SpotifyHelpers.scrollIntoView("search-results")
+			Utils.scrollIntoView("search-results")
 		}
 		setFetching(false)
 	}
@@ -33,6 +43,7 @@ const Search = () => {
 			<form  onSubmit={handleSubmit}>
 				<div className="search-bar">
 					<input
+						tabIndex="1"
 						className="query"
 						type="text"
 						value={searchText}
@@ -44,15 +55,15 @@ const Search = () => {
 					</button>
 				</div>
 				<div className="search-bar select-types" >
-					<label>label<input type="checkbox" checked={searchLabel} name="label" onClick={toggleLabel} /></label>
-					<select name="type" onChange={ ({ target }) => setType(target.value) }>
-						{types.map( (type) =>
-						<option value={type}>{type}</option>
+					<label tabIndex="3" >by label<input type="checkbox" checked={searchLabel} name="label" onChange={toggleLabel} /></label>
+					<select tabIndex="2" name="type" onChange={ ({ target }) => setType(target.value) }>
+						{types.map( (ty) =>
+						<option selected={type === ty} value={ty}>{ty}</option>
 						)}
 					</select>
 				</div>
 			</form>
-			<Results ref={resultsRef} type={type} data={data} />
+			<Results type={type} data={data} />
 		</>
 	)
 }

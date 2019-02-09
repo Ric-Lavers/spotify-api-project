@@ -29,14 +29,14 @@
 	input {
 		border: 0;
 	}
-	input:focus {
+	input:focus, button:focus {
 		outline: none;
 	}
 }
 .select-types {
 	margin-top: 0px;
 	justify-content: space-between;
-	font-size: 0.9em;
+	font-size: 0.7em;
 	text-align: center;
 	select {
 		padding: $sm;
@@ -46,6 +46,7 @@
 	}
 	select:focus {
 		outline: none;
+		text-decoration: underline;
 	}
 }
 

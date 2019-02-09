@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 
 import { play } from '../../api/spotify'
+import { types } from './Search'
 
 export const handlePlay = (type, uri) => {
 	let body = {}
@@ -13,11 +14,13 @@ export const handlePlay = (type, uri) => {
 }
 
 
-const SearchResults = ({ type, data }) => {
-	if ( !data || !data[`${type}s`] ) {
-		return  null
+const SearchResults = ({ data }) => {
+	if ( !data  ) {
+		return  <span id="search-results" />
 	}
-	const items = data[`${type}s`].items
+	const [ type ] = types.map( t => t + "s" ).filter( t => data[t] )
+	
+	const items = data[type].items
 
 	return items.length ?(
 		<ul className="results" id="search-results" >
@@ -27,7 +30,7 @@ const SearchResults = ({ type, data }) => {
 			</li>
 		))}
 		</ul>
-	): <p>no results</p>
+	): <p id="search-results" >no results</p>
 }
 
 export default SearchResults

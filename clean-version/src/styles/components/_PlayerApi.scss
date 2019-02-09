@@ -51,11 +51,13 @@
 
 
 @mixin seek {
-  
+  .seek {
+    width: 100%;
+  }
 }
 
 
-.audio-controls {
+.player {
   width: 300px;
   display: flex;
   flex-direction: column;
@@ -63,10 +65,15 @@
   background-color: rgba(black, 0.9);
 
   padding: $lg;
-  .audio-buttons {
-    @include audio-buttons;
+
+  .audio-controls {
+    .audio-buttons {
+      @include audio-buttons;
+    }
+    
+    @include seek;
   }
-  @include seek;
   @import 'search-bar';
 
 }
+@import 'search-bar';

@@ -38,15 +38,17 @@ const PlayerAPI = ({ visable }) => {
   }
 
   return  (
-    <div className="audio-controls"> 
-    {song ?
-      <>
-        <Details song={song} />
-        <ControlButtons is_playing={song.is_playing} />
-        <Progress song={song} />
-        {<Search />}
-      </>:
-      <LoadingSvg/>}
+    <div className="player"> 
+      <div className="audio-controls" >
+      {song ?
+        <>
+          <Details song={song} />
+          <ControlButtons is_playing={song.is_playing} />
+          <Progress song={song} />
+        </>:
+        <LoadingSvg/>}
+      </div>
+      <Search />
     </div>
   )
 }

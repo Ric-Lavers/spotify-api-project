@@ -62,9 +62,8 @@ class SpotifyLogin extends Component {
     if ( address.includes('access_token=') ) {
       let token=  new URLSearchParams(window.location.search).get('access_token')
 
-      console.log('got token', token)
       localStorage.spotifyToken = token
-      // window.location.replace( window.origin )
+      window.location.replace( window.origin )
     }
   }
 

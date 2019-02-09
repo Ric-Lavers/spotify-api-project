@@ -12,15 +12,25 @@ class SpotifyHelpers {
       .map( ({ name }) => name )
       .join(', ')
 
+}
+
+class Utils {
   static scrollIntoView = elementId => 
-    document.getElementById(elementId).scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    })
-  
+  document.getElementById(elementId).scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  })
+
+static scrollToTop = () => 
+  window.scroll({
+    top: 0,
+    left: 0,
+    behavior: 'smooth',
+  });
 }
 
 export {
   SpotifyHelpers,
+  Utils,
   LOGIN_URL,
 }

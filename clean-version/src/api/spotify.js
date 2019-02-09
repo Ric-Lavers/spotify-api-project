@@ -22,7 +22,7 @@ export const searchSpotify = async( query, type, params={} ) => {
     })
     return res.json()
   } catch (error) {
-    console.log( error.message )
+    console.error( error.message )
     return error
   }
 }
@@ -45,7 +45,7 @@ export const checkToken = async(
     })
     return res.json()
   } catch (error) {
-    console.log( error.message )
+    console.error( error.message )
     if ( redirect ) {
       window.location.replace(LOGIN_URL)
     }
@@ -63,7 +63,7 @@ export const getPlaylistInfo = async(spotifyToken, ids) => {
     })
     return res.json()
   } catch (error) {
-    console.log( error.message )
+    console.error( error.message )
     return error
   }
 }
@@ -117,10 +117,10 @@ export const getUserPlaylists = async() => {
     return error
   }
 }
-export const getPlaylistsTracks = async(playlistId) => {
+export const getPlaylistsTracks = async(listId) => {
   const spotifyToken = localStorage.spotifyToken
   try {
-    let res= await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`,{
+    let res= await fetch(`https://api.spotify.com/v1/playlists/${listId}/tracks`,{
       headers: new Headers({
         'Authorization': `Bearer ${spotifyToken}`, 
         'Content-Type': 'application/json'
