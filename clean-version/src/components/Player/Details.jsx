@@ -1,10 +1,10 @@
-import React from 'react'
-
+import React, { useContext } from 'react'
+import { CurrentPlayingContext } from '../../context'
 import { SpotifyHelpers } from '../../helpers'
 
-const Details = ({ song }) => {
-  if ( !song ){ return null }
-  
+const Details = () => {
+  const song = useContext(CurrentPlayingContext)
+  if (!song) { return null }
   const {
     item: {
       name,
@@ -13,7 +13,7 @@ const Details = ({ song }) => {
     }
   } = song
 
-  return song ? ( 
+  return ( 
     <>
       <h3>{name} - {album.name}</h3>
       <h4>
@@ -21,7 +21,7 @@ const Details = ({ song }) => {
         {` ( ${album.release_date} )`}
       </h4>
     </>
-  ): null
+  )
 }
 
 export default Details

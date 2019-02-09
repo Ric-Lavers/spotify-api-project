@@ -1,12 +1,14 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import { play } from '../../api/spotify'
 import { types } from './Search'
 
 export const handlePlay = (type, uri) => {
 	let body = {}
-	if ( type === 'track' ) {
+	if ( type === 'tracks' ) {
 		body = {uris: [uri]}
+	}else if  ( type === 'albums' ){
+		
 	}else {
 		body = {context_uri: uri}
 	}

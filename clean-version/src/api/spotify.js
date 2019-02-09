@@ -1,6 +1,5 @@
 //@flow
 import { LOGIN_URL } from  '../helpers'
-import { throwError } from 'rxjs';
 
 const spotifyToken = localStorage.spotifyToken
 /* 

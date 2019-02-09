@@ -1,38 +1,34 @@
 import React, { createContext, useState, useEffect} from 'react';
 import { currentPlaying } from './api/spotify'
 
-export const CurrentPlayingContext = createContext( [0, () => {console.log('nothing')}] )
+export const CurrentPlayingContext = createContext(false) 
 
-const Test = ({ children }) => {
-  const [ song, setSong ] = useState(0)
+
+const CurrentlyPlaying = ({ children }) => {
+  const [ song, setSong ] = useState(false)
   const [ isFetching, setFetching ] = useState( false )
 
   useEffect(() => {
-    setInterval( setCurrentPlaying, 5000 )
-    return ( setCurrentPlaying )
-  }, [])
+    let polling = setInterval( setCurrentPlaying, 3000 )
+    return () => clearInterval(polling)
+  })
 
 
   const setCurrentPlaying = async () => {
-    if ( isFetching ) return;
+    if ( isFetching ) return
     setFetching(true)
-    try {
-      let playingNow = await currentPlaying()
-      setSong(playingNow)
-
-    } catch (error) {
-      console.error(error.message)
-    }
+    let playingNow = await currentPlaying()
+    setSong(playingNow)
     setFetching(false)
   }
 
   return (
-    <CurrentPlayingContext.Provider value={[song, setSong]} >
+    <CurrentPlayingContext.Provider value={song} >
       <>
-        { children }
+        { children  }
       </>
     </CurrentPlayingContext.Provider>
   )
 }
 
-export default Test
+export default CurrentlyPlaying

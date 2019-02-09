@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useContext} from 'react'
 import { useToggle } from '../../hooks'
+import { CurrentPlayingContext } from '../../context'
 
 import { searchSpotify } from '../../api/spotify.js'
 import { Utils } from '../../helpers'
@@ -37,7 +38,7 @@ const Search = () => {
 		}
 		setFetching(false)
 	}
-
+	
 	return(
 		<>
 			<form  onSubmit={handleSubmit}>
@@ -56,9 +57,9 @@ const Search = () => {
 				</div>
 				<div className="search-bar select-types" >
 					<label tabIndex="3" >by label<input type="checkbox" checked={searchLabel} name="label" onChange={toggleLabel} /></label>
-					<select tabIndex="2" name="type" onChange={ ({ target }) => setType(target.value) }>
+					<select tabIndex="2" name="type" defaultValue={type} onChange={ ({ target }) => setType(target.value) }>
 						{types.map( (ty) =>
-						<option selected={type === ty} value={ty}>{ty}</option>
+						<option key={ty} name={ty} value={ty}>{ty}</option>
 						)}
 					</select>
 				</div>

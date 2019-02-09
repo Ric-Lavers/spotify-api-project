@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
-// import  { CurrentPlayingContext } from '../../context'
+import React, { useState, useEffect, useContext  } from 'react'
+import { CurrentPlayingContext } from '../../context'
 import { seek } from '../../api/spotify'
 
-const Progress = ({ song }) => {
+const Progress = () => {
+  const song = useContext(CurrentPlayingContext)
   let [ rangeValue, setRange ] = useState(50)
  
   const findRange = currentSong => {

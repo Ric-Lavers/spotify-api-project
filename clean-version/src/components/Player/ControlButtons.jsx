@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react';
+
+import { CurrentPlayingContext } from '../../context'
 import { useToggle }from '../../hooks'
 import Button from '../common/PlayerButton'
 import { controls } from '../../api/spotify'
 
-const PlayerButtons = ({ is_playing=true }) => {
-  // console.log( {is_playing} )
-  let [ _, togglePlay ] = useToggle(is_playing)
+const ControlButtons = () => {
+  const { is_playing } = useContext(CurrentPlayingContext)
+  let togglePlay = useToggle(is_playing)[1]
 
   const handleClick = async action => {
     let isSuccess = await controls( action )
@@ -46,4 +48,4 @@ const PlayerButtons = ({ is_playing=true }) => {
   )
 }
 
-export default PlayerButtons
+export default ControlButtons
