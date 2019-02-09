@@ -10,12 +10,16 @@ import {
   getAlbumInfo,
   getUserPlaylists,
   getPlaylistsTracks,
+  searchSpotify,
 
   play,
 } from './api/spotify'
 
 import SelectContainer from './components/SelectContainer'
 import AudioControls from './components/AudioControls'
+import DiscogsSearchResults from './components/DiscogsSearchResults'
+import SearchSpotify from './components/SearchSpotify'
+import { log } from 'handlebars';
 
 export const trackKeys = [
   "name",
@@ -52,8 +56,24 @@ class App extends Component {
     ],
     tracks: [],
     playlistItems: [],
-    filters: [],
+    filters: JSON.parse(localStorage.getItem('filters')) || [],
+    searchDiscogsQuery: {
+      q: "Warp Records",
+      type: 'label',
+    },
   }
+  handleAlbumQuery = query => {
+    console.log(query, 'label')
+
+    // this.setState({searchDiscogsQuery: query})
+  }
+  handleLabelQuery = async (label, type='album') => {
+    console.log( label )
+    this.setState({searchDiscogsQuery: {q: `label:${label}`, type}})
+    let res = await searchSpotify(`label:${label}`, type, {limit: 50})
+
+  }
+
 
   _getUsersPlaylists = async() => {
     try {
@@ -86,22 +106,26 @@ class App extends Component {
   }
 
   addInfoToTracks = (tracks) => {
-    const token = localStorage.spotifyToken
-    let albumPromises =  tracks.map( async(track, i) => {
-      let {id} = track.album
-      let album =  await getAlbumInfo(token, id)
-      let album_md_img: {}
-      if ( track.album.images.length ) {
-        album_md_img = track.album.images.length === 2? track.album.images[1].url : track.album.images[0].url;
-      }
-      Object.assign(tracks[i], {
-        label: album.label,
-        album_name: track.album.name,
-        album_release_date: track.album.release_date,
-        album_md_img,
+    try {
+      let albumPromises =  tracks.map( async(track, i) => {
+        let {id} = track.album
+        let album =  await getAlbumInfo(id)
+        let album_md_img: {}
+        if ( track.album.images.length ) {
+          album_md_img = track.album.images.length === 2? track.album.images[1].url : track.album.images[0].url;
+        }
+        Object.assign(tracks[i], {
+          label: album.label,
+          album_name: track.album.name,
+          album_release_date: track.album.release_date,
+          album_md_img,
+        })
       })
-    })
-    return albumPromises
+      return albumPromises
+    } catch (error) {
+      return tracks
+    }
+    
   }
 
   handleSubmit = async (event) => {
@@ -111,7 +135,7 @@ class App extends Component {
       let data = await getPlaylistInfo(token, this.state.spotifyIds )
       let { tracks } = data
       let albumPromises = this.addInfoToTracks(tracks)
-      Promise.all(albumPromises).then(data => {
+      albumPromises && Promise.all(albumPromises).then(data => {
         console.log( "about to setstate" )
         this.setState({tracks})
       })
@@ -121,7 +145,7 @@ class App extends Component {
     
   }
   playSong = async(body) => {
-    console.log("play",JSON.stringify(body, null, 2))
+    // console.log("play",JSON.stringify(body, null, 2))
     
     await play(body)
     
@@ -145,22 +169,25 @@ class App extends Component {
             }
                 </Fragment>
         case 'popularity':
-          return <div><p>{key}: </p><PopularityMeter popularity={track[key]}/></div>
+          return <div><span>{key}: </span><PopularityMeter popularity={track[key]}/></div>
         case 'href':
           return <a href={track[key].replace('api.spotify.com/v1/tracks','open.spotify.com/track')} target="_blank" >go to spotify</a>
         case 'album_name':
-            console.log('track.album.uri', track.album.uri)
             return (
               <Fragment>
                 {key}: 
                 <a style={{cursor: 'pointer'}} onClick={() => {
-                  console.log('click')
                   this.playSong({context_uri: track.album.uri})
                 }} >
-                  {track[key]}
+                {track[key]} --- play album?
                 </a>
               </Fragment>
             )
+        case 'label': 
+          return(
+            <span onClick={() => this.handleLabelQuery(track[key]) } >{key}: {track[key]}</span>
+            
+          )
               
         
       }
@@ -203,8 +230,6 @@ class App extends Component {
 
   render() {
     let { tracks, playlistItems, fetching } = this.state
-    console.log('playlistItems', playlistItems )
-    console.log( "tracks: ", tracks )
 
     if (this.state.loading) {
       return <h1>loading...</h1>
@@ -247,27 +272,43 @@ class App extends Component {
               </ul>
             </Fragment>
           </div>
+
           <div className="keys" >
             <SelectContainer
+              
               placeholder={"apply filters"}
               isLoading={this.state.loading}
               className="react-select-container"
               classNamePrefix="react-select"
               isMulti 
               value={this.state.filters}
-              onChange={(option)=> this.setState({filters: option})}
+              onChange={
+                (option)=> this.setState( () => ({filters: option})
+                , () => {
+                  localStorage.setItem(
+                    'filters',
+                    JSON.stringify(this.state.filters) )})
+              }
               options={
                 trackKeys.map( key => ({value: key, label: key}) )
               }
             />
             <AudioControls/>
           </div>
+          <DiscogsSearchResults 
+            query={this.state.searchDiscogsQuery.q}
+            type={this.state.searchDiscogsQuery.type}
+            setTracks={(tracks) => this.setState({tracks: tracks})}
+          />
           </Fragment>
         </div>
+       
 
         <div className="content" >
             <div className="paste" >
+              <SearchSpotify/>
               <h2>Paste Song Ids</h2>
+
         <Fragment>
               <form 
                 onSubmit={this.handleSubmit}
@@ -293,7 +334,7 @@ class App extends Component {
                   className="flex song"
                   >
                     <div className="song__img" >
-                      <img src={track.album_md_img} alt={track.album.name}  onClick={() => this.playSong({uris: [track.uri]})} 
+                      <img src={track.album_md_img} alt='album art'  onClick={() => this.playSong({uris: [track.uri]})} 
                       />
                     </div>
                     <div className="song__info" >
@@ -311,62 +352,6 @@ class App extends Component {
         </div>
 
       </div>
-        <h1>Spotify playlists</h1>
-        {!this.state.loading &&
-          <SpotifyLogin />
-          }
-        <div style={{textAlign: "left"}} >
-          <h2>Playlists</h2>
-          <ul>
-            {playlistItems.map(item => 
-              <li
-                style={styles.playlistItems}
-                onClick={() => this.handleGetPlaylistTrackIds(item.id)}
-              >{item.title}</li> )}
-          </ul>
-        </div>
-        {fetching && <Loading/>}
-        <form 
-          onSubmit={this.handleSubmit}
-          onChange={({target}) => this.handleChange(target)}
-          >
-          <label> copy paste from spotify playlist or add spotify ids <br/>
-            <textarea
-              rows="4" cols="50"
-              name="spotifyIds" 
-              value={this.state.value} 
-            />
-          </label><br/>
-          <input type="submit"/>
-        </form>
-        {tracks.map((track, i) => 
-          <div 
-          key={track.id}
-          style={i !== tracks.length ? { borderBottom: '1px solid grey' }: {}}
-          className="flex"
-          >
-            <img src={track.album_md_img} alt={track.album.name} 
-              style={{width: 150, height: 150, borderRadius: 25}}
-            />
-            <div style={{display: 'block', marginLeft: 32}}>
-              {trackKeys.map(key =>
-              <p key={key}>
-                {
-                  
-                  key === 'artists'
-                    ? `${key}: ${track[key].map(artist => artist.name).join(',')}`
-                    : key === "popularity"
-                      ? <span>{key}: <PopularityMeter popularity={track[key]}/></span>
-                      : typeof(track[key]) === 'string' || typeof(track[key]) === 'number' 
-                        ? `${key}: ${track[key]}`
-                        : `${key}: ${typeof(track[key])}`
-                }
-              </p>
-              )} 
-            </div>
-          </div>
-          )
-        }
       </div>
     );
   }
