@@ -62,7 +62,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: rgba(black, 0.9);
+  background-color: rgba(black, 0.8);
+  border-radius: $md;
 
   padding: $lg;
 
