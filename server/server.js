@@ -3,6 +3,26 @@ let express = require('express')
 let request = require('request')
 let querystring = require('querystring')
 
+const authScope = [
+	'playlist-read-private',
+	'playlist-modify-private',
+	'playlist-modify-public',
+	'playlist-read-collaborative',
+	'user-modify-playback-state',
+	'user-read-currently-playing',
+	'user-read-playback-state',
+	'user-top-read',
+	'user-read-recently-played',
+	'app-remote-control',
+	'user-read-birthdate',
+	'user-read-email',
+	'user-read-private',
+	'user-follow-read',
+	'user-follow-modify',
+	'user-library-modify',
+	'user-library-read',
+]
+
 let app = express()
 let port = process.env.PORT || 4000
 let redirect_uri = 
@@ -15,7 +35,7 @@ app.get('/login', function(req, res) {
     querystring.stringify({
       response_type: 'code',
       client_id: process.env.SPOTIFY_CLIENT_ID,
-      scope: 'user-read-private user-read-email playlist-read-private',
+      scope: authScope.join(' '),
       redirect_uri
     }))
 })

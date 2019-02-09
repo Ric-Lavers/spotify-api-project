@@ -18,7 +18,7 @@
 			stroke: black;
 			// fill: #1DB954;
 		}
-		border-radius: 0 $sm $sm 0;
+		border-radius: 0 $sm 0 0;
 	};
 	.search__loading-circle {
 		fill: transparent;
@@ -26,7 +26,29 @@
 		stroke-miterlimit: 10;
 		stroke-width: 4px;
 	}
+	input {
+		border: 0;
+	}
+	input:focus {
+		outline: none;
+	}
 }
+.select-types {
+	margin-top: 0px;
+	justify-content: space-between;
+	font-size: 0.9em;
+	text-align: center;
+	select {
+		padding: $sm;
+		border-radius: 0 0 $sm $sm;
+		border-width: 0px;
+		-webkit-appearance: none;
+	}
+	select:focus {
+		outline: none;
+	}
+}
+
 
 .results {
 	text-align: left;

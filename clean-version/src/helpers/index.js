@@ -11,6 +11,12 @@ class SpotifyHelpers {
     artists
       .map( ({ name }) => name )
       .join(', ')
+
+  static scrollIntoView = elementId => 
+    document.getElementById(elementId).scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
   
 }
 
