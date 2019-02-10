@@ -1,5 +1,7 @@
-import React, { useState, useContext} from 'react'
-import { useToggle } from '../../hooks'
+import React, { useState} from 'react'
+import Switch from 'react-switch'
+
+import { useToggle, handleFormChange } from '../../hooks'
 import { CurrentPlayingContext } from '../../context'
 
 import { searchSpotify } from '../../api/spotify.js'
@@ -21,42 +23,53 @@ const useType = () => {
 
 const Search = () => {
 
-	const [ searchText, setSearch ] = useState("")
 	const [ type, setType ]  = useType()
+	// const [ formState, setFormState ] = useState({ type })
+	const [ formState, setFormState ] =  handleFormChange({ type })
+
 	const [ isFetching, setFetching] = useState( false )
 	const [ data, setData ] = useState( null )
-	const [ searchLabel, toggleLabel ] = useToggle( false )
 
-	const handleChange = ({ value }) => setSearch( value )
 	const handleSubmit = async (e) => {
 		e.preventDefault()
+		const { searchLabel, searchText, type } = formState
 		setFetching(true)
-		const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type )
-		if (res ){
-			setData( res )
+		try {
+			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type )
 			Utils.scrollIntoView("search-results")
+			setData( res )
+		} catch (error) {
 		}
 		setFetching(false)
 	}
-	
+	/* 
+
+	const handleFormChange = ({ target }) => {
+		let { name, value, checked, type } = target
+		if (type === 'checkbox') value = checked
+		setFormState({ ...formState, [name]: value }) 
+	} */
+
 	return(
 		<>
-			<form  onSubmit={handleSubmit}>
+			<form  onSubmit={handleSubmit} onChange={setFormState}>
+					{ JSON.stringify( formState ) }
 				<div className="search-bar">
 					<input
+						name="searchText"
 						tabIndex="1"
 						className="query"
 						type="text"
-						value={searchText}
+						value={formState.searchText}
 						placeholder="Search spotify"
-						onChange={({ target }) => handleChange(target)}
 					/>
 					<button className="submit" type="submit" >
 						<SearchIcon isLoading={isFetching} />
 					</button>
 				</div>
 				<div className="search-bar select-types" >
-					<label tabIndex="3" >by label<input type="checkbox" checked={searchLabel} name="label" onChange={toggleLabel} /></label>
+					<label htmlFor="label-check" tabIndex="3" >by label<input id="label-check" type="checkbox" checked={formState.searchLabel} name="searchLabel" /></label>
+					
 					<select tabIndex="2" name="type" defaultValue={type} onChange={ ({ target }) => setType(target.value) }>
 						{types.map( (ty) =>
 						<option key={ty} name={ty} value={ty}>{ty}</option>

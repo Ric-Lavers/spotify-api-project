@@ -8,7 +8,7 @@ export const handlePlay = (type, uri) => {
 	if ( type === 'tracks' ) {
 		body = {uris: [uri]}
 	}else if  ( type === 'albums' ){
-		
+		body = {context_uri: uri}
 	}else {
 		body = {context_uri: uri}
 	}

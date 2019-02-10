@@ -11,7 +11,7 @@ const CurrentlyPlaying = ({ children }) => {
   useEffect(() => {
     let polling = setInterval( setCurrentPlaying, 3000 )
     return () => clearInterval(polling)
-  })
+  }, [])
 
 
   const setCurrentPlaying = async () => {

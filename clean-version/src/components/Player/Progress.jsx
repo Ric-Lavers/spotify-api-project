@@ -4,10 +4,10 @@ import { seek } from '../../api/spotify'
 
 const Progress = () => {
   const song = useContext(CurrentPlayingContext)
+  if ( !song ) { return null }
   let [ rangeValue, setRange ] = useState(50)
  
   const findRange = currentSong => {
-    if (!currentSong) return;
     let { progress_ms } = currentSong
     let { duration_ms } = currentSong.item
 
