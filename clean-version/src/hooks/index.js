@@ -21,6 +21,7 @@ const useColorOnInput = () => {
 			setValue(len)
 		}
 	}
+
 	useEffect( () => {
 		setColor( colors[ Math.random() * colors.length | 0 ] )
 	}, [length])

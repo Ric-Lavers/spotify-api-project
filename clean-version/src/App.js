@@ -9,7 +9,7 @@ import { useWindowWidth, withWindowWidth, WindowWidthWrapper } from './hooks'
 
 const App = ({ widthHOC }) => {
   const [ show, setShow ] = useState(false)
-  const width = useWindowWidth()
+  // const width = useWindowWidth()
   return (
       <div className="App">
       <header className="App-header">
@@ -19,13 +19,13 @@ const App = ({ widthHOC }) => {
           <img src={logo} className="App-logo" alt="logo"
             onClick={() => setShow(!show)}/>
           <img src={hooks} alt="logo" className="App-logo hooks" onClick={() => setShow(!show)}/>
-         <WindowWidthWrapper>
+        {/*  <WindowWidthWrapper>
             { width => (
               `window width is:  ${width}`
             )}
           </WindowWidthWrapper><br/>
           window width is: {widthHOC}<br/>
-          window width is: {width}
+          window width is: {width} */}
         {show &&
           <Player visable={show} />}
         </header>

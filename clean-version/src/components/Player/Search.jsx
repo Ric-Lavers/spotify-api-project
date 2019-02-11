@@ -24,7 +24,7 @@ const useType = () => {
 const Search = () => {
 
 	const [ type, setType ]  = useType()
-	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
+	const [ inputStyle, setColorOnInput ] = useColorOnInput()
 	// const [ formState, setFormState ] = useState({ type })
 
 	const [ formState, setFormState ] =  useHandleChange({ type })
@@ -44,16 +44,16 @@ const Search = () => {
 		}
 		setFetching(false)
 	}
-	/* 
+/* 
 	const useFormChange = ({ target }) => {
 		let { name, value, checked, type } = target
 		if (type === 'checkbox') value = checked
 		setFormState({ ...formState, [name]: value }) 
-	} */
+	}  */
 
 	return(
 		<>
-			<form  onSubmit={handleSubmit} onChange={setFormState}>
+			<form style={ inputStyle } onSubmit={handleSubmit} onChange={setFormState}>
 				<div  className="search-bar">
 					<input
 						name="searchText"
@@ -63,7 +63,7 @@ const Search = () => {
 						value={formState.searchText}
 						placeholder="Search spotify"
 						autoComplete="off"
-						// onChange={setColorOnInput}
+						onChange={setColorOnInput}
 					/>
 					<button className="submit" type="submit" >
 						<SearchIcon isLoading={isFetching} />

@@ -39,7 +39,6 @@ class CurrentlyPlayingClass extends React.Component {
     setInterval( this.setCurrentPlaying, 3000 )
   }
   componentDidUpdate(prevProps) {
-   
   }
   
   componentWillUnmount() {
