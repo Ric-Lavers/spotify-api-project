@@ -21,7 +21,6 @@ const Details = React.memo(({ name, artists, album }) => {
   return ( 
     <>
       <h3>{name} - {album.name}</h3>
-      { console.count( 'details' ) }
       <h4>
         <i>{ SpotifyHelpers.combineArtists(artists) }</i>
         {` ( ${album.release_date} )`}

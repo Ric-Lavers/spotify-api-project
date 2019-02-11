@@ -1,7 +1,7 @@
 import React, { useState} from 'react'
 import Switch from 'react-switch'
 
-import { useToggle, handleFormChange } from '../../hooks'
+import { useToggle, useHandleChange, useColorOnInput } from '../../hooks'
 import { CurrentPlayingContext } from '../../context'
 
 import { searchSpotify } from '../../api/spotify.js'
@@ -24,8 +24,10 @@ const useType = () => {
 const Search = () => {
 
 	const [ type, setType ]  = useType()
+	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
 	// const [ formState, setFormState ] = useState({ type })
-	const [ formState, setFormState ] =  handleFormChange({ type })
+
+	const [ formState, setFormState ] =  useHandleChange({ type })
 
 	const [ isFetching, setFetching] = useState( false )
 	const [ data, setData ] = useState( null )
@@ -43,8 +45,7 @@ const Search = () => {
 		setFetching(false)
 	}
 	/* 
-
-	const handleFormChange = ({ target }) => {
+	const useFormChange = ({ target }) => {
 		let { name, value, checked, type } = target
 		if (type === 'checkbox') value = checked
 		setFormState({ ...formState, [name]: value }) 
@@ -53,8 +54,7 @@ const Search = () => {
 	return(
 		<>
 			<form  onSubmit={handleSubmit} onChange={setFormState}>
-					{ JSON.stringify( formState ) }
-				<div className="search-bar">
+				<div  className="search-bar">
 					<input
 						name="searchText"
 						tabIndex="1"
@@ -62,6 +62,8 @@ const Search = () => {
 						type="text"
 						value={formState.searchText}
 						placeholder="Search spotify"
+						autoComplete="off"
+						// onChange={setColorOnInput}
 					/>
 					<button className="submit" type="submit" >
 						<SearchIcon isLoading={isFetching} />

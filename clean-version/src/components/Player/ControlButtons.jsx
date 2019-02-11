@@ -1,14 +1,25 @@
 import React, { useState, useContext } from 'react';
 
-import { CurrentPlayingContext } from '../../context'
 // import { useToggle }from '../../hooks'
+// import { CurrentPlayingContext } from '../../context'
 import Button from '../common/PlayerButton'
 import { controls } from '../../api/spotify'
 
+const useToggle = intialValue => {
+  const [ value, setValue ] = useState( intialValue )
+
+  const toggler =  () => {
+    setValue(!value) 
+  }
+
+  return [ value, toggler ]
+}
+
+
 const ControlButtons = () => {
   // const { is_playing } = useContext(CurrentPlayingContext) || {}
-
-  const [ is_playing, togglePlaying ] = useState( false )
+  const [ is_playing, setIsPlaying  ] = useToggle( false )
+  
 
   const handleClick = async action => {
     let isSuccess = await controls( action )
@@ -16,7 +27,7 @@ const ControlButtons = () => {
     switch ( action ) {
       case 'play':
       case 'pause':
-      togglePlaying(!is_playing)
+      setIsPlaying()
         break
       case 'previous':
       case 'next':
