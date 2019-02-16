@@ -10,7 +10,7 @@ const Pagination = ({ onPageChange, onClick, numOfPages, pages, offset, limit })
 		<div className="pagination dev" >
 			<Circle onClick={() => onPageChange(0)} 
 			 offset={'1'} className="min-max" style={{ opacity: offset === 0 ? 0 : 0.4}} />
-			<ArrowLeft onClick={() => onClick(-1)} />
+			<ArrowLeft onClick={() => onClick(-1)} style={{ opacity: offset === 0 ? 0 : 1}}/>
 			{pages}
 			<ArrowRight onClick={() => onClick(1)} />
 			<Circle onClick={() => onPageChange(numOfPages * limit)} 
@@ -19,19 +19,19 @@ const Pagination = ({ onPageChange, onClick, numOfPages, pages, offset, limit })
 	)
 }
 
-const PaginationContainer = ({ total, limit, offset, onPageChange}) => {
+const PaginationContainer = ({ count, total, limit, offset, onPageChange}) => {
 
 	const [pages, setPages] = useState([])
 	let numOfPages =  total/ limit|0
 
 	useEffect( () => {
-		
+		// console.log(  numOfPages - (offset/ limit + 1) )
 		const pages = []		
 		for(let i = 0; i < total/limit |0 ; i++){
 			let isSelected = i === offset / limit % 10
 
-			pages.push( <Circle offset={ isSelected && offset/ limit + 1} style={isSelected ? {} : { opacity: 0.2 }} /> )
-			if (i === 9) break;
+			pages.push( <Circle onClick={() => onPageChange(offset + i*limit)} offset={ isSelected && offset/ limit + 1} style={isSelected ? {} : { opacity: 0.2 }} /> )
+			if ( i === 9 || numOfPages - (offset/ limit + 1) === 0  ) break;
 		}
 		setPages( pages )
 	}, [offset] )
@@ -39,6 +39,7 @@ const PaginationContainer = ({ total, limit, offset, onPageChange}) => {
 
 	const handlePageChange = direction => {
 		let nextOffset = (offset + (direction * limit)) % total
+		console.log( nextOffset )
 		onPageChange(nextOffset >= limit ? nextOffset : 0)
 	}
 	
