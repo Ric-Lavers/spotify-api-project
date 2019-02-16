@@ -20,19 +20,16 @@ import CurrentlyPlaying from '../../context'
 const PlayerAPI = () => {
 
   return  (
-    <BreakpointContainer debug containerClass="player" >
-      <div className="player" >
-      
-        <div className="audio-controls" >
-          <CurrentlyPlaying>
-            <Details />
-            <ControlButtons/>
-            <Progress />
-          </CurrentlyPlaying>
-        </div>
-        <Search/>
+    <div className="player" >
+      <div className="audio-controls" >
+        <CurrentlyPlaying>
+          <Details />
+          <ControlButtons/>
+          <Progress />
+        </CurrentlyPlaying>
       </div>
-    </BreakpointContainer>
+      <Search/>
+    </div>
   )
 }
 
