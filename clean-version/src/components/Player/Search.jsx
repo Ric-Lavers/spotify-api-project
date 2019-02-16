@@ -1,7 +1,6 @@
 import React, { useState} from 'react'
 
-import { useToggle, useHandleChange, useColorOnInput } from '../../hooks'
-import { CurrentPlayingContext } from '../../context'
+import { useHandleChange/* , useColorOnInput */ } from '../../hooks'
 
 import { searchSpotify } from '../../api/spotify.js'
 import { Utils } from '../../helpers'
@@ -23,7 +22,7 @@ const useType = () => {
 const Search = () => {
 
 	const [ type, setType ]  = useType()
-	const [ inputStyle, setColorOnInput ] = useColorOnInput()
+	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
 	// const [ formState, setFormState ] = useState({ type })
 
 	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "" })
@@ -59,10 +58,11 @@ const Search = () => {
 
 	return(
 		<>
-			<form onSubmit={handleSubmit} onChange={setFormState}>
+			<form id="search" onSubmit={handleSubmit} onChange={setFormState}>
 				<div  className="search-bar">
 					<input
 						name="searchText"
+						aria-label="search-input"
 						tabIndex="1"
 						className="query"
 						type="text"

@@ -1,27 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 
 const SearchIcon = ({ isLoading, isError }) => {
-	// let [flashError, setFlash ] = useState(false)
-
-	// useEffect(() => {
-	// 	if ( isError ) {
-	// 		setFlash( true )
-	// 	}else if ( isLoading ) {
-	// 		setFlash( false )
-	// 	}
-	// }, [ isLoading, isError ])
-
-	// const flashingError = () => {
-	// 	if ( flashError ) {
-	// 		setTimeout( () => {
-	// 			setFlash( false )
-	// 		}, 1000 )
-	// 		return ({ fill: 'red' })
-	// 	}
-	// 	return ({})
-	// }
-
+	
 	return(
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72.04 72.04">
 			<circle id="search__loading-circle" className="search__loading-circle" cx="30" cy="30" r="25"/>

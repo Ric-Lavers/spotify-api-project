@@ -20,7 +20,7 @@ const App = () => {
           onClick={toggleShow}/>
         <img src={hooks} alt="logo" className="App-logo hooks" onClick={toggleShow}/>
       {show &&
-        <Player visable={show} />}
+        <Player />}
       </header>
     </div>
   );

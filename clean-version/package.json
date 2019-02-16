@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "classnames": "^2.2.6",
-    "dd-breakpoint-container": "git+ssh://dvcs.deloittedigital.com.au:22/fed/dd-breakpoint-container.git",
     "node-sass": "^4.11.0",
     "react": "^16@next",
     "react-dom": "^16@next",
@@ -17,7 +16,7 @@
     "start:dev": "REACT_APP_ENV=DEV react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -28,5 +27,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "react-testing-library": "^5.8.0"
+  }
 }
