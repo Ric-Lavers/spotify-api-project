@@ -25,9 +25,10 @@ const Search = () => {
 	const [ type, setType ]  = useType()
 	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
 
-	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "brainfeeder", searchLabel: true })
+	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "", searchLabel: false })
+	const [ prevFormState, setLastSearchObject] = useState({})
 
-	const [ resultsPageOffset, setResultsPageOffset ] = useState(0)
+	let [ resultsPageOffset, setResultsPageOffset ] = useState(0)
 	const [ isFetching, setFetching] = useState( false )
 	const [ isError, setError] = useState( false )
 	const [ data, setData ] = useState( null )
@@ -50,10 +51,14 @@ const Search = () => {
 			flashError()
 			return
 		}
+		if ( prevFormState !== formState) {
+			resultsPageOffset = 0
+		}
 		setFetching(true)
 		try {
 			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type, {offset: resultsPageOffset, limit: 20} )
 			Utils.scrollIntoView("search-results")
+			setLastSearchObject(formState)
 			setData( res )
 		} catch (error) {
 			flashError()

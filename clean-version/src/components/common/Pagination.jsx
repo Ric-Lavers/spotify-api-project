@@ -7,7 +7,7 @@ import Circle from '../../images/custom-svgs/CircleSvg'
 
 const Pagination = ({ onPageChange, onClick, numOfPages, pages, offset, limit }) => {
 	return (
-		<div className="pagination dev" >
+		<div className="pagination" >
 			<Circle onClick={() => onPageChange(0)} 
 			 offset={'1'} className="min-max" style={{ opacity: offset === 0 ? 0 : 0.4}} />
 			<ArrowLeft onClick={() => onClick(-1)} style={{ opacity: offset === 0 ? 0 : 1}}/>
@@ -19,10 +19,13 @@ const Pagination = ({ onPageChange, onClick, numOfPages, pages, offset, limit })
 	)
 }
 
-const PaginationContainer = ({ count, total, limit, offset, onPageChange}) => {
+const PaginationContainer = ({ total, limit, offset, onPageChange}) => {
 
 	const [pages, setPages] = useState([])
 	let numOfPages =  total/ limit|0
+	if ( !numOfPages ) {
+		return null
+	}
 
 	useEffect( () => {
 		// console.log(  numOfPages - (offset/ limit + 1) )
@@ -31,7 +34,7 @@ const PaginationContainer = ({ count, total, limit, offset, onPageChange}) => {
 			let isSelected = i === offset / limit % 10
 
 			pages.push( <Circle onClick={() => onPageChange(offset + i*limit)} offset={ isSelected && offset/ limit + 1} style={isSelected ? {} : { opacity: 0.2 }} /> )
-			if ( i === 9 || numOfPages - (offset/ limit + 1) === 0  ) break;
+			if ( i === 9   ) break;
 		}
 		setPages( pages )
 	}, [offset] )
