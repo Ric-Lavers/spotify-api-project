@@ -1,5 +1,4 @@
 import React from 'react';
-import { BreakpointContainer } from 'dd-breakpoint-container'
 
 import ControlButtons from './ControlButtons'
 import Progress from './Progress'
