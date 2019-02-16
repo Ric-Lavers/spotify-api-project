@@ -1,4 +1,5 @@
 import React from 'react';
+import { BreakpointContainer } from 'dd-breakpoint-container'
 
 import ControlButtons from './ControlButtons'
 import Progress from './Progress'
@@ -16,20 +17,22 @@ import CurrentlyPlaying from '../../context'
     *[x] on successful API button flashes success color
     *[x] on unsuccessful API button flashes fail color
 */
-const PlayerAPI = ({ visable }) => {
+const PlayerAPI = () => {
 
   return  (
-    <div className="player"> 
-      <div className="audio-controls" >
-        <CurrentlyPlaying>
-          <Details />
-          <ControlButtons/>
-          <Progress />
-        </CurrentlyPlaying>
-      </div>
-      <Search/>
+    <BreakpointContainer debug containerClass="player" >
+      <div className="player" >
       
-    </div>
+        <div className="audio-controls" >
+          <CurrentlyPlaying>
+            <Details />
+            <ControlButtons/>
+            <Progress />
+          </CurrentlyPlaying>
+        </div>
+        <Search/>
+      </div>
+    </BreakpointContainer>
   )
 }
 

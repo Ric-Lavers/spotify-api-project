@@ -1,5 +1,4 @@
 import React, { useState} from 'react'
-import Switch from 'react-switch'
 
 import { useToggle, useHandleChange, useColorOnInput } from '../../hooks'
 import { CurrentPlayingContext } from '../../context'
@@ -27,33 +26,40 @@ const Search = () => {
 	const [ inputStyle, setColorOnInput ] = useColorOnInput()
 	// const [ formState, setFormState ] = useState({ type })
 
-	const [ formState, setFormState ] =  useHandleChange({ type })
+	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "" })
 
 	const [ isFetching, setFetching] = useState( false )
+	const [ isError, setError] = useState( false )
 	const [ data, setData ] = useState( null )
+
+	const flashError = () => {
+		setError( true )
+		setTimeout( () => {
+			setError( false )
+		}, 750 )
+	}
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 		const { searchLabel, searchText, type } = formState
+		if ( !searchText.length ) {
+			flashError()
+			return
+		}
 		setFetching(true)
 		try {
 			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type )
 			Utils.scrollIntoView("search-results")
 			setData( res )
 		} catch (error) {
+			flashError()
 		}
 		setFetching(false)
 	}
-/* 
-	const useFormChange = ({ target }) => {
-		let { name, value, checked, type } = target
-		if (type === 'checkbox') value = checked
-		setFormState({ ...formState, [name]: value }) 
-	}  */
 
 	return(
 		<>
-			<form style={ inputStyle } onSubmit={handleSubmit} onChange={setFormState}>
+			<form onSubmit={handleSubmit} onChange={setFormState}>
 				<div  className="search-bar">
 					<input
 						name="searchText"
@@ -63,10 +69,9 @@ const Search = () => {
 						value={formState.searchText}
 						placeholder="Search spotify"
 						autoComplete="off"
-						onChange={setColorOnInput}
 					/>
 					<button className="submit" type="submit" >
-						<SearchIcon isLoading={isFetching} />
+						<SearchIcon isLoading={isFetching} isError={isError} />
 					</button>
 				</div>
 				<div className="search-bar select-types" >

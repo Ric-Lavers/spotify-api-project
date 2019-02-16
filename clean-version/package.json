@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "classnames": "^2.2.6",
+    "dd-breakpoint-container": "git+ssh://dvcs.deloittedigital.com.au:22/fed/dd-breakpoint-container.git",
     "node-sass": "^4.11.0",
     "react": "^16@next",
     "react-dom": "^16@next",

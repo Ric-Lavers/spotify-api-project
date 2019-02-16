@@ -1,37 +1,32 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserContainer } from 'dd-breakpoint-container';
 
 import logo from './logo.svg';
 import hooks from './images/hooks.svg'
 import './styles/index.scss';
 import SpotifyLogin from './components/SpotifyLogin';
 import Player from './components/Player/Player';
-import { useWindowWidth, withWindowWidth, WindowWidthWrapper } from './hooks'
+import { useToggle } from './hooks'
 
-const App = ({ widthHOC }) => {
-  const [ show, setShow ] = useState(false)
-  // const width = useWindowWidth()
+const App = () => {
+  const [ show, toggleShow ] = useToggle(true)
+  
   return (
+    <BrowserContainer>
       <div className="App">
       <header className="App-header">
         
         <SpotifyLogin/>
 
           <img src={logo} className="App-logo" alt="logo"
-            onClick={() => setShow(!show)}/>
-          <img src={hooks} alt="logo" className="App-logo hooks" onClick={() => setShow(!show)}/>
-        {/*  <WindowWidthWrapper>
-            { width => (
-              `window width is:  ${width}`
-            )}
-          </WindowWidthWrapper><br/>
-          window width is: {widthHOC}<br/>
-          window width is: {width} */}
+            onClick={toggleShow}/>
+          <img src={hooks} alt="logo" className="App-logo hooks" onClick={toggleShow}/>
         {show &&
           <Player visable={show} />}
         </header>
       </div>
-    
+    </BrowserContainer>
   );
 }
 
-export default withWindowWidth(App);
+export default App;
