@@ -6,24 +6,21 @@ const spotifyToken = localStorage.spotifyToken
   * Params can be genre, year, artist, album, label
 
 */
-export const searchSpotify = async( query, type, params={} ) => {
+export const searchSpotify = async( query, type, params ) => {
 
-  const encodedParams = encodeURIComponent( Object.keys(params).map( key =>  `${key}:${params[key]}`).join(' '))
-  const search = new URLSearchParams({ q: query+encodedParams }).toString()
+  params = [`type=${type}`, ...Object.keys(params).map(k => `${k}=${params[k]}`) ].join('&')
+  const search = new URLSearchParams({ q: query }).toString()
 
-  try {
-    
-    let res = await fetch(`https://api.spotify.com/v1/search?${search}&type=${type}`, {
-      headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
-        'Content-Type': 'application/json'
-      })
+  let res = await fetch(`https://api.spotify.com/v1/search?${search}&${params}`, {
+    headers: new Headers({
+      'Authorization': `Bearer ${spotifyToken}`, 
+      'Content-Type': 'application/json'
     })
-    return res.json()
-  } catch (error) {
-    console.error( error.message )
-    return error
+  })
+  if (!res.ok) {
+    throw Error(res.statusText);
   }
+  return res.json()
 }
 /* sort by year
 albums.items.map(({artists, name, type, release_date}) => ({name, artists : artists[0].name, type,release_date})).sort((a,b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime()
@@ -42,6 +39,9 @@ export const checkToken = async(
         'Content-Type': 'application/json'
       })
     })
+    if (!res.ok) {
+      throw Error(res.statusText);
+    }
     return res.json()
   } catch (error) {
     console.error( error.message )
@@ -60,6 +60,9 @@ export const getPlaylistInfo = async(spotifyToken, ids) => {
         'Content-Type': 'application/json'
       })
     })
+    if (!res.ok) {
+      throw Error(res.statusText);
+    }
     return res.json()
   } catch (error) {
     console.error( error.message )
@@ -110,6 +113,9 @@ export const getUserPlaylists = async() => {
         'Content-Type': 'application/json'
       })
     })
+    if (!res.ok) {
+      throw Error(res.statusText);
+    }
     return res.json()
   } catch (error) {
     console.log(error.message)
@@ -125,6 +131,9 @@ export const getPlaylistsTracks = async(listId) => {
         'Content-Type': 'application/json'
       })
     })
+    if (!res.ok) {
+      throw Error(res.statusText);
+    }
     return res.json()
   } catch (error) {
     console.log(error.message)

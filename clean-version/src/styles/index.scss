@@ -1,6 +1,25 @@
-
 @import 'variables';
 @import 'common';
 @import 'App';
 
 @import './components/PlayerApi';
+
+
+.dev {
+	border: 1px solid lime;
+}
+
+.pagination {
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	padding: $sm 0;
+
+	svg {
+		height: $lg; width: $lg;
+		fill: white;
+		text {
+			fill:black;
+		}
+	};
+}

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import classNames from 'classnames'
 
-const PlayerButton = ({ lastTouch, text, action, onClick, wasPressed, touched }) => {
+const PlayerButton = ({ text, action, onClick }) => {
   const [ successClass, setSuccess ] = useState('')
 
   const handleClick = () => {
@@ -12,14 +12,15 @@ const PlayerButton = ({ lastTouch, text, action, onClick, wasPressed, touched })
     }, 1000 )
   }
 
-  return useMemo(() => {
-    return(
-      <div
-        className={classNames("icon", successClass)}
-        onClick={handleClick}
-      >{ text }</div>
-    )}, [ successClass, text ]
-  )}
+  const formatButton = useMemo(() => (
+    <div
+      className={classNames("icon", successClass)}
+      onClick={handleClick}
+    >{ text }</div>)
+    , [ successClass, text ])
+
+  return ( formatButton )
+}
 
 /* 
 class ButtonClass extends React.Component {

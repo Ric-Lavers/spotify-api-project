@@ -4,10 +4,9 @@ import { seek } from '../../api/spotify'
 
 const Progress = () => {
   const song = useContext(CurrentPlayingContext)
-  let [ rangeValue, setRange ] = useState(50)
- 
+  if ( !song ) { return null }
+  
   const findRange = currentSong => {
-    if (!currentSong) return;
     let { progress_ms } = currentSong
     let { duration_ms } = currentSong.item
 
@@ -15,6 +14,7 @@ const Progress = () => {
       Math.floor( progress_ms/ duration_ms * 100 )
     )
   }
+  let [ rangeValue, setRange ] = useState(findRange(song))
 
   useEffect(() => {
     setRange ( findRange(song) )
@@ -24,7 +24,6 @@ const Progress = () => {
   const handleSeek = async (e) => {
     if ( !song ) return;
     let { item: {duration_ms} } = song
-
     await seek({
       position_ms: Math.floor( e.target.value * 0.01 * duration_ms)
     })
@@ -33,7 +32,7 @@ const Progress = () => {
   const handleChange = e => {
     setRange( e.target.value )
   }
-
+  
   return (
     <input onChange={handleChange}  onMouseUp={handleSeek} className="icon seek" type="range" min='0' max='100' value={rangeValue} />
   )

@@ -1,5 +1,6 @@
-import React, { useState, useContext} from 'react'
-import { useToggle } from '../../hooks'
+import React, { useState, useEffect, useRef } from 'react'
+
+import { useToggle, useHandleChange, useColorOnInput } from '../../hooks'
 import { CurrentPlayingContext } from '../../context'
 
 import { searchSpotify } from '../../api/spotify.js'
@@ -20,43 +21,71 @@ const useType = () => {
 }
 
 const Search = () => {
-
-	const [ searchText, setSearch ] = useState("")
+	const mounted = useRef();
 	const [ type, setType ]  = useType()
-	const [ isFetching, setFetching] = useState( false )
-	const [ data, setData ] = useState( null )
-	const [ searchLabel, toggleLabel ] = useToggle( false )
+	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
 
-	const handleChange = ({ value }) => setSearch( value )
+	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "brainfeeder", searchLabel: true })
+
+	const [ resultsPageOffset, setResultsPageOffset ] = useState(0)
+	const [ isFetching, setFetching] = useState( false )
+	const [ isError, setError] = useState( false )
+	const [ data, setData ] = useState( null )
+
+	const flashError = () => {
+		setError( true )
+		setTimeout( () => {
+			setError( false )
+		}, 750 )
+	}
+
+	useEffect(() => {
+		handleSubmit()	
+	}, [resultsPageOffset])
+
 	const handleSubmit = async (e) => {
-		e.preventDefault()
+		e && e.preventDefault()
+		const { searchLabel, searchText, type } = formState
+		if ( !searchText.length ) {
+			flashError()
+			return
+		}
 		setFetching(true)
-		const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type )
-		if (res ){
-			setData( res )
+		try {
+			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type, {offset: resultsPageOffset, limit: 20} )
 			Utils.scrollIntoView("search-results")
+			setData( res )
+		} catch (error) {
+			flashError()
 		}
 		setFetching(false)
 	}
-	
+
+	const handlePageChange = offset => {
+		console.log("handlePageChange ", offset )
+		setResultsPageOffset( offset )
+	}
+
 	return(
 		<>
-			<form  onSubmit={handleSubmit}>
-				<div className="search-bar">
+			<form ref={mounted} onSubmit={handleSubmit} onChange={setFormState}>
+				<div  className="search-bar">
 					<input
+						name="searchText"
 						tabIndex="1"
 						className="query"
 						type="text"
-						value={searchText}
+						value={formState.searchText}
 						placeholder="Search spotify"
-						onChange={({ target }) => handleChange(target)}
+						autoComplete="off"
 					/>
 					<button className="submit" type="submit" >
-						<SearchIcon isLoading={isFetching} />
+						<SearchIcon isLoading={isFetching} isError={isError} />
 					</button>
 				</div>
 				<div className="search-bar select-types" >
-					<label tabIndex="3" >by label<input type="checkbox" checked={searchLabel} name="label" onChange={toggleLabel} /></label>
+					<label htmlFor="label-check" tabIndex="3" >by label<input id="label-check" type="checkbox" checked={formState.searchLabel} name="searchLabel" /></label>
+					
 					<select tabIndex="2" name="type" defaultValue={type} onChange={ ({ target }) => setType(target.value) }>
 						{types.map( (ty) =>
 						<option key={ty} name={ty} value={ty}>{ty}</option>
@@ -64,7 +93,7 @@ const Search = () => {
 					</select>
 				</div>
 			</form>
-			<Results type={type} data={data} />
+			<Results type={type} data={data} onPageChange={handlePageChange} />
 		</>
 	)
 }

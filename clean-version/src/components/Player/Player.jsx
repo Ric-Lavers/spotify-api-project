@@ -16,10 +16,10 @@ import CurrentlyPlaying from '../../context'
     *[x] on successful API button flashes success color
     *[x] on unsuccessful API button flashes fail color
 */
-const PlayerAPI = ({ visable }) => {
+const PlayerAPI = () => {
 
   return  (
-    <div className="player"> 
+    <div className="player" >
       <div className="audio-controls" >
         <CurrentlyPlaying>
           <Details />
@@ -28,7 +28,6 @@ const PlayerAPI = ({ visable }) => {
         </CurrentlyPlaying>
       </div>
       <Search/>
-      
     </div>
   )
 }
