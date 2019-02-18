@@ -27,7 +27,7 @@ const SearchResults = ({ data, onPageChange }) => {
 
 	return items.length ?(
 		<>
-			<Pagination limit={limit} total={total} offset={offset} onPageChange={onPageChange} />
+			<Pagination count={items.length} limit={limit} total={total} offset={offset} onPageChange={onPageChange} />
 			<ul className="results" id="search-results" >
 				{ items.map( ({ name, id, uri, popularity })  => (
 				<li className="results__item" key={id} onClick={() => handlePlay( type, uri ) } >

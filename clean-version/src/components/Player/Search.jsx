@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState} from 'react'
 
 import { useToggle, useHandleChange, useColorOnInput } from '../../hooks'
 import { CurrentPlayingContext } from '../../context'
@@ -21,13 +21,13 @@ const useType = () => {
 }
 
 const Search = () => {
-	const mounted = useRef();
+
 	const [ type, setType ]  = useType()
-	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
+	const [ inputStyle, setColorOnInput ] = useColorOnInput()
+	// const [ formState, setFormState ] = useState({ type })
 
-	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "brainfeeder", searchLabel: true })
+	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "" })
 
-	const [ resultsPageOffset, setResultsPageOffset ] = useState(0)
 	const [ isFetching, setFetching] = useState( false )
 	const [ isError, setError] = useState( false )
 	const [ data, setData ] = useState( null )
@@ -39,12 +39,8 @@ const Search = () => {
 		}, 750 )
 	}
 
-	useEffect(() => {
-		handleSubmit()	
-	}, [resultsPageOffset])
-
 	const handleSubmit = async (e) => {
-		e && e.preventDefault()
+		e.preventDefault()
 		const { searchLabel, searchText, type } = formState
 		if ( !searchText.length ) {
 			flashError()
@@ -52,7 +48,7 @@ const Search = () => {
 		}
 		setFetching(true)
 		try {
-			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type, {offset: resultsPageOffset, limit: 20} )
+			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type )
 			Utils.scrollIntoView("search-results")
 			setData( res )
 		} catch (error) {
@@ -61,21 +57,16 @@ const Search = () => {
 		setFetching(false)
 	}
 
-	const handlePageChange = offset => {
-		console.log("handlePageChange ", offset )
-		setResultsPageOffset( offset )
-	}
-
 	return(
 		<>
-			<form ref={mounted} onSubmit={handleSubmit} onChange={setFormState}>
+			<form onSubmit={handleSubmit} onChange={setFormState} >
 				<div  className="search-bar">
 					<input
 						name="searchText"
 						tabIndex="1"
 						className="query"
 						type="text"
-						value={formState.searchText}
+						defaultValue={formState.searchText}
 						placeholder="Search spotify"
 						autoComplete="off"
 					/>
@@ -93,7 +84,7 @@ const Search = () => {
 					</select>
 				</div>
 			</form>
-			<Results type={type} data={data} onPageChange={handlePageChange} />
+			<Results type={type} data={data} />
 		</>
 	)
 }

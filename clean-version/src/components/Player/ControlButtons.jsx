@@ -8,13 +8,13 @@ import { controls } from '../../api/spotify'
 
 
 const ControlButtons = () => {
-  // const { is_playing } = useContext(CurrentPlayingContext) || {}
-  const [ is_playing, setIsPlaying  ] = useToggle( false )
+  const { is_playing } = useContext(CurrentPlayingContext) || {}
+  // const [ is_playing, setIsPlaying  ] = useToggle( false )
 
   const handleClick = async action => {
     let isSuccess = await controls( action )
     
-    switch ( action ) {
+   /*  switch ( action ) {
       case 'play':
       case 'pause':
       setIsPlaying()
@@ -24,7 +24,7 @@ const ControlButtons = () => {
         break;
       default:
         break;
-    }
+    } */
     return isSuccess
   }
 

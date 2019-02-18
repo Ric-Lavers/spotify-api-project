@@ -106,8 +106,10 @@ export const getAlbumInfo = async( id) => {
 
 export const getUserPlaylists = async() => {
   const spotifyToken = localStorage.spotifyToken
+  
+
   try {
-    let res= await fetch(`https://api.spotify.com/v1/me/playlists`,{
+    let res = await fetch(`https://api.spotify.com/v1/me/playlists`,{
       headers: new Headers({
         'Authorization': `Bearer ${spotifyToken}`, 
         'Content-Type': 'application/json'
