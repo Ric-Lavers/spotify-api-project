@@ -25,7 +25,7 @@ const PlayerAPI = () => {
     <SearchResultsContext.Provider value={[data, setState]}>
       <div className={`player`} >
         <p onClick={() => dispatch({ type: 'playlist/hide' })}
-        >{state.playListIsHidden ? 'show ': 'hide '}playlists</p>
+        >{state.playListIsHidden ? 'hide ' : 'show '}playlists</p>
         <div className="audio-controls" >
           <CurrentlyPlaying>
             <Details />

@@ -14,13 +14,12 @@ const Playlists = () => {
     const {items, href} = await getMePlaylists()
     setPlaylists(items)
   }, [])
-  console.log( isHidden )
 
   return (
     <>
       <Fade big when={isHidden}>
       <Slide right when={isHidden}>
-        <ul className="results" style={{ borderRadius: '0 14px 14px 0' }} >
+        <ul className="results" style={{ borderRadius: '0 14px 14px 0', ...isHidden?{}:{display: 'none' } }} >
           {playlists.map( ({ name, public: isPublic }) => <li>{name}<i>{` - ${isPublic?"public":"private"}`}</i></li> )}
         </ul>
       </Slide>
