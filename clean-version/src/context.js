@@ -20,7 +20,7 @@ const CurrentlyPlaying = ({ children }) => {
   return (
     <CurrentPlayingContext.Provider value={song} >
       <>
-        { children  }
+        { children }
       </>
     </CurrentPlayingContext.Provider>
   )

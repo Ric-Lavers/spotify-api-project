@@ -2,40 +2,48 @@ import React, { useState, useEffect, useContext  } from 'react'
 import { CurrentPlayingContext } from '../../context'
 import { seek } from '../../api/spotify'
 
-const Progress = () => {
+
+const ProgressContainer = () => {
   const song = useContext(CurrentPlayingContext)
+
   if ( !song ) { return null }
+  let { progress_ms } = song
+  let { duration_ms } = song.item
+
+  return <Progress progress_ms={progress_ms} duration_ms={duration_ms} />
+}
+
+const Progress = React.memo(({ progress_ms, duration_ms }) => {
   
   const findRange = currentSong => {
-    let { progress_ms } = currentSong
-    let { duration_ms } = currentSong.item
-
     return (
       Math.floor( progress_ms/ duration_ms * 100 )
     )
   }
-  let [ rangeValue, setRange ] = useState(findRange(song))
 
-  useEffect(() => {
-    setRange ( findRange(song) )
-  }, [ song.progress_ms ])
-  
+  let [ rangeValue, setRange ] = useState(findRange())
   
   const handleSeek = async (e) => {
-    if ( !song ) return;
-    let { item: {duration_ms} } = song
+
     await seek({
       position_ms: Math.floor( e.target.value * 0.01 * duration_ms)
     })
+    
   }
 
-  const handleChange = e => {
-    setRange( e.target.value )
-  }
+  const handleChange = ({ target }) => setRange( target.value )
   
   return (
-    <input onChange={handleChange}  onMouseUp={handleSeek} className="icon seek" type="range" min='0' max='100' value={rangeValue} />
+    <input
+      onChange={handleChange}
+      onMouseUp={handleSeek}
+      className="icon seek"
+      type="range"
+      min='0'
+      max='100'
+      value={rangeValue}
+    />
   )
-}
+})
 
-export default Progress
+export default ProgressContainer

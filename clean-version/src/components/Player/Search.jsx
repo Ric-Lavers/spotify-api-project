@@ -59,14 +59,14 @@ const Search = () => {
 
 	return(
 		<>
-			<form onSubmit={handleSubmit} onChange={setFormState}>
+			<form onSubmit={handleSubmit} onChange={setFormState} >
 				<div  className="search-bar">
 					<input
 						name="searchText"
 						tabIndex="1"
 						className="query"
 						type="text"
-						value={formState.searchText}
+						defaultValue={formState.searchText}
 						placeholder="Search spotify"
 						autoComplete="off"
 					/>
