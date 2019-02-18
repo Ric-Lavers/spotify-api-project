@@ -6,8 +6,8 @@ const spotifyToken = localStorage.spotifyToken
   * Params can be genre, year, artist, album, label
 
 */
-export const searchSpotify = async( query, type, params ) => {
-
+export const searchSpotify = async( query, type, params=[] ) => {
+  
   params = [`type=${type}`, ...Object.keys(params).map(k => `${k}=${params[k]}`) ].join('&')
   const search = new URLSearchParams({ q: query }).toString()
 
@@ -17,6 +17,7 @@ export const searchSpotify = async( query, type, params ) => {
       'Content-Type': 'application/json'
     })
   })
+
   if (!res.ok) {
     throw Error(res.statusText);
   }
@@ -104,7 +105,7 @@ export const getAlbumInfo = async( id) => {
   }
 }
 
-export const getUserPlaylists = async() => {
+export const getMePlaylists = async() => {
   const spotifyToken = localStorage.spotifyToken
   
 
@@ -279,7 +280,7 @@ export default {
   checkToken,
   getPlaylistInfo,
   getAlbumInfo,
-  getUserPlaylists,
+  getMePlaylists,
   getPlaylistsTracks,
   getRecentlyPlayed,
   

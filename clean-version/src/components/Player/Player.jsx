@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';  
 
+import { GlobalContext } from '../../globalContext'
 import ControlButtons from './ControlButtons'
 import Progress from './Progress'
 import Details from './Details'
-import Search from './Search'
+import Search, { SearchResultsContext, types } from './Search'
+import SearchResults from './SearchResults'
 import CurrentlyPlaying from '../../context'
-
 
 /* 
   * The Audio controls has the following features;
@@ -17,18 +18,25 @@ import CurrentlyPlaying from '../../context'
     *[x] on unsuccessful API button flashes fail color
 */
 const PlayerAPI = () => {
-
+  const [state, dispatch] = useContext(GlobalContext)
+  const [ data, setState ] = useState(null)
+  
   return  (
-    <div className="player" >
-      <div className="audio-controls" >
-        <CurrentlyPlaying>
-          <Details />
-          <ControlButtons/>
-          <Progress />
-        </CurrentlyPlaying>
+    <SearchResultsContext.Provider value={[data, setState]}>
+      <div className={`player`} >
+        <p onClick={() => dispatch({ type: 'playlist/hide' })}
+        >{state.playListIsHidden ? 'show ': 'hide '}playlists</p>
+        <div className="audio-controls" >
+          <CurrentlyPlaying>
+            <Details />
+            <ControlButtons/>
+            <Progress />
+          </CurrentlyPlaying>
+        </div>
+        <Search/>
+        <SearchResults/>
       </div>
-      <Search/>
-    </div>
+    </SearchResultsContext.Provider>
   )
 }
 

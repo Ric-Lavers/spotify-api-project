@@ -1,12 +1,14 @@
-import React, { useState} from 'react'
+import React, { useContext, useState, createContext } from 'react'
 
-import { useToggle, useHandleChange, useColorOnInput } from '../../hooks'
+import { useHandleChange, useColorOnInput } from '../../hooks'
 import { CurrentPlayingContext } from '../../context'
 
 import { searchSpotify } from '../../api/spotify.js'
 import { Utils } from '../../helpers'
 import SearchIcon from '../../images/custom-svgs/SearchIcon'
 import Results from './SearchResults'
+
+export const SearchResultsContext = createContext({})
 
 export const types = [ 'track', 'artist', 'album', 'playlist' ]
 
@@ -21,7 +23,7 @@ const useType = () => {
 }
 
 const Search = () => {
-
+	const [ data, setData ] = useContext( SearchResultsContext )
 	const [ type, setType ]  = useType()
 	const [ inputStyle, setColorOnInput ] = useColorOnInput()
 	// const [ formState, setFormState ] = useState({ type })
@@ -30,7 +32,7 @@ const Search = () => {
 
 	const [ isFetching, setFetching] = useState( false )
 	const [ isError, setError] = useState( false )
-	const [ data, setData ] = useState( null )
+	// const [ data, setData ] = useState( null )
 
 	const flashError = () => {
 		setError( true )
@@ -52,13 +54,13 @@ const Search = () => {
 			Utils.scrollIntoView("search-results")
 			setData( res )
 		} catch (error) {
+			console.error(error)
 			flashError()
 		}
 		setFetching(false)
 	}
-
+	
 	return(
-		<>
 			<form onSubmit={handleSubmit} onChange={setFormState} >
 				<div  className="search-bar">
 					<input
@@ -84,8 +86,6 @@ const Search = () => {
 					</select>
 				</div>
 			</form>
-			<Results type={type} data={data} />
-		</>
 	)
 }
 
