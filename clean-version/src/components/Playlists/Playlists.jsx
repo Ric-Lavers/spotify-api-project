@@ -8,6 +8,7 @@ import { getMePlaylists } from '../../api/spotify'
 const Playlists = () => {
 
   const [playlists, setPlaylists] = useState([])
+  const [selected, setSelected] = useState(null)
   const isHidden = useContext(GlobalContext)[0].playListIsHidden
   
   useEffect(async () => {
@@ -20,7 +21,16 @@ const Playlists = () => {
       <Fade big when={isHidden}>
       <Slide right when={isHidden}>
         <ul className="results" style={{ borderRadius: '0 14px 14px 0', ...isHidden?{}:{display: 'none' } }} >
-          {playlists.map( ({ name, public: isPublic }) => <li>{name}<i>{` - ${isPublic?"public":"private"}`}</i></li> )}
+          {playlists
+            .filter(({id}) => selected === null ? true : id === selected  )
+            .map( ({ id, name, public: isPublic }) => 
+            <li onClick={() => setSelected(id === selected ? null : id)}
+            key={id}
+            id={id}
+            >
+              {name}<i>{` - ${isPublic?"public":"private"}`}</i>
+            </li>
+          )}
         </ul>
       </Slide>
       </Fade>
