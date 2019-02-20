@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { CurrentPlayingContext } from '../../context'
+import {SearchContext} from '../Player/Search'
 import { SpotifyHelpers } from '../../helpers'
 import { getAlbumById } from '../../api/spotify.js'
 

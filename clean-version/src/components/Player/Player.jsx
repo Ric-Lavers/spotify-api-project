@@ -34,6 +34,7 @@ const PlayerAPI = () => {
           </CurrentlyPlaying>
         </div>
         <Search/>
+        {JSON.stringify(data)}
         <SearchResults/>
       </div>
     </SearchResultsContext.Provider>
