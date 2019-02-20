@@ -6,7 +6,7 @@ import hooks from './images/hooks.svg'
 import './styles/index.scss';
 import SpotifyLogin from './components/SpotifyLogin';
 import Player from './components/Player/Player';
-import Playlists from './components/Playlists/Playlists'
+import Playlists from './components/playlists/Playlists'
 
 import { useToggle } from './hooks'
 import { ReactComponent as GithubLogo } from './images/github-logo.svg'

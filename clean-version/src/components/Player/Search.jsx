@@ -24,8 +24,6 @@ const useType = () => {
 const Search = () => {
 	const [ data, setData ] = useContext( SearchResultsContext )
 	const [ type, setType ]  = useType()
-	const [ inputStyle, setColorOnInput ] = useColorOnInput()
-	// const [ formState, setFormState ] = useState({ type })
 
 	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "", searchLabel: false })
 	const [ prevFormState, setLastSearchObject] = useState({})
@@ -93,6 +91,7 @@ const Search = () => {
 					</select>
 				</div>
 			</form>
+		</>
 	)
 }
 
