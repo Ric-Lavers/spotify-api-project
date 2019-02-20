@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useContext, useState, createContext } from 'react'
 
 import { useHandleChange/* , useColorOnInput */ } from '../../hooks'
 
@@ -6,6 +6,8 @@ import { searchSpotify } from '../../api/spotify.js'
 import { Utils } from '../../helpers'
 import SearchIcon from '../../images/custom-svgs/SearchIcon'
 import Results from './SearchResults'
+
+export const SearchResultsContext = createContext({})
 
 export const types = [ 'track', 'artist', 'album', 'playlist' ]
 
@@ -20,9 +22,10 @@ const useType = () => {
 }
 
 const Search = () => {
-	const mounted = useRef();
+	const [ data, setData ] = useContext( SearchResultsContext )
 	const [ type, setType ]  = useType()
-	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
+	const [ inputStyle, setColorOnInput ] = useColorOnInput()
+	// const [ formState, setFormState ] = useState({ type })
 
 	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "", searchLabel: false })
 	const [ prevFormState, setLastSearchObject] = useState({})
@@ -30,7 +33,7 @@ const Search = () => {
 	let [ resultsPageOffset, setResultsPageOffset ] = useState(0)
 	const [ isFetching, setFetching] = useState( false )
 	const [ isError, setError] = useState( false )
-	const [ data, setData ] = useState( null )
+	// const [ data, setData ] = useState( null )
 
 	const flashError = () => {
 		setError( true )
@@ -39,12 +42,8 @@ const Search = () => {
 		}, 750 )
 	}
 
-	useEffect(() => {
-		handleSubmit()	
-	}, [resultsPageOffset])
-
 	const handleSubmit = async (e) => {
-		e && e.preventDefault()
+		e.preventDefault()
 		const { searchLabel, searchText, type } = formState
 		if ( !searchText.length ) {
 			flashError()
@@ -55,21 +54,17 @@ const Search = () => {
 		}
 		setFetching(true)
 		try {
-			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type, {offset: resultsPageOffset, limit: 20} )
+			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type )
 			Utils.scrollIntoView("search-results")
 			setLastSearchObject(formState)
 			setData( res )
 		} catch (error) {
+			console.error(error)
 			flashError()
 		}
 		setFetching(false)
 	}
-
-	const handlePageChange = offset => {
-		console.log("handlePageChange ", offset )
-		setResultsPageOffset( offset )
-	}
-
+	
 	return(
 		<>
 			<form id="search" onSubmit={handleSubmit} onChange={setFormState}>
@@ -80,7 +75,7 @@ const Search = () => {
 						tabIndex="1"
 						className="query"
 						type="text"
-						value={formState.searchText}
+						defaultValue={formState.searchText}
 						placeholder="Search spotify"
 						autoComplete="off"
 					/>
@@ -98,8 +93,6 @@ const Search = () => {
 					</select>
 				</div>
 			</form>
-			<Results type={type} data={data} onPageChange={handlePageChange} />
-		</>
 	)
 }
 

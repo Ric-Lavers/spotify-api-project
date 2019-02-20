@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "eslint-plugin-react-hooks": "^0.0.0"
+    "eslint-plugin-react-hooks": "^0.0.0",
+    "react-reveal": "^1.2.2"
   }
 }

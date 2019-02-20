@@ -55,10 +55,8 @@
     width: 100%;
   }
 }
-
-
-.player {
-  width: 300px;
+@mixin container {
+  max-width: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -66,7 +64,13 @@
   border-radius: $md;
 
   padding: $lg;
-
+}
+.with-results {
+  border-radius: $md $md 0 0;
+};
+.player {
+  @include container;
+  
   .audio-controls {
     .audio-buttons {
       @include audio-buttons;
@@ -77,4 +81,9 @@
   @import 'search-bar';
 
 }
-@import 'search-bar';
+.results {
+  @include container;
+  min-width: 300px;
+  border-radius: 0 0 $md $md;
+
+}

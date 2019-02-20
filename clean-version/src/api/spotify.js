@@ -19,8 +19,8 @@ const isOk = res => {
   * Params can be genre, year, artist, album, label
 
 */
-export const searchSpotify = async( query, type, params ) => {
-
+export const searchSpotify = async( query, type, params=[] ) => {
+  
   params = [`type=${type}`, ...Object.keys(params).map(k => `${k}=${params[k]}`) ].join('&')
   const search = new URLSearchParams({ q: query }).toString()
 
@@ -30,6 +30,7 @@ export const searchSpotify = async( query, type, params ) => {
       'Content-Type': 'application/json'
     })
   })
+
   if (!res.ok) {
     throw Error(res.statusText);
   }
@@ -109,8 +110,10 @@ export const getAlbumInfo = async( id) => {
   }
 }
 
-export const getUserPlaylists = async() => {
+export const getMePlaylists = async() => {
   const spotifyToken = localStorage.spotifyToken
+  
+
   try {
     let res= await fetch(`${baseUrl}/me/playlists`,{
       headers: new Headers({
@@ -283,7 +286,7 @@ export default {
   getPlaylistInfo,
   getAlbumInfo,
   getAlbumById,
-  getUserPlaylists,
+  getMePlaylists,
   getPlaylistsTracks,
   getRecentlyPlayed,
   

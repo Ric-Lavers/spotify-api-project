@@ -8,8 +8,10 @@
     "react": "^16@next",
     "react-dom": "^16@next",
     "react-pose": "^4.0.6",
+    "react-reveal": "^1.2.2",
     "react-scripts": "2.1.3",
-    "react-switch": "^4.0.1"
+    "react-switch": "^4.0.1",
+    "typescript": "^3.3.3"
   },
   "scripts": {
     "start:prod": "REACT_APP_ENV=PROD react-scripts start",

@@ -25,33 +25,33 @@ export const labelReleases = async(labelId, queryObj ) => {
   }
 
   
-type labelReleasesQueryObj = {
-  page: number,
-  per_page: number,
-}
+// type labelReleasesQueryObj = {
+//   page: number,
+//   per_page: number,
+// }
 
-type labelReleasesResponse = {
-  pagination: {
-    per_page: number,
-    pages: number,
-    page: number,
-    urls: {
-      last: string,
-      next: string
-    },
-    items: number
-  },
-  releases: Array<release>
-}
+// type labelReleasesResponse = {
+//   pagination: {
+//     per_page: number,
+//     pages: number,
+//     page: number,
+//     urls: {
+//       last: string,
+//       next: string
+//     },
+//     items: number
+//   },
+//   releases: Array<release>
+// }
 
-type release = {
-  artist: string,
-  catno: string,
-  format: string,
-  id: number,
-  resource_url: string,
-  status: string,
-  thumb: string,
-  title: string,
-  year: number
-}
+// type release = {
+//   artist: string,
+//   catno: string,
+//   format: string,
+//   id: number,
+//   resource_url: string,
+//   status: string,
+//   thumb: string,
+//   title: string,
+//   year: number
+// }
