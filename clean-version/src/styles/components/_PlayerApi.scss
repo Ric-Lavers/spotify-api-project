@@ -65,9 +65,11 @@
 
   padding: $lg;
 }
+
 .with-results {
   border-radius: $md $md 0 0;
 };
+
 .player {
   @include container;
   
