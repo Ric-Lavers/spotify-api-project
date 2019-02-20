@@ -23,10 +23,6 @@ const Search = () => {
 	const mounted = useRef();
 	const [ type, setType ]  = useType()
 	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
-<<<<<<< HEAD
-	// const [ formState, setFormState ] = useState({ type })
-=======
->>>>>>> add-labels-to-albums
 
 	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "", searchLabel: false })
 	const [ prevFormState, setLastSearchObject] = useState({})
