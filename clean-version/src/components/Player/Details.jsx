@@ -1,6 +1,8 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { CurrentPlayingContext } from '../../context'
 import { SpotifyHelpers } from '../../helpers'
+import { getAlbumById } from '../../api/spotify.js'
+
 
 const DetailsData = () => {
   const song = useContext(CurrentPlayingContext)
@@ -12,11 +14,31 @@ const DetailsData = () => {
       album,
     }
   } = song
-  return <Details name={name} artists={artists} album={album} />
+
+
+  const [ albumData, setData ] = useState(album)
+
+  async function handleGetAlbumById(id) {
+    //gets the unique fields not avaiable in song.data.item.album
+    const {
+      copyrights,
+      genres,
+      label,
+      popularity,
+      tracks,
+    } = await getAlbumById(id)
+    setData( {...albumData, copyrights, genres, label, popularity, tracks } )
+  }
+
+  return <Details getAlbumById={handleGetAlbumById} name={name} artists={artists} album={albumData} />
 }
 
 
-const Details = React.memo(({ name, artists, album }) => {
+const Details = React.memo(({ name, artists, album, getAlbumById }) => {
+  useEffect(() => {
+    getAlbumById( album.id )
+  }, [album.id])
+  
   
   return ( 
     <>
@@ -25,12 +47,18 @@ const Details = React.memo(({ name, artists, album }) => {
         <i>{ SpotifyHelpers.combineArtists(artists) }</i>
         {` ( ${album.release_date} )`}
       </h4>
+      <h4>{album.label}</h4>
     </>
   )
 }, (prevProps, nextProps) => {
+  
+  if ( prevProps.album.label !== nextProps.album.label ) {
+    return false
+  }
   if ( prevProps.name === nextProps.name ) {
     return true
   }
+  
   return false
 })
 

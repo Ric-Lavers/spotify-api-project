@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import { useHandleChange/* , useColorOnInput */ } from '../../hooks'
 
@@ -20,13 +20,18 @@ const useType = () => {
 }
 
 const Search = () => {
-
+	const mounted = useRef();
 	const [ type, setType ]  = useType()
 	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
+<<<<<<< HEAD
 	// const [ formState, setFormState ] = useState({ type })
+=======
+>>>>>>> add-labels-to-albums
 
-	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "" })
+	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "", searchLabel: false })
+	const [ prevFormState, setLastSearchObject] = useState({})
 
+	let [ resultsPageOffset, setResultsPageOffset ] = useState(0)
 	const [ isFetching, setFetching] = useState( false )
 	const [ isError, setError] = useState( false )
 	const [ data, setData ] = useState( null )
@@ -38,22 +43,35 @@ const Search = () => {
 		}, 750 )
 	}
 
+	useEffect(() => {
+		handleSubmit()	
+	}, [resultsPageOffset])
+
 	const handleSubmit = async (e) => {
-		e.preventDefault()
+		e && e.preventDefault()
 		const { searchLabel, searchText, type } = formState
 		if ( !searchText.length ) {
 			flashError()
 			return
 		}
+		if ( prevFormState !== formState) {
+			resultsPageOffset = 0
+		}
 		setFetching(true)
 		try {
-			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type )
+			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type, {offset: resultsPageOffset, limit: 20} )
 			Utils.scrollIntoView("search-results")
+			setLastSearchObject(formState)
 			setData( res )
 		} catch (error) {
 			flashError()
 		}
 		setFetching(false)
+	}
+
+	const handlePageChange = offset => {
+		console.log("handlePageChange ", offset )
+		setResultsPageOffset( offset )
 	}
 
 	return(
@@ -84,7 +102,7 @@ const Search = () => {
 					</select>
 				</div>
 			</form>
-			<Results type={type} data={data} />
+			<Results type={type} data={data} onPageChange={handlePageChange} />
 		</>
 	)
 }

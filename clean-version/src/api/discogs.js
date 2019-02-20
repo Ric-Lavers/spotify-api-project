@@ -13,7 +13,7 @@ export const searchDiscogs = async(queryObj) => {
   }
 }
 
-export const labelReleases = async(labelId, queryObj: labelReleasesQueryObj ) => {
+export const labelReleases = async(labelId, queryObj ) => {
     const query = new URLSearchParams({ ...queryObj }).toString()
     try {
       let res= await fetch(`https://api.discogs.com/labels/${labelId}/releases?${query}`)
