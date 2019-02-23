@@ -68,7 +68,6 @@ const Playlists = () => {
       <Fade big when={isHidden}>
       <Slide duration={1000} right when={isHidden}>
         <ul className="playlists" style={isHidden?{}:{display: 'none' } } >
-          <>
           {playlists
             .filter(({id}) => selected.id === null ? true : id === selected.id  )
             .map( ({ id, name, public: isPublic, uri }) => 
@@ -82,7 +81,6 @@ const Playlists = () => {
               />
           )}
           <PlaylistSongs playlistId={selected.id} context_uri={selected.uri} />
-          </>
         </ul>
       </Slide>
       </Fade>

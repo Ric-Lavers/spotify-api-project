@@ -51,6 +51,7 @@
 
 .player {
   @include container;
+  height: 100%;
   justify-content: flex-start;
   .audio-controls {
     .audio-buttons {

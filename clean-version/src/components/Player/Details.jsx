@@ -66,7 +66,7 @@ const Details = React.memo(({ name, artists, album, getAlbumById }) => {
         onClick={() => dispatch({
           type:'search/set',
           payload: {
-            type: 'album',
+            type: 'artist',
             searchText: album.label,
             searchLabel: true,
           }}
