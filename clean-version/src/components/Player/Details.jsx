@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { CurrentPlayingContext } from '../../context'
+import { GlobalContext } from '../../globalContext'
 import { SpotifyHelpers } from '../../helpers'
 import { getAlbumById } from '../../api/spotify.js'
 
@@ -12,34 +13,47 @@ const DetailsData = () => {
       name,
       artists,
       album,
+      album: {
+        id
+      },
     }
   } = song
-
-
-  const [ albumData, setData ] = useState(album)
+  const [ extraAlbumData, setData ] = useState({})
 
   async function handleGetAlbumById(id) {
     //gets the unique fields not avaiable in song.data.item.album
-    const {
-      copyrights,
-      genres,
-      label,
-      popularity,
-      tracks,
-    } = await getAlbumById(id)
-    setData( {...albumData, copyrights, genres, label, popularity, tracks } )
+    try {
+      const {
+        genres,
+        label,
+        popularity,
+        tracks,
+      } = await getAlbumById(id)
+      setData( { genres, label, popularity, tracks } )
+    } catch (error) {
+      console.error(error.message)
+    }
+    
+    
   }
 
-  return <Details getAlbumById={handleGetAlbumById} name={name} artists={artists} album={albumData} />
+  useEffect(() => {
+    id && handleGetAlbumById(id)
+  }, [id])
+
+  return (
+    <Details
+      getAlbumById={handleGetAlbumById}
+      name={name}
+      artists={artists}
+      album={{...album, ...extraAlbumData}} />
+    )
 }
 
 
 const Details = React.memo(({ name, artists, album, getAlbumById }) => {
-  useEffect(() => {
-    getAlbumById( album.id )
-  }, [album.id])
-  
-  
+  const dispatch = useContext(GlobalContext)[1]
+
   return ( 
     <>
       <h3>{name} - {album.name}</h3>
@@ -47,7 +61,19 @@ const Details = React.memo(({ name, artists, album, getAlbumById }) => {
         <i>{ SpotifyHelpers.combineArtists(artists) }</i>
         {` ( ${album.release_date} )`}
       </h4>
-      <h4>{album.label}</h4>
+      <h4 className="pointer" 
+
+        onClick={() => dispatch({
+          type:'search/set',
+          payload: {
+            type: 'artist',
+            searchText: album.label,
+            searchLabel: true,
+          }}
+        )}
+      >
+        {album.label}
+      </h4>
     </>
   )
 }, (prevProps, nextProps) => {

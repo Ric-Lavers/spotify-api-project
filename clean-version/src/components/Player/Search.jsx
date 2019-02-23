@@ -1,4 +1,4 @@
-import React, { useContext, useState, createContext } from 'react'
+import React, { useContext, useState, useEffect, createContext } from 'react'
 
 import { useHandleChange/* , useColorOnInput */ } from '../../hooks'
 
@@ -21,14 +21,17 @@ const useType = () => {
 	return [ type, setAndStoreType ]
 }
 
-const Search = () => {
+const Search = ({ query }) => {
 	const [ data, setData ] = useContext( SearchResultsContext )
 	const [ type, setType ]  = useType()
-	const [ inputStyle, setColorOnInput ] = useColorOnInput()
-	// const [ formState, setFormState ] = useState({ type })
 
-	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "", searchLabel: false })
+	let [ formState, handleFormState, setFormState ] =  useHandleChange({ type, searchText: "", searchLabel: false })
 	const [ prevFormState, setLastSearchObject] = useState({})
+
+	useEffect( () => {
+		setFormState(query)
+		setType(query.type ? query.type : type)
+	}, [query] )
 
 	let [ resultsPageOffset, setResultsPageOffset ] = useState(0)
 	const [ isFetching, setFetching] = useState( false )
@@ -67,7 +70,7 @@ const Search = () => {
 	
 	return(
 		<>
-			<form id="search" onSubmit={handleSubmit} onChange={setFormState}>
+			<form id="search" onSubmit={handleSubmit} onChange={handleFormState}>
 				<div  className="search-bar">
 					<input
 						name="searchText"
@@ -79,20 +82,31 @@ const Search = () => {
 						placeholder="Search spotify"
 						autoComplete="off"
 					/>
-					<button className="submit" type="submit" >
+					<button className="submit" type="submit" alt="submit" >
 						<SearchIcon isLoading={isFetching} isError={isError} />
 					</button>
 				</div>
 				<div className="search-bar select-types" >
-					<label htmlFor="label-check" tabIndex="3" >by label<input id="label-check" type="checkbox" checked={formState.searchLabel} name="searchLabel" /></label>
+					<label
+						htmlFor="label-check"
+						tabIndex="3"
+						>by label
+						<input
+							onChange={handleFormState}
+							id="label-check"
+							type="checkbox"
+							checked={formState.searchLabel}
+							name="searchLabel" />
+					</label>
 					
-					<select tabIndex="2" name="type" defaultValue={type} onChange={ ({ target }) => setType(target.value) }>
+					<select tabIndex="2" name="type" value={type} onChange={ ({ target }) => setType(target.value) }>
 						{types.map( (ty) =>
 						<option key={ty} name={ty} value={ty}>{ty}</option>
 						)}
 					</select>
 				</div>
 			</form>
+		</>
 	)
 }
 

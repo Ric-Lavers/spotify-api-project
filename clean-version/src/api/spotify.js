@@ -30,10 +30,7 @@ export const searchSpotify = async( query, type, params=[] ) => {
       'Content-Type': 'application/json'
     })
   })
-
-  if (!res.ok) {
-    throw Error(res.statusText);
-  }
+  isOk(res)
   return res.json()
 }
 /* sort by year
@@ -111,37 +108,18 @@ export const getAlbumInfo = async( id) => {
 }
 
 export const getMePlaylists = async() => {
-  const spotifyToken = localStorage.spotifyToken
-  
-
   try {
-    let res= await fetch(`${baseUrl}/me/playlists`,{
-      headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
-        'Content-Type': 'application/json'
-      })
-    })
-    if (!res.ok) {
-      throw Error(res.statusText);
-    }
+    let res= await fetch(`${baseUrl}/me/playlists`, headers)
+    isOk(res)
     return res.json()
   } catch (error) {
     console.log(error.message)
-    return error
   }
 }
 export const getPlaylistsTracks = async(listId) => {
-  const spotifyToken = localStorage.spotifyToken
   try {
-    let res= await fetch(`${baseUrl}/playlists/${listId}/tracks`,{
-      headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
-        'Content-Type': 'application/json'
-      })
-    })
-    if (!res.ok) {
-      throw Error(res.statusText);
-    }
+    let res= await fetch(`${baseUrl}/playlists/${listId}/tracks`, headers)
+    isOk(res)
     return res.json()
   } catch (error) {
     console.log(error.message)
@@ -171,36 +149,6 @@ export const getRecentlyPlayed = async(  ) => {
   }
 }
 
-// export const handleGetPlaylistTrackIds = async(playListId) => {
-//   try {
-//     let data = await getPlaylistsTracks(playListId)
-//     let tracks = data.items.map(item => item.track)
-//     let albumPromises = await addInfoToTracks(tracks)
-//     Promise.all(albumPromises).then(data => {
-//       console.log( "promises resolved" )
-//       return( Promise(data) )
-//     })
-//   } catch(err) {}
-// }
-
-// const addInfoToTracks = async (tracks) => {
-//   const token = localStorage.spotifyToken
-//   let albumPromises =  tracks.map( async(track, i) => {
-//     let {id} = track.album
-//     let album =  await getAlbumInfo(token, id)
-//     Object.assign(tracks[i], {
-//       label: album.label,
-//       album_name: track.album.name,
-//       album_release_date: track.album.release_date,
-//       album_md_img: track.album.images.length <= 1 
-//         ? track.album.images[1].url
-//         : track.album.images[0].url,
-//     })
-//     return track
-//   })
-//   return albumPromises
-// }
-
 export const controls = async (action, body={}) => {
   const spotifyToken = localStorage.spotifyToken
   const method = ( action === 'play' || action === 'pause') ? 'PUT' : 'POST'
@@ -224,13 +172,9 @@ export const controls = async (action, body={}) => {
 }
 
 export const play = async ( body={}) => {
-  const spotifyToken = localStorage.spotifyToken
   try {
     await fetch(`${baseUrl}/me/player/play`,{
-      headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
-        'Content-Type': 'application/json'
-      }),
+      ...headers,
       method: 'PUT',
       body: JSON.stringify({...body})
     })
@@ -289,8 +233,12 @@ export default {
   getMePlaylists,
   getPlaylistsTracks,
   getRecentlyPlayed,
+  searchSpotify,
+  controls,
+  play,
+  seek,
+  currentPlaying,
   
-  // handleGetPlaylistTrackIds,
 }
 
 // href: string

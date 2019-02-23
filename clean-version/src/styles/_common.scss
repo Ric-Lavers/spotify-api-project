@@ -5,14 +5,44 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system,"Roboto",  BlinkMacSystemFont, "Segoe UI", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "proxima-nova", "Roboto", sans-serif;
+  font-style: normal;
+  font-weight: 500;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.header {
+  opacity: $header-opacity;
+  text-transform: uppercase;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+/* touched animation */
+.touched {
+  animation: touched-success 1s ;
+}
+.touched-success {
+  animation: touched-success 1s ;
+}
+.touched-error {
+  animation: touched-error 1s ;
+}
+
+@keyframes touched-success {
+  0% { color: #fff }
+  50% { color: $spotify-green }
+  100% { color: #fff }
+}
+@keyframes touched-error {
+  0% { color: #fff }
+  50% { color: $error }
+  100% { color: #fff }
 }

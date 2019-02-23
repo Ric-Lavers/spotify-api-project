@@ -1,12 +1,13 @@
 import React, { useContext, useState } from 'react';  
 
 import { GlobalContext } from '../../globalContext'
+import CurrentlyPlaying from '../../context'
+import { useFlash } from '../../hooks'
 import ControlButtons from './ControlButtons'
 import Progress from './Progress'
 import Details from './Details'
 import Search, { SearchResultsContext, types } from './Search'
 import SearchResults from './SearchResults'
-import CurrentlyPlaying from '../../context'
 
 /* 
   * The Audio controls has the following features;
@@ -20,12 +21,17 @@ import CurrentlyPlaying from '../../context'
 const PlayerAPI = () => {
   const [state, dispatch] = useContext(GlobalContext)
   const [ data, setState ] = useState(null)
+  const [ touched, flashClass ] = useFlash('touched')
   
   return  (
     <SearchResultsContext.Provider value={[data, setState]}>
       <div className={`player`} >
-        <p onClick={() => dispatch({ type: 'playlist/hide' })}
-        >{state.playListIsHidden ? 'hide ' : 'show '}playlists</p>
+        <p className={`header pointer ${ touched }`}
+          onClick={() => {
+            flashClass()
+            dispatch({ type: 'playlist/hide' })}
+          }
+        >{state.playListIsHidden ? 'hide ' : 'show '}PLAYLISTS</p>
         <div className="audio-controls" >
           <CurrentlyPlaying>
             <Details />
@@ -33,7 +39,7 @@ const PlayerAPI = () => {
             <Progress />
           </CurrentlyPlaying>
         </div>
-        <Search/>
+        <Search query={state.searchQuery} />
         <SearchResults/>
       </div>
     </SearchResultsContext.Provider>
