@@ -13,37 +13,47 @@ const DetailsData = () => {
       name,
       artists,
       album,
+      album: {
+        id
+      },
     }
   } = song
-
-
-  const [ albumData, setData ] = useState(album)
+  const [ extraAlbumData, setData ] = useState({})
 
   async function handleGetAlbumById(id) {
     //gets the unique fields not avaiable in song.data.item.album
-    const {
-      copyrights,
-      genres,
-      label,
-      popularity,
-      tracks,
-    } = await getAlbumById(id)
-    setData( {...albumData, copyrights, genres, label, popularity, tracks } )
+    try {
+      const {
+        genres,
+        label,
+        popularity,
+        tracks,
+      } = await getAlbumById(id)
+      setData( { genres, label, popularity, tracks } )
+    } catch (error) {
+      console.error(error.message)
+    }
+    
+    
   }
 
-  return <Details getAlbumById={handleGetAlbumById} name={name} artists={artists} album={albumData} />
+  useEffect(() => {
+    id && handleGetAlbumById(id)
+  }, [id])
+
+  return (
+    <Details
+      getAlbumById={handleGetAlbumById}
+      name={name}
+      artists={artists}
+      album={{...album, ...extraAlbumData}} />
+    )
 }
 
 
 const Details = React.memo(({ name, artists, album, getAlbumById }) => {
   const dispatch = useContext(GlobalContext)[1]
-  useEffect(() => {
-    getAlbumById( album.id )
-  }, [album.id])
-  
 
-  
-  
   return ( 
     <>
       <h3>{name} - {album.name}</h3>

@@ -87,9 +87,19 @@ const Search = ({ query }) => {
 					</button>
 				</div>
 				<div className="search-bar select-types" >
-					<label htmlFor="label-check" tabIndex="3" >by label<input id="label-check" type="checkbox" checked={formState.searchLabel} name="searchLabel" /></label>
+					<label
+						htmlFor="label-check"
+						tabIndex="3"
+						>by label
+						<input
+							onChange={handleFormState}
+							id="label-check"
+							type="checkbox"
+							checked={formState.searchLabel}
+							name="searchLabel" />
+					</label>
 					
-					<select tabIndex="2" name="type" defaultValue={type} onChange={ ({ target }) => setType(target.value) }>
+					<select tabIndex="2" name="type" value={type} onChange={ ({ target }) => setType(target.value) }>
 						{types.map( (ty) =>
 						<option key={ty} name={ty} value={ty}>{ty}</option>
 						)}
