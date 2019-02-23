@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { CurrentPlayingContext } from '../../context'
-import {SearchContext} from '../Player/Search'
+import { GlobalContext } from '../../globalContext'
 import { SpotifyHelpers } from '../../helpers'
 import { getAlbumById } from '../../api/spotify.js'
 
@@ -36,9 +36,12 @@ const DetailsData = () => {
 
 
 const Details = React.memo(({ name, artists, album, getAlbumById }) => {
+  const dispatch = useContext(GlobalContext)[1]
   useEffect(() => {
     getAlbumById( album.id )
   }, [album.id])
+  
+
   
   
   return ( 
@@ -48,7 +51,19 @@ const Details = React.memo(({ name, artists, album, getAlbumById }) => {
         <i>{ SpotifyHelpers.combineArtists(artists) }</i>
         {` ( ${album.release_date} )`}
       </h4>
-      <h4>{album.label}</h4>
+      <h4 className="pointer" 
+
+        onClick={() => dispatch({
+          type:'search/set',
+          payload: {
+            type: 'album',
+            searchText: album.label,
+            searchLabel: true,
+          }}
+        )}
+      >
+        {album.label}
+      </h4>
     </>
   )
 }, (prevProps, nextProps) => {

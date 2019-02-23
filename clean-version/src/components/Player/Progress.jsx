@@ -24,7 +24,7 @@ const Progress = React.memo(({ progress_ms, duration_ms }) => {
   let [ rangeValue, setRange ] = useState(findRange())
 
   useEffect(() => {
-    findRange()
+    setRange(findRange())
   }, [progress_ms, duration_ms])
   
   const handleSeek = ({ target: { value } }) => {

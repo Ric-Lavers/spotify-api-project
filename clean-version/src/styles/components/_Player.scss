@@ -26,27 +26,6 @@
     border: $md solid $spotify-white;
   }
 
-  .touched {
-    animation: touched-success 1s ;
-  }
-  .touched-success {
-    animation: touched-success 1s ;
-  }
-  .touched-error {
-    animation: touched-error 1s ;
-  }
-  
-  @keyframes touched-success {
-    0% { color: #fff }
-    50% { color: #140 }
-    100% { color: #fff }
-  }
-  @keyframes touched-error {
-    0% { color: #fff }
-    50% { color: $error }
-    100% { color: #fff }
-  }
-
 }
 
 
@@ -72,7 +51,7 @@
 
 .player {
   @include container;
-  
+  justify-content: flex-start;
   .audio-controls {
     .audio-buttons {
       @include audio-buttons;
@@ -83,9 +62,33 @@
   @import 'search-bar';
 
 }
+
+
 .results {
   @include container;
   min-width: 300px;
   border-radius: 0 0 $md $md;
+  text-align: left;
+  font-size: 0.9em;
+}
 
+.playlists {
+  @include container;
+  border-radius: 0 $md $md 0 ;
+  text-align: left;
+  .playlist__item {
+    cursor: pointer;
+    list-style: none;
+    padding-bottom: $sm;
+    font-weight: bolder;
+  }
+  .playlist__song {
+    cursor: pointer;
+    font-size: 0.8em;
+  }
+  .playlist__song:hover {
+    color: $spotify-green
+  }
+  border: 1px solid rgba(white, 0.4);
+  border-left-color: rgba(#fff, 0);
 }

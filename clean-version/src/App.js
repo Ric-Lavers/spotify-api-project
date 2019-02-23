@@ -3,7 +3,7 @@ import { GlobalUiState } from './globalContext'
 
 import logo from './logo.svg';
 import hooks from './images/hooks.svg'
-import './styles/index.scss';
+import './styles/_index.scss';
 import SpotifyLogin from './components/SpotifyLogin';
 import Player from './components/Player/Player';
 import Playlists from './components/playlists/Playlists'
