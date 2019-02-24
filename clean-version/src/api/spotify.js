@@ -15,9 +15,20 @@ const isOk = res => {
     throw Error(res.statusText);
   }
 }
+
+export const getHref = async (href) => {
+  try {
+    const res = await fetch(href, headers)
+    isOk(res)
+
+    return res.json()
+  } catch (error) {
+    console.error(error)
+  }
+} 
+
 /* 
   * Params can be genre, year, artist, album, label
-
 */
 export const searchSpotify = async( query, type, params=[] ) => {
   
@@ -37,6 +48,15 @@ export const searchSpotify = async( query, type, params=[] ) => {
 albums.items.map(({artists, name, type, release_date}) => ({name, artists : artists[0].name, type,release_date})).sort((a,b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime()
 */
 
+export const getMe = async() => {
+  try {
+    let res = await fetch(baseUrl + '/me', headers)
+    isOk(res)
+    return res.json()
+  } catch (error) {
+    console.error( error.message )
+  }
+}
 
 
 export const checkToken = async(
@@ -60,6 +80,72 @@ export const checkToken = async(
       window.location.replace(LOGIN_URL)
     }
     return error
+  }
+}
+
+export const followMany = (ids, type) => {
+
+  let queryIds =  ids.splice(0,50)
+  if ( ids.length ) {
+    followMany(ids)
+  }
+  follow(queryIds)
+}
+
+export const unFollow = async(ids, type) => {
+  if ( type !== 'artist' && type !== 'user' ) {
+    console.error(type, 'bad type')
+    return
+  }
+  let query = new URLSearchParams({ type }).toString()
+
+  try {
+    let res = await fetch(`${baseUrl}/me/following?${query}`, {
+      ...headers,
+      method: 'DELETE',
+      body: JSON.stringify({ids: [].concat(ids)})
+    })
+    isOk(res)
+    return true
+  } catch (error) {
+    console.error(error.message)
+    return false
+  }
+}
+export const follow = async(ids, type) => {
+  if ( type !== 'artist' && type !== 'user' ) {
+    console.error(type, 'bad type')
+    return
+  }
+  let query = new URLSearchParams({ type }).toString()
+
+  try {
+    let res = await fetch(`${baseUrl}/me/following?${query}`, {
+      ...headers,
+      method: 'PUT',
+      body: JSON.stringify({ids: [].concat(ids)})
+    })
+    isOk(res)
+    return true
+  } catch (error) {
+    console.error(error.message)
+    return false
+  }
+}
+export const getFollowingState = async(ids, type) => {
+  if ( type !== 'artist' && type !== 'user' ) {
+    console.error(type, 'bad type')
+    return
+  }
+
+  let query = new URLSearchParams({ids: ids.join(), type}).toString()
+  // type=${type}&ids
+  try {
+    let res = await fetch(`${baseUrl}/me/following/contains?${query}`, headers)
+    isOk(res)
+    return res.json()
+  } catch (error) {
+    console.error(error.message)
   }
 }
 
@@ -90,8 +176,17 @@ export const getAlbumById = async (id) => {
     console.error( error.message )
   }
 }
+export const getAlbums = async (ids) => {
+  try {
+    let res = await fetch(`${baseUrl}/albums/?ids=${ids.join()}`, headers)
+    isOk(res)
+    return res.json()
+  } catch (error) {
+    console.error( error.message )
+  }
+}
 
-export const getAlbumInfo = async( id) => {
+export const getAlbumInfo = async(id) => {
   let spotifyToken = localStorage.spotifyToken
   try {
     let res= await fetch(`${baseUrl}/albums/${id}`,{
@@ -226,6 +321,7 @@ export const currentPlaying = async () => {
 
 
 export default {
+  getMe,
   checkToken,
   getPlaylistInfo,
   getAlbumInfo,
@@ -238,6 +334,7 @@ export default {
   play,
   seek,
   currentPlaying,
+  getFollowingState,
   
 }
 

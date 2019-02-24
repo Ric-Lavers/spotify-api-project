@@ -47,7 +47,7 @@ const Search = ({ query }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
-		const { searchLabel, searchText, type } = formState
+		const { searchLabel, searchText } = formState
 		if ( !searchText.length ) {
 			flashError()
 			return

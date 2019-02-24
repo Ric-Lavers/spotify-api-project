@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   margin: $md;
-
+  
   .icon {
     cursor: pointer;
     text-align: center;
@@ -35,7 +35,7 @@
   }
 }
 @mixin container {
-  max-width: 300px;
+  // max-width: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -50,10 +50,15 @@
 };
 
 .player {
+
+  border: 1px solid aliceblue;
   @include container;
+  min-width: 360px;
+  max-width: 70vw;
   height: 100%;
   justify-content: flex-start;
   .audio-controls {
+    width: 100%;
     .audio-buttons {
       @include audio-buttons;
     }
@@ -67,14 +72,25 @@
 
 .results {
   @include container;
-  min-width: 300px;
   border-radius: 0 0 $md $md;
   text-align: left;
+
   font-size: 0.9em;
+}
+.next-icon__contatiner {
+  text-align: center;
+  .next-icon {
+    fill: $spotify-green;
+  }
+}
+.popularity-meter {
+  height: $md;
 }
 
 .playlists {
   @include container;
+  position: sticky;
+  top: 0;
   border-radius: 0 $md $md 0 ;
   text-align: left;
   .playlist__item {
