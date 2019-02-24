@@ -1,5 +1,5 @@
 import React from 'react';
-import { GlobalUiState } from './globalContext'
+import { GlobalUiState, GlobalContext } from './globalContext'
 
 import logo from './logo.svg';
 import hooks from './images/hooks.svg'
@@ -11,17 +11,26 @@ import Playlists from './components/playlists/Playlists'
 import { useToggle } from './hooks'
 import { ReactComponent as GithubLogo } from './images/github-logo.svg'
 
+const Section = ({ children }) => {
+  const [ state ] = React.useContext(GlobalContext)
+  console.log(state)
+  return <section style={{
+    backgroundImage: `url(${state.currentPlaying.image.src})`,
+    backgroundPosition: 'top',
+  }} className="App-header" >{ children }</section>
+}
 
 const App = () => {
   const [ show, toggleShow ] = useToggle(true)
   
   return (
     <GlobalUiState>
+      
       <div className="App">
       <a target="_blank" href="https://github.com/Ric-Lavers/spotify-api-project">
         <GithubLogo/>
       </a>
-      <section className="App-header">
+      <Section>
         
         <SpotifyLogin/>
 
@@ -33,10 +42,12 @@ const App = () => {
             <Player visable={show} />}
             <Playlists />
           </div>
-        </section>
+        </Section>
       </div>
     </GlobalUiState>
   );
 }
+
+
 
 export default App;

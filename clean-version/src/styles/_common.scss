@@ -16,6 +16,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+tr td {
+  border-bottom:1pt solid rgba(#fff, 0.6);
+}
+
 .header {
   opacity: $header-opacity;
   text-transform: uppercase;
@@ -46,3 +50,4 @@ code {
   50% { color: $error }
   100% { color: #fff }
 }
+

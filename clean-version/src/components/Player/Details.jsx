@@ -2,10 +2,11 @@ import React, { useContext, useState, useEffect } from 'react'
 import { CurrentPlayingContext } from '../../context'
 import { GlobalContext } from '../../globalContext'
 import { SpotifyHelpers } from '../../helpers'
-import { getAlbumById } from '../../api/spotify.js'
+import { getAlbumById, currentPlaying } from '../../api/spotify.js'
 
 
 const DetailsData = () => {
+
   const song = useContext(CurrentPlayingContext)
   if (!song) { return null }
   const {
@@ -13,6 +14,7 @@ const DetailsData = () => {
       name,
       artists,
       album,
+      uri,
       album: {
         id
       },
@@ -46,17 +48,27 @@ const DetailsData = () => {
       getAlbumById={handleGetAlbumById}
       name={name}
       artists={artists}
-      album={{...album, ...extraAlbumData}} />
+      album={{...album, ...extraAlbumData}}
+      uri={uri}
+    />
     )
 }
 
 
-const Details = React.memo(({ name, artists, album, getAlbumById }) => {
-  const dispatch = useContext(GlobalContext)[1]
-
+const Details = React.memo(({ uri, name, artists, album, getAlbumById }) => {
+  const [state, dispatch] = useContext(GlobalContext)
+  if ( album.images.length && state.currentPlaying.image.src !== album.images[0].url) {
+    dispatch({
+      type: 'currentPlaying/image',
+      payload: {
+        src: album.images[0].url,
+        alt: 'currently playing'
+      }
+    })
+  }
   return ( 
     <>
-      <h3>{name} - {album.name}</h3>
+      <h3 onClick={() => alert(uri)} >{name} - {album.name}</h3>
       <h4>
         <i>{ SpotifyHelpers.combineArtists(artists) }</i>
         {` ( ${album.release_date} )`}

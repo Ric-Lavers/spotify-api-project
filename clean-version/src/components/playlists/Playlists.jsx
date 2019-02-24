@@ -66,7 +66,7 @@ const Playlists = () => {
   return (
     <>
       <Fade big when={isHidden}>
-      <Slide duration={1000} right when={isHidden}>
+      <Slide  duration={1000} right when={isHidden}>
         <ul className="playlists" style={isHidden?{}:{display: 'none' } } >
           {playlists
             .filter(({id}) => selected.id === null ? true : id === selected.id  )
