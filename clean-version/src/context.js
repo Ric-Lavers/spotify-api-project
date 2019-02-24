@@ -2,7 +2,17 @@ import React, { createContext, useState, useEffect} from 'react';
 import { currentPlaying } from './api/spotify'
 
 export const CurrentPlayingContext = createContext(false) 
+export const SearchInputsContext = createContext({searchText: "nah", searchLabel: false}) 
 
+export const SearchInputsProvider = ({ children }) => {
+  const [searchInputs, setSearchInputs] = useState({searchText: "", searchLabel: false})
+  
+  return (
+    <SearchInputsContext.Provider value={[searchInputs, setSearchInputs]} >
+      {children}
+    </SearchInputsContext.Provider>
+  )
+}
 
 const CurrentlyPlaying = ({ children }) => {
   const [ song, setSong ] = useState(false)

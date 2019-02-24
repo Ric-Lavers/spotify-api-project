@@ -7,6 +7,7 @@ import SpotifyLogin from './components/SpotifyLogin';
 import Player from './components/Player/Player';
 import { useToggle } from './hooks'
 import { ReactComponent as GithubLogo } from './images/github-logo.svg'
+import { SearchInputsProvider } from './context'
 
 const App = () => {
   const [ show, toggleShow ] = useToggle(true)
@@ -24,7 +25,9 @@ const App = () => {
           onClick={toggleShow}/>
         <img src={hooks} alt="logo" className="App-logo hooks" onClick={toggleShow}/>
       {show &&
-        <Player visable={show} />}
+        <SearchInputsProvider>
+          <Player visable={show} />
+        </SearchInputsProvider>}
       </header>
     </div>
   );

@@ -17,17 +17,26 @@ export const handlePlay = (type, uri) => {
 }
 
 
-const SearchResults = ({ data, onPageChange }) => {
+const SearchResults = ({ data, onPageChange, addData }) => {
 	if ( !data  ) {
 		return  <span id="search-results" />
 	}
 	const [ type ] = types.map( t => t + "s" ).filter( t => data[t] )
 	
-	let { offset, limit, total, items } = data[type]
+	let { offset, limit, total, items, previous, next } = data[type]
 
 	return items.length ?(
 		<>
-			<Pagination count={items.length} limit={limit} total={total} offset={offset} onPageChange={onPageChange} />
+			<Pagination
+				count={items.length}
+				limit={limit}
+				total={total}
+				offset={offset}
+				onPageChange={onPageChange}
+				previous={previous}
+				next={next}
+				addData={addData}
+			/>
 			<ul className="results" id="search-results" >
 				{ items.map( ({ name, id, uri, popularity })  => (
 				<li className="results__item" key={id} onClick={() => handlePlay( type, uri ) } >

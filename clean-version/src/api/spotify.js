@@ -15,6 +15,17 @@ const isOk = res => {
     throw Error(res.statusText);
   }
 }
+
+export const fetchUrl = async url => {
+  try {
+    let res = await fetch(url, headers)
+    isOk(res)
+    return res.json()
+  } catch (error) {
+    console.error( error.message )
+  }
+}
+
 /* 
   * Params can be genre, year, artist, album, label
 

@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 
-import { useToggle, useHandleChange, useColorOnInput } from '../../hooks'
-import { CurrentPlayingContext } from '../../context'
+import { useHandleChange } from '../../hooks'
 
 import { searchSpotify } from '../../api/spotify.js'
 import { Utils } from '../../helpers'
@@ -20,13 +19,15 @@ const useType = () => {
 	return [ type, setAndStoreType ]
 }
 
-const Search = () => {
-	const mounted = useRef();
+const Search = ({ searchInputs }) => {
+	
 	const [ type, setType ]  = useType()
-	// const [ inputStyle, setColorOnInput ] = useColorOnInput()
-
-	const [ formState, setFormState ] =  useHandleChange({ type, searchText: "", searchLabel: false })
+	const [ formState, setFormState, replaceFormState ] =  useHandleChange({ type,  ...searchInputs })
 	const [ prevFormState, setLastSearchObject] = useState({})
+
+	useEffect(() => {
+		replaceFormState({...formState, ...searchInputs})
+	}, [ searchInputs ])
 
 	let [ resultsPageOffset, setResultsPageOffset ] = useState(0)
 	const [ isFetching, setFetching] = useState( false )
@@ -57,13 +58,24 @@ const Search = () => {
 		setFetching(true)
 		try {
 			const res = await searchSpotify( searchLabel ? `label:${searchText}`: searchText, type, {offset: resultsPageOffset, limit: 20} )
+
 			Utils.scrollIntoView("search-results")
 			setLastSearchObject(formState)
 			setData( res )
+
 		} catch (error) {
 			flashError()
 		}
 		setFetching(false)
+	}
+	
+	 async function addData( moreData ) {
+
+		moreData = await moreData
+
+		data[`${type}s`].items = [...data[`${type}s`].items, ...moreData[`${type}s`].items]
+		
+		setData( data )
 	}
 
 	const handlePageChange = offset => {
@@ -73,7 +85,7 @@ const Search = () => {
 
 	return(
 		<>
-			<form ref={mounted} onSubmit={handleSubmit} onChange={setFormState}>
+			<form onSubmit={handleSubmit} onChange={setFormState}>
 				<div  className="search-bar">
 					<input
 						name="searchText"
@@ -98,9 +110,13 @@ const Search = () => {
 					</select>
 				</div>
 			</form>
-			<Results type={type} data={data} onPageChange={handlePageChange} />
+			<Results addData={addData} type={type} data={data} onPageChange={handlePageChange} />
 		</>
 	)
+}
+
+Search.defaultProps = {
+	searchInputs: {}
 }
 
 

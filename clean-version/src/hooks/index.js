@@ -39,7 +39,7 @@ const useHandleChange = (inialState) => {
 		setFormState({ ...formState, [name]: value }) 
 	}
 
-	return [ formState, handleChange ]
+	return [ formState, handleChange, setFormState ]
 }
 
 const useWindowWidth = () => {

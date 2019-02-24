@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
+import { SearchInputsContext } from '../../context'
 import ControlButtons from './ControlButtons'
 import Progress from './Progress'
 import Details from './Details'
@@ -17,6 +18,7 @@ import CurrentlyPlaying from '../../context'
     *[x] on unsuccessful API button flashes fail color
 */
 const PlayerAPI = () => {
+  const [ searchInputs ] = useContext(SearchInputsContext)
 
   return  (
     <div className="player" >
@@ -27,7 +29,7 @@ const PlayerAPI = () => {
           <Progress />
         </CurrentlyPlaying>
       </div>
-      <Search/>
+      <Search searchInputs={searchInputs} />
     </div>
   )
 }
