@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 
-import { useToggle }from '../../hooks'
 import { CurrentPlayingContext } from '../../context'
 import Button from '../common/PlayerButton'
 import { controls } from '../../api/spotify'

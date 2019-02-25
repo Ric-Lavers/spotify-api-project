@@ -1,8 +1,10 @@
+@import url("https://use.typekit.net/rje0nrm.css");
 @import 'variables';
+@import 'breakpoints';
 @import 'common';
 @import 'App';
 
-@import './components/PlayerApi';
+@import './components/Player';
 
 
 .dev {
@@ -23,4 +25,13 @@
 			fill:black;
 		}
 	};
+}
+.arrow-icon {
+
+	cursor: pointer;
+	height: $lg; width: $lg;
+	fill: white;
+	text {
+		fill:black;
+	}
 }

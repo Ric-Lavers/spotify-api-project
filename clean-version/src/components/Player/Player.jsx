@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';  
 
+import { GlobalContext } from '../../globalContext'
+import CurrentlyPlaying from '../../context'
+import { useFlash } from '../../hooks'
 import ControlButtons from './ControlButtons'
 import Progress from './Progress'
 import Details from './Details'
-import Search from './Search'
-import CurrentlyPlaying from '../../context'
-
+import Search, { SearchResultsContext, types } from './Search'
+import SearchResults from './SearchResults'
 
 /* 
   * The Audio controls has the following features;
@@ -17,18 +19,30 @@ import CurrentlyPlaying from '../../context'
     *[x] on unsuccessful API button flashes fail color
 */
 const PlayerAPI = () => {
-
+  const [state, dispatch] = useContext(GlobalContext)
+  const [ data, setState ] = useState(null)
+  const [ touched, flashClass ] = useFlash('touched')
+  
   return  (
-    <div className="player" >
-      <div className="audio-controls" >
-        <CurrentlyPlaying>
-          <Details />
-          <ControlButtons/>
-          <Progress />
-        </CurrentlyPlaying>
+    <SearchResultsContext.Provider value={[data, setState]}>
+      <div className={`player`} >
+        <p className={`header pointer ${ touched }`}
+          onClick={() => {
+            flashClass()
+            dispatch({ type: 'playlist/hide' })}
+          }
+        >{state.playListIsHidden ? 'hide ' : 'show '}PLAYLISTS</p>
+        <div className="audio-controls" >
+          <CurrentlyPlaying>
+            <Details />
+            <ControlButtons/>
+            <Progress />
+          </CurrentlyPlaying>
+        </div>
+        <Search query={state.searchQuery} />
+        <SearchResults/>
       </div>
-      <Search/>
-    </div>
+    </SearchResultsContext.Provider>
   )
 }
 

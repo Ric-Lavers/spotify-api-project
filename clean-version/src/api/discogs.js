@@ -13,7 +13,7 @@ export const searchDiscogs = async(queryObj) => {
   }
 }
 
-export const labelReleases = async(labelId, queryObj: labelReleasesQueryObj ) => {
+export const labelReleases = async(labelId, queryObj ) => {
     const query = new URLSearchParams({ ...queryObj }).toString()
     try {
       let res= await fetch(`https://api.discogs.com/labels/${labelId}/releases?${query}`)
@@ -25,33 +25,33 @@ export const labelReleases = async(labelId, queryObj: labelReleasesQueryObj ) =>
   }
 
   
-type labelReleasesQueryObj = {
-  page: number,
-  per_page: number,
-}
+// type labelReleasesQueryObj = {
+//   page: number,
+//   per_page: number,
+// }
 
-type labelReleasesResponse = {
-  pagination: {
-    per_page: number,
-    pages: number,
-    page: number,
-    urls: {
-      last: string,
-      next: string
-    },
-    items: number
-  },
-  releases: Array<release>
-}
+// type labelReleasesResponse = {
+//   pagination: {
+//     per_page: number,
+//     pages: number,
+//     page: number,
+//     urls: {
+//       last: string,
+//       next: string
+//     },
+//     items: number
+//   },
+//   releases: Array<release>
+// }
 
-type release = {
-  artist: string,
-  catno: string,
-  format: string,
-  id: number,
-  resource_url: string,
-  status: string,
-  thumb: string,
-  title: string,
-  year: number
-}
+// type release = {
+//   artist: string,
+//   catno: string,
+//   format: string,
+//   id: number,
+//   resource_url: string,
+//   status: string,
+//   thumb: string,
+//   title: string,
+//   year: number
+// }

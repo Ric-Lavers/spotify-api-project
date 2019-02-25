@@ -22,26 +22,26 @@ const Progress = React.memo(({ progress_ms, duration_ms }) => {
   }
 
   let [ rangeValue, setRange ] = useState(findRange())
-  
-  const handleSeek = async (e) => {
 
-    await seek({
-      position_ms: Math.floor( e.target.value * 0.01 * duration_ms)
+  useEffect(() => {
+    setRange(findRange())
+  }, [progress_ms, duration_ms])
+  
+  const handleSeek = ({ target: { value } }) => {
+    seek({
+      position_ms: Math.floor( value * 0.01 * duration_ms)
     })
-    
   }
 
-  const handleChange = ({ target }) => setRange( target.value )
-  
   return (
     <input
-      onChange={handleChange}
+      onChange={({ target: { value } }) => setRange( value )}
       onMouseUp={handleSeek}
       className="icon seek"
       type="range"
       min='0'
       max='100'
-      value={rangeValue}
+      value={rangeValue.toString()}
     />
   )
 })
