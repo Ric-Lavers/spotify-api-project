@@ -10,9 +10,13 @@ const CurrentlyPlaying = ({ children }) => {
   const [ song, setSong ] = useState(CurrentPlayingInital)
 
   const setCurrentPlaying = async () => {
-    let playingNow = await currentPlaying()
-    // console.log(playingNow)
-    setSong(playingNow)
+    try {
+      let playingNow = await currentPlaying()
+      setSong(playingNow)  
+    } catch (error) {
+      
+    }
+    
   }
 
   useEffect(() => {
