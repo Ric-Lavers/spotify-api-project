@@ -68,6 +68,8 @@ class SpotifyLogin extends Component {
   }
 
   checkToken = async spotifyToken => {
+    const { onLogIn } = this.props;
+
     if (spotifyToken){
       this.setState({tokenPresent: true})
       try {// set User
@@ -77,9 +79,11 @@ class SpotifyLogin extends Component {
           : null
 
         this.setState({ tokenValid: true, display_name, display_picture, email, spotifyLink: external_urls.spotify })
+        onLogIn(true)
         return true
       } catch (error) { // timed out
         this.setState({ tokenValid: false })
+        onLogIn(false)
       }
      
     } else { // no token

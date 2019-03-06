@@ -11,42 +11,58 @@ import Playlists from './components/playlists/Playlists'
 import { useToggle } from './hooks'
 import { ReactComponent as GithubLogo } from './images/github-logo.svg'
 
-const Section = ({ children }) => {
-  const [ state ] = React.useContext(GlobalContext)
-  console.log(state)
-  return <section style={{
-    backgroundImage: `url(${state.currentPlaying.image.src})`,
-    backgroundPosition: 'top',
-  }} className="App-header" >{ children }</section>
-}
 
 const App = () => {
-  const [ show, toggleShow ] = useToggle(true)
+  
   
   return (
     <GlobalUiState>
-      
-      <div className="App">
-      <a target="_blank" href="https://github.com/Ric-Lavers/spotify-api-project">
-        <GithubLogo/>
-      </a>
-      <Section>
-        
-        <SpotifyLogin/>
-
-          <img src={logo} className="App-logo" alt="logo"
-            onClick={toggleShow}/>
-          <img src={hooks} alt="logo" className="App-logo hooks" onClick={toggleShow}/>
-          <div style={{ display: 'flex' }} >
-          {show &&
-            <Player visable={show} />}
-            <Playlists />
-          </div>
-        </Section>
-      </div>
+      <MainPage/>
     </GlobalUiState>
   );
 }
+
+const MainPage = () => {
+  const [ show, toggleShow ] = useToggle(true)
+  const [ state, dispatch ] = React.useContext(GlobalContext)
+
+  const handleSetLogin = payload => {
+    dispatch({
+      type: 'user/loginSpotify',
+      payload,
+    })
+  }
+
+  return (
+    <div className="App">
+      <a target="_blank" href="https://github.com/Ric-Lavers/spotify-api-project">
+        <GithubLogo/>
+      </a>
+      <section 
+        className="App-header"
+        style={{
+          backgroundImage: `url(${state.currentPlaying.image.src})`,
+          backgroundPosition: 'top',
+        }} >
+
+        <SpotifyLogin onLogIn={handleSetLogin}/>
+        <img src={logo} className="App-logo" alt="logo"
+          onClick={toggleShow}/>
+        <img src={hooks} alt="logo" className="App-logo hooks" onClick={toggleShow}/>
+        <div style={{ display: 'flex' }} >
+        {show && state.isSpotifyLoggedIn &&
+          <>
+          <Player visable={show} />
+          <Playlists />
+          </>}
+        </div>
+
+      </section>
+    </div>
+  )
+}
+
+
 
 
 
