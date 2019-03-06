@@ -15,6 +15,11 @@ const isOk = res => {
     throw Error(res.statusText);
   }
 }
+const is204 = res => {
+  if ( res.status === 204 ) {
+    throw Error("is 204");
+  }
+}
 
 export const getHref = async (href) => {
   try {
@@ -70,9 +75,8 @@ export const checkToken = async(
         'Content-Type': 'application/json'
       })
     })
-    if (!res.ok) {
-      throw Error(res.statusText);
-    }
+    isOk(res)
+   
     return res.json()
   } catch (error) {
     console.error( error.message )
@@ -197,7 +201,7 @@ export const getAlbumInfo = async(id) => {
     })
     return res.json()
   } catch (error) {
-    console.log(error.message)
+    console.debug(error.message)
     return error
   }
 }
@@ -208,7 +212,7 @@ export const getMePlaylists = async() => {
     isOk(res)
     return res.json()
   } catch (error) {
-    console.log(error.message)
+    console.debug(error.message)
   }
 }
 export const getPlaylistsTracks = async(listId) => {
@@ -217,7 +221,7 @@ export const getPlaylistsTracks = async(listId) => {
     isOk(res)
     return res.json()
   } catch (error) {
-    console.log(error.message)
+    console.debug(error.message)
     return error
   }
 }
@@ -239,7 +243,7 @@ export const getRecentlyPlayed = async(  ) => {
     }
     return res.json()
   } catch (error) {
-    console.log(error.message)
+    console.debug(error.message)
     return null
   }
 }
@@ -275,7 +279,7 @@ export const play = async ( body={}) => {
     })
     return true
   } catch (error) {
-    console.log(error.message)
+    console.debug(error.message)
     return error
   }
 }
@@ -293,30 +297,26 @@ export const seek = async ( queries={}) => {
     })
     return true
   } catch (error) {
-    console.log(error.message)
+    console.debug(error.message)
     return error
   }
 }
 
 export const currentPlaying = async () => {
   const spotifyToken = localStorage.spotifyToken
-  try {
+
     let res = await fetch(`${baseUrl}/me/player/currently-playing`,{
       headers: new Headers({
         'Authorization': `Bearer ${spotifyToken}`, 
         'Content-Type': 'application/json'
       })
     })
-    if ( !res.ok ) {
-      throw res
-    }
+    isOk(res)
+    is204(res)
+
     const data = res.json()
     return data
-  } catch (error) {
-    console.log(error.message)
-    checkToken(undefined, true)
-    return null
-  }
+ 
 }
 
 
