@@ -1,8 +1,8 @@
+//!DONT USE THIS VERSION USE SPOTIFY-LOGIN
 require('dotenv').config()
 let express = require('express')
 let request = require('request')
 let querystring = require('querystring')
-
 const authScope = [
 	'playlist-read-private',
 	'playlist-modify-private',

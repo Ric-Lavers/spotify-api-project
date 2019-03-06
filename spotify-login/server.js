@@ -103,7 +103,7 @@ app.get('/callback/discogs', async function(req, res){
 
 app.get('/login', function(req, res) {
   console.log( 'loggin in' )
-
+  // asks for the code
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -114,7 +114,8 @@ app.get('/login', function(req, res) {
 })
 
 app.get('/callback', function(req, res) {
-  console.log( 'callback' )
+  console.log( 'callback' , req.query)
+  //Recieves the code
   let code = req.query.code || null
   let authOptions = {
     url: 'https://accounts.spotify.com/api/token',
