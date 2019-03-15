@@ -2,9 +2,7 @@
 import React from 'react'
 import Select from 'react-select'
 
-import {trackKeys} from '../App'
-
-const SelectContainer = (props, {value, onChange}) => {
+const SelectContainer = (props, {options, value, onChange}) => {
   return (
     <div className="SelectContainer" >
       <Select 
@@ -16,9 +14,7 @@ const SelectContainer = (props, {value, onChange}) => {
           // onChange={onChange}
           // value={this.state.filters}
           // onChange={(data)=> this.setState({filters: data})}
-          options={
-            trackKeys.map( key => ({value: key, label: key}) )
-          }
+          options={options}
           {...props}
       />
     </div>

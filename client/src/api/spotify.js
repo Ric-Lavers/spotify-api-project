@@ -1,3 +1,35 @@
+//@flow
+
+const spotifyToken = localStorage.spotifyToken
+ 
+/* 
+  * Params can be genre, year, artist, album, label
+
+*/
+export const searchSpotify = async( query, type, params={} ) => {
+
+  const encodedParams = encodeURIComponent( Object.keys(params).map( key =>  `${key}:${params[key]}`).join(' '))
+  const search = new URLSearchParams({ q: query+encodedParams }).toString()
+
+  try {
+    console.log(`https://api.spotify.com/v1/search?${search}&type=${type}`)
+    let res = await fetch(`https://api.spotify.com/v1/search?${search}&type=${type}`, {
+      headers: new Headers({
+        'Authorization': `Bearer ${spotifyToken}`, 
+        'Content-Type': 'application/json'
+      })
+    })
+    return res.json()
+  } catch (error) {
+    console.log( error.message )
+    return error
+  }
+}
+/* sort by year
+albums.items.map(({artists, name, type, release_date}) => ({name, artists : artists[0].name, type,release_date})).sort((a,b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime()
+*/
+
+
 
 export const checkToken = async(spotifyToken) => {
   try {
@@ -47,7 +79,8 @@ export const getAlbumInfo = (spotifyToken, id) => {
   })
 } */
 
-export const getAlbumInfo = async(spotifyToken, id) => {
+export const getAlbumInfo = async( id) => {
+  let spotifyToken = localStorage.spotifyToken
   try {
     let res= await fetch(`https://api.spotify.com/v1/albums/${id}`,{
       headers: new Headers({
@@ -80,16 +113,11 @@ export const getUserPlaylists = async() => {
 export const getPlaylistsTracks = async(playlistId) => {
   const spotifyToken = localStorage.spotifyToken
   try {
-    let res= await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`,{
-      headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
-        'Content-Type': 'application/json'
-      })
-    })
+    let res= await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, headers)
+    isOK(res)
     return res.json()
   } catch (error) {
     console.log(error.message)
-    return error
   }
 }
 
@@ -141,7 +169,7 @@ export const getRecentlyPlayed = async(  ) => {
 
 export const controls = async (action, body={}) => {
   const spotifyToken = localStorage.spotifyToken
-  const method = action === 'play' ? 'PUT' : 'POST'
+  const method = ( action === 'play' || action === 'pause') ? 'PUT' : 'POST'
   try {
     await fetch(`https://api.spotify.com/v1/me/player/${action}`,{
       headers: new Headers({
@@ -157,6 +185,7 @@ export const controls = async (action, body={}) => {
     return error
   }
 }
+
 export const play = async ( body={}) => {
   const spotifyToken = localStorage.spotifyToken
   try {
@@ -192,16 +221,19 @@ export const seek = async ( queries={}) => {
     return error
   }
 }
+
 export const currentPlaying = async () => {
   const spotifyToken = localStorage.spotifyToken
   try {
     let res = await fetch(`https://api.spotify.com/v1/me/player/currently-playing`,{
       headers: new Headers({
+        method: 'GET',
         'Authorization': `Bearer ${spotifyToken}`, 
         'Content-Type': 'application/json'
       })
     })
-    return res.json()
+    console.log( "here" )
+    return res
   } catch (error) {
     console.log(error.message)
     return error
@@ -221,6 +253,14 @@ export default {
   getUserPlaylists,
   getPlaylistsTracks,
   getRecentlyPlayed,
-  
+  currentPlaying,
   // handleGetPlaylistTrackIds,
 }
+
+// href: string
+// // items: (2) [{…}, {…}]
+// limit: number
+// next: null
+// offset: number
+// previous: null
+// total: number
