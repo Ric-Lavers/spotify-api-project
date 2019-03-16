@@ -72,7 +72,7 @@ const Details = React.memo(({ uri, name, artists, album, id, setSaved }) => {
     })
     dispatch({
       type: 'currentPlaying/details',
-      payload: { uri, name, artists, album, id, setSaved }
+      payload: { uri, name, artists, album, id }
     })
   }
 

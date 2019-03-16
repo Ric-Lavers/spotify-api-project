@@ -84,7 +84,7 @@ const Playlists = () => {
 
   const [playlists, setPlaylists] = useState([])
   const [selected, setSelected] = useState({id: null, uri: null})
-  const isHidden = useContext(GlobalContext)[0].visable.playlist
+  const isHidden = useContext(GlobalContext)[0].visible.playlist
   const currentPlaying = useContext(GlobalContext)[0].currentPlaying.details
 
   useEffect(() => {
@@ -92,12 +92,14 @@ const Playlists = () => {
   }, [])
 
   const fetchMePlaylists = async () => {
-    const {items} = await getMePlaylists()
-    setPlaylists(items)
+    try {
+      const {items} = await getMePlaylists()
+      setPlaylists(items)
+    } catch (e) {}
   }
 
   return (
-    <>
+    <div className="sticky" >
       <Fade big when={isHidden}>
       <Slide  duration={1000} right when={isHidden}>
         <ul className="playlists" style={isHidden?{}:{display: 'none' } } >
@@ -125,7 +127,7 @@ const Playlists = () => {
         </ul>
       </Slide>
       </Fade>
-    </>
+    </div>
   )
 }
 

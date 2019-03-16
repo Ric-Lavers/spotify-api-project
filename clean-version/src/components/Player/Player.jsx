@@ -6,37 +6,45 @@ import { useFlash } from '../../hooks'
 import ControlButtons from './ControlButtons'
 import Progress from './Progress'
 import Details from './Details'
-import Search, { SearchResultsContext, types } from './Search'
+import Search, { SearchResultsContext } from './Search'
 import SearchResults from './SearchResults'
 import { Up, Down } from '../../images/custom-svgs/arrows';
 
+
+const noBorderTop = {
+  borderTopLeftRadius: 0,
+  borderTopRightRadius: 0,
+}
 
 /* 
   * 
 */
 const PlayerAPI = () => {
-  const [state, dispatch] = useContext(GlobalContext)
-  const [ data, setState ] = useState(null)
+  const [state, dispatch, { fetchDevices }] = useContext(GlobalContext)
+
   const [ touched, flashClass ] = useFlash('touched')
+
+console.log(state.visible.devices)
   return  (
-    <SearchResultsContext.Provider value={[data, setState]}>
-      <div className={`player`} >
+
+      <div className='player' style={state.visible.devices? noBorderTop:{}} >
         <ActionButton
           Icon={Up}
           label='DEVICES'
           action={() => {
-            dispatch({ type: 'visable/toggle-playlist' })
+            dispatch({ type: 'visible/toggle-devices' })
+            fetchDevices()
           }}
-          className="devices pointer"
+          className="device-button pointer"
         />
 
-        <p className={`header pointer ${ touched }`}
-          onClick={() => {
+        <p className={`header pointer ${ touched }`}>
+          <span onClick={() => {
             flashClass()
-            dispatch({ type: 'visable/toggle-playlist' })}
-          }
-        >
-          {state.visable.playlist ? 'hide ' : 'show '}PLAYLISTS
+            dispatch({ type: 'visible/toggle-playlist' })}
+          } >
+          {state.visible.playlist ? 'hide ' : 'show '}PLAYLISTS
+          </span>
         </p>
 
         <div className="audio-controls" >
@@ -47,9 +55,8 @@ const PlayerAPI = () => {
           </CurrentlyPlaying>
         </div>
         <Search query={state.searchQuery} />
-        <SearchResults/>
       </div>
-    </SearchResultsContext.Provider>
+
   )
 }
 

@@ -396,12 +396,15 @@ export const removeTracks = async ids => {
 }
 
 export const getDevices = async () => {
-  
-  let res = fetch(`${baseUrl}me/player/devices`, headers)
-  isOk(res)
-  is204(res)
-
-  return res.json()
+  try {
+    let res = await fetch(`${baseUrl}/me/player/devices`, headers)
+    isOk(res)
+    is204(res)
+    return res.json()
+  } catch (error) {
+    console.error(error)
+    return []
+  }
 }
 
 export default {

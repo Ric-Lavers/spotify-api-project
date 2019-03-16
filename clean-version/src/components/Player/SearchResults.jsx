@@ -7,7 +7,7 @@ import { SpotifyHelpers } from '../../helpers'
 import { ReactComponent as ArrowDown} from '../../images/custom-svgs/arrow-down.svg'
 import PopularityMeter from '../../images/custom-svgs/PopularityMeter'
 import Pagination from '../common/Pagination'
-import { play, getHref,getSavedState, getFollowingState, follow, unFollow, getAlbums, saveTracks, removeTracks } from '../../api/spotify'
+import { play, getHref, getSavedState, getFollowingState, follow, unFollow, getAlbums, saveTracks, removeTracks } from '../../api/spotify'
 import { types } from './Search'
 
 
@@ -256,7 +256,7 @@ const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
 		{items.map( ({ artists, album: {name: albumName, release_date}, name, id, uri, popularity, saved, type })  => {
 				return (
 					<tr className="results__item" key={id} >
-						<td onClick={() => handlePlay( 'tracks', uri )} >{name}</td>
+						<td className="pointer" onClick={() => handlePlay( 'tracks', uri )} >{name}</td>
 						<td>{SpotifyHelpers.combineArtists(artists)}</td>
 						<td>{albumName}</td>
 						<td className="hide-up-sm" ><PopularityMeter className="popularity-meter" popularity={popularity} /></td>
@@ -300,7 +300,7 @@ const ArtistTable = ({ items, followArtist, toggleFollowAll }) => (
 
 				return(
 					<tr className="results__item" key={id} >
-						<td onClick={() => handlePlay( 'artists', uri ) } >{name}</td>					
+						<td className="pointer" onClick={() => handlePlay( 'artists', uri ) } >{name}</td>					
 						<td><PopularityMeter className="popularity-meter" popularity={popularity} /></td>
 						<td className="hide-up-md" >{followers.total.toString()}</td>
 						<td style={{ textAlign: 'center' }} >
@@ -334,7 +334,7 @@ const AlbumTable = ({ items }) => (
 
 				return(
 					<tr className="results__item" key={id} >
-						<td onClick={() => handlePlay( 'artists', uri ) } >{name}</td>					
+						<td className="pointer" onClick={() => handlePlay( 'artists', uri ) } >{name}</td>					
 						<td>{SpotifyHelpers.combineArtists(artists)}</td>
 						<td>{label}</td>
 						<td className="hide-up-sm" ><PopularityMeter className="popularity-meter" popularity={popularity} /></td>
@@ -362,7 +362,7 @@ const SearchResults = ({ type, next, items, href, addData, followArtist, toggleF
 	}
 
 	return (
-		<div className="results" >
+		<div className="results results-area" >
 			{/* <Pagination count={items.length} limit={limit} total={total} offset={offset} onPageChange={onPageChange} /> */}
 	{type === 'artists' &&
 			<ArtistTable items={items} followArtist={followArtist} toggleFollowAll={toggleFollowAll} />  }

@@ -5,6 +5,9 @@
 @import 'App';
 
 @import './components/Player';
+@import './components/Devices';
+@import './components/Playlists';
+@import './components/Results';
 
 
 .dev {
@@ -35,3 +38,29 @@
 		fill:black;
 	}
 }
+
+.app-grid {
+	padding: $lg;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-areas:
+	"... device  ..."
+	"... player  playlists"
+	"results results  playlists";
+}
+
+.device-area {
+	grid-area: device;
+}
+.player-area {
+	grid-area: player;
+}
+.results-area {
+	grid-area: results;
+}
+.playlists-area {
+	position: sticky;
+  top: 0;
+	grid-area: playlists;
+}
+

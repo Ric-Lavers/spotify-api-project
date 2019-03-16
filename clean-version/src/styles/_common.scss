@@ -5,6 +5,21 @@
   color: $spotify-green;
 }
 
+.sm-txt {
+  font-size: $md;
+}
+@mixin no-list-style {
+  ul {
+		display: block;
+		list-style-type: none;
+		padding-inline-start: 0;
+		margin: 0;
+	}
+	li {
+		display: block;
+	}
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -32,6 +47,9 @@ input[type='checkbox'] {
 }
 @mixin font-sm {
   font-size: calc(10px + 1vmin);
+}
+@mixin font-xs {
+  font-size: calc(10px + 0.5vmin);
 }
 
 .header {

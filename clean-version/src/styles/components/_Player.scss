@@ -57,9 +57,9 @@
   height: 100%;
   justify-content: flex-start;
   position: relative;
-  .devices {
+  .device-button {
     position: absolute;
-    @include font-sm;
+    @include font-xs;
     svg {
       height: 0.8em;
       fill: $spotify-black;
@@ -78,45 +78,4 @@
   }
   @import 'search-bar';
 
-}
-
-
-.results {
-  @include container;
-  border-radius: 0 0 $md $md;
-  text-align: left;
-
-  font-size: 0.9em;
-}
-.next-icon__contatiner {
-  text-align: center;
-  .next-icon {
-    fill: $spotify-green;
-  }
-}
-.popularity-meter {
-  height: $md;
-}
-
-.playlists {
-  @include container;
-  position: sticky;
-  top: 0;
-  border-radius: 0 $md $md 0 ;
-  text-align: left;
-  .playlist__item {
-    cursor: pointer;
-    list-style: none;
-    padding-bottom: $sm;
-    font-weight: bolder;
-  }
-  .playlist__song {
-    cursor: pointer;
-    font-size: 0.8em;
-  }
-  .playlist__song:hover {
-    color: $spotify-green
-  }
-  border: 1px solid rgba(white, 0.4);
-  border-left-color: rgba(#fff, 0);
 }
