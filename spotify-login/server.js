@@ -11,10 +11,54 @@ let querystring = require('querystring')
 
 let app = express()
 
-const REDIRECT_URI = process.env.REDIRECT_URI
+// set dev and prod variables below
+const REDIRECT_URI = process.env.ENV ==='dev'
+  ? 'http://localhost:4000/callback'
+  : process.env.REDIRECT_URI
+console.log(process.env.ENV, REDIRECT_URI, process.env.REDIRECT_URI)
 
 const DISCOGS_CONSUMER_KEY= process.env.DISCOGS_CONSUMER_KEY
 const DISCOGS_CONSUMER_SECRET= process.env.DISCOGS_CONSUMER_SECRET
+
+/* SPOTIFY */
+
+app.get('/login', function(req, res) {
+  console.log( 'loggin in' )
+  // asks for the code
+  res.redirect('https://accounts.spotify.com/authorize?' +
+    querystring.stringify({
+      response_type: 'code',
+      client_id: process.env.SPOTIFY_CLIENT_ID,
+      scope: allPermisions,
+      redirect_uri: REDIRECT_URI
+    }))
+})
+
+app.get('/callback', function(req, res) {
+  console.log( 'callback' , req.query)
+  //Recieves the code
+  let code = req.query.code || null
+  let authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      code: code,
+      redirect_uri: REDIRECT_URI,
+      grant_type: 'authorization_code'
+    },
+    headers: {
+      'Authorization': 'Basic ' + (new Buffer(
+        process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET
+      ).toString('base64'))
+    },
+    json: true
+  }
+  request.post(authOptions, function(error, response, body) {
+    var access_token = body.access_token
+    let uri = process.env.ENV === 'dev' ? 'http://localhost:3000' : proccess.env.FRONTEND_URI
+    res.redirect(uri + '?access_token=' + access_token)
+  })
+})
+
 /* DISCOGS */
 
 
@@ -97,46 +141,7 @@ app.get('/callback/discogs', async function(req, res){
   );
   console.log({token})
 });
-
-
-/* SPOTIFY */
-
-app.get('/login', function(req, res) {
-  console.log( 'loggin in' )
-  // asks for the code
-  res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      response_type: 'code',
-      client_id: process.env.SPOTIFY_CLIENT_ID,
-      scope: allPermisions,
-      redirect_uri: REDIRECT_URI
-    }))
-})
-
-app.get('/callback', function(req, res) {
-  console.log( 'callback' , req.query)
-  //Recieves the code
-  let code = req.query.code || null
-  let authOptions = {
-    url: 'https://accounts.spotify.com/api/token',
-    form: {
-      code: code,
-      redirect_uri: REDIRECT_URI,
-      grant_type: 'authorization_code'
-    },
-    headers: {
-      'Authorization': 'Basic ' + (new Buffer(
-        process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET
-      ).toString('base64'))
-    },
-    json: true
-  }
-  request.post(authOptions, function(error, response, body) {
-    var access_token = body.access_token
-    let uri = process.env.FRONTEND_URI || 'http://localhost:3000'
-    res.redirect(uri + '?access_token=' + access_token)
-  })
-})
+/* end Discogs */
 
 let port = process.env.PORT || 4000
 console.log(`Listening on port ${port}. Go /login to initiate authentication flow.`)
