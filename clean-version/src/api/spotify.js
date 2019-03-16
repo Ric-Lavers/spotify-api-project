@@ -1,7 +1,7 @@
 //@flow
 import { LOGIN_URL } from  '../helpers'
 
-const spotifyToken = localStorage.spotifyToken
+const spotifyToken = sessionStorage.spotifyToken
 const baseUrl = 'https://api.spotify.com/v1'
 const headers = {
   headers: new Headers({
@@ -65,7 +65,7 @@ export const getMe = async() => {
 
 
 export const checkToken = async(
-  spotifyToken=localStorage.spotifyToken,
+  spotifyToken=sessionStorage.spotifyToken,
   redirect=false
   ) => {
   try {
@@ -191,7 +191,7 @@ export const getAlbums = async (ids) => {
 }
 
 export const getAlbumInfo = async(id) => {
-  let spotifyToken = localStorage.spotifyToken
+  let spotifyToken = sessionStorage.spotifyToken
   try {
     let res= await fetch(`${baseUrl}/albums/${id}`,{
       headers: new Headers({
@@ -227,7 +227,7 @@ export const getPlaylistsTracks = async(listId) => {
 }
 
 export const getRecentlyPlayed = async(  ) => {
-  const spotifyToken = localStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken
   try {
     let res= await fetch(`${baseUrl}/me/player/recently-played`,{
       headers: new Headers({
@@ -249,7 +249,7 @@ export const getRecentlyPlayed = async(  ) => {
 }
 
 export const controls = async (action, body={}) => {
-  const spotifyToken = localStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken
   const method = ( action === 'play' || action === 'pause') ? 'PUT' : 'POST'
   try {
     const res = await fetch(`${baseUrl}/me/player/${action}`,{
@@ -284,7 +284,7 @@ export const play = async ( body={}) => {
   }
 }
 export const seek = async ( queries={}) => {
-  const spotifyToken = localStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken
   let query = new URLSearchParams(queries).toString()
   try {
     await fetch(`${baseUrl}/me/player/seek?${query}`,{
@@ -303,7 +303,7 @@ export const seek = async ( queries={}) => {
 }
 
 export const currentPlaying = async () => {
-  const spotifyToken = localStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken
 
     let res = await fetch(`${baseUrl}/me/player/currently-playing`,{
       headers: new Headers({
