@@ -160,7 +160,7 @@ export const getSavedState = async(ids, type) => {
     return
   }
 
-  let query = new URLSearchParams({ids: ids.join(), type}).toString()
+  let query = new URLSearchParams({ids: [].concat(ids).join(), type}).toString()
   // type=${type}&ids
   try {
     let res = await fetch(`${baseUrl}/me/tracks/contains?${query}`, headers)
@@ -337,8 +337,31 @@ export const currentPlaying = async () => {
  
 }
 
+export const getMeSavedTracks = async () => {
+  
+  try {
+    let res = await fetch(`${baseUrl}/me/tracks?limit=50`,headers)
+    isOk(res)
+
+    return res.json()
+  } catch (err) {
+    return []
+  }
+}
+export const getMeSavedAlbums = async () => {
+  
+  try {
+    let res = await fetch(`${baseUrl}/me/albums`,headers)
+    isOk(res)
+
+    return res.json()
+  } catch (err) {
+    return []
+  }
+}
+
 export const saveTracks = async ids => {
-  if ( ids.length > 50 ) {
+  if ( [].concat(ids).length > 50 ) {
     throw Error('max of 50 tracks can be saved at a time')
   }
   try {
@@ -400,6 +423,8 @@ export default {
   saveTracks,
   removeTracks,
   getDevices,
+  getMeSavedTracks,
+  getMeSavedAlbums,
 }
 
 // href: string

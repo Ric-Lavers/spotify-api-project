@@ -10,6 +10,7 @@ import Search, { SearchResultsContext, types } from './Search'
 import SearchResults from './SearchResults'
 import { Up, Down } from '../../images/custom-svgs/arrows';
 
+
 /* 
   * 
 */
@@ -17,24 +18,25 @@ const PlayerAPI = () => {
   const [state, dispatch] = useContext(GlobalContext)
   const [ data, setState ] = useState(null)
   const [ touched, flashClass ] = useFlash('touched')
-  
   return  (
     <SearchResultsContext.Provider value={[data, setState]}>
       <div className={`player`} >
         <ActionButton
           Icon={Up}
           label='DEVICES'
-          action={() => {}}
-          className="devices"
+          action={() => {
+            dispatch({ type: 'visable/toggle-playlist' })
+          }}
+          className="devices pointer"
         />
 
         <p className={`header pointer ${ touched }`}
           onClick={() => {
             flashClass()
-            dispatch({ type: 'playlist/hide' })}
+            dispatch({ type: 'visable/toggle-playlist' })}
           }
         >
-          {state.playListIsHidden ? 'hide ' : 'show '}PLAYLISTS
+          {state.visable.playlist ? 'hide ' : 'show '}PLAYLISTS
         </p>
 
         <div className="audio-controls" >
@@ -50,6 +52,7 @@ const PlayerAPI = () => {
     </SearchResultsContext.Provider>
   )
 }
+
 
 const ActionButton = ({ Icon, label, action, className }) => (
   <div className={`action ${className}`}  onClick={action}>

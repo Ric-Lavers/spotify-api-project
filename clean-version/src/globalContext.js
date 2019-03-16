@@ -6,7 +6,11 @@ import { getMe , currentPlaying} from './api/spotify';
 const initalState = {
   isSpotifyLoggedIn: false,
   userData: {},
-  playListIsHidden: false,
+  playListIsHidden: false, //TODO refactor to visable object
+  visable: {
+    playlist: false,
+    devices: false,
+  },
   searchQuery: {
     type: '',
     searchText: "",
@@ -16,7 +20,8 @@ const initalState = {
     image:{
       src: "",
       alt: ""
-    }
+    },
+    details: {} 
   }
 }
 
@@ -30,11 +35,21 @@ function reducer(state, action) {
       return ({...state, userData: action.payload})
     case 'playlist/hide':
       return {...state, playListIsHidden: !state.playListIsHidden }
+    case 'visable/toggle-devices':
+      return {...state, visable: {...state.visable, devices: !state.visable.devices } }
+    case 'visable/toggle-playlist':
+      return {...state, visable: {...state.visable, playlist: !state.visable.playlist } }
     case 'search/set':
       return {...state, searchQuery: {...state.searchQuery, ...action.payload} }
     case 'currentPlaying/image':
       return {...state, currentPlaying: {
+        ...state.currentPlaying,
         image: action.payload
+      }}
+    case 'currentPlaying/details':
+      return {...state, currentPlaying: {
+        ...state.currentPlaying,
+        details: action.payload
       }}
     default:
       break;

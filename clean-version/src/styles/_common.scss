@@ -1,6 +1,9 @@
 .flex {
 	display: flex;
 }
+.green {
+  color: $spotify-green;
+}
 
 body {
   margin: 0;
@@ -62,3 +65,39 @@ input[type='checkbox'] {
   100% { color: #fff }
 }
 
+/* SfCheck */
+.sfCheck {
+  display: inline;
+  margin: 0 $md;
+  position: relative;
+  width: $lg;height:$lg;
+  text-align: center;
+  
+  .icon {
+    position: absolute;
+    opacity: 0.6;
+    fill: none;
+    stroke: white;
+    width: $lg;
+  }
+  .sfCheck_tick {
+    stroke: $spotify-green;
+    opacity: 1;
+  }
+  .sfCheck_cross {
+    opacity: 0;
+  }
+  
+}
+
+.sfCheck:hover {
+  .sfCheck_tick {
+    opacity: 0;
+  }
+  .sfCheck_cross {
+    opacity: 1;
+  }
+  .sfCheck_plus {
+    opacity: 1;
+  }
+}
