@@ -51,7 +51,7 @@ class SpotifyLogin extends Component {
   }
 
   componentDidMount() {
-    const { spotifyToken } = localStorage;
+    const { spotifyToken } = sessionStorage;
     
     this.checkToken(spotifyToken)
     this.setToken()
@@ -62,7 +62,7 @@ class SpotifyLogin extends Component {
     if ( address.includes('access_token=') ) {
       let token=  new URLSearchParams(window.location.search).get('access_token')
 
-      localStorage.spotifyToken = token
+      sessionStorage.spotifyToken = token
       window.location.replace( window.origin )
     }
   }
@@ -88,7 +88,7 @@ class SpotifyLogin extends Component {
      
     } else { // no token
       this.setState({tokenPresent: false})
-      window.location.href = LOGIN_URL
+      // window.location.href = LOGIN_URL
     } 
   }
 

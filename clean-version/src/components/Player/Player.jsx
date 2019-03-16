@@ -8,15 +8,10 @@ import Progress from './Progress'
 import Details from './Details'
 import Search, { SearchResultsContext, types } from './Search'
 import SearchResults from './SearchResults'
+import { Up, Down } from '../../images/custom-svgs/arrows';
 
 /* 
-  * The Audio controls has the following features;
-    *[x] play / pause
-    *[x] previous / next 
-    * scrub track
-    * show track position
-    *[x] on successful API button flashes success color
-    *[x] on unsuccessful API button flashes fail color
+  * 
 */
 const PlayerAPI = () => {
   const [state, dispatch] = useContext(GlobalContext)
@@ -26,12 +21,22 @@ const PlayerAPI = () => {
   return  (
     <SearchResultsContext.Provider value={[data, setState]}>
       <div className={`player`} >
+        <ActionButton
+          Icon={Up}
+          label='DEVICES'
+          action={() => {}}
+          className="devices"
+        />
+
         <p className={`header pointer ${ touched }`}
           onClick={() => {
             flashClass()
             dispatch({ type: 'playlist/hide' })}
           }
-        >{state.playListIsHidden ? 'hide ' : 'show '}PLAYLISTS</p>
+        >
+          {state.playListIsHidden ? 'hide ' : 'show '}PLAYLISTS
+        </p>
+
         <div className="audio-controls" >
           <CurrentlyPlaying>
             <Details />
@@ -46,8 +51,11 @@ const PlayerAPI = () => {
   )
 }
 
-// {!!currentSong 
-//   &&  <SongDetails details={currentSong.item} />
-//   }
+const ActionButton = ({ Icon, label, action, className }) => (
+  <div className={`action ${className}`}  onClick={action}>
+    <Icon /> {label}
+  </div>
+)
+
 
 export default PlayerAPI;

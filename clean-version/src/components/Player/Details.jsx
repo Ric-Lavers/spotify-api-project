@@ -79,7 +79,7 @@ const Details = React.memo(({ uri, name, artists, album, getAlbumById }) => {
           type:'search/set',
           payload: {
             type: 'artist',
-            searchText: album.label,
+            searchText: album.label.replace(' Recordings', ''),
             searchLabel: true,
           }}
         )}

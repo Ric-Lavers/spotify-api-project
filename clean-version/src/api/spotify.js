@@ -1,7 +1,8 @@
 //@flow
 import { LOGIN_URL } from  '../helpers'
+import { async } from 'q';
 
-const spotifyToken = localStorage.spotifyToken
+const spotifyToken = sessionStorage.spotifyToken
 const baseUrl = 'https://api.spotify.com/v1'
 const headers = {
   headers: new Headers({
@@ -65,7 +66,7 @@ export const getMe = async() => {
 
 
 export const checkToken = async(
-  spotifyToken=localStorage.spotifyToken,
+  spotifyToken=sessionStorage.spotifyToken,
   redirect=false
   ) => {
   try {
@@ -153,6 +154,23 @@ export const getFollowingState = async(ids, type) => {
   }
 }
 
+export const getSavedState = async(ids, type) => {
+  if ( type !== 'track') {
+    console.error(type, 'bad type')
+    return
+  }
+
+  let query = new URLSearchParams({ids: ids.join(), type}).toString()
+  // type=${type}&ids
+  try {
+    let res = await fetch(`${baseUrl}/me/tracks/contains?${query}`, headers)
+    isOk(res)
+    return res.json()
+  } catch (error) {
+    console.error(error.message)
+  }
+}
+
 export const getPlaylistInfo = async(spotifyToken, ids) => {
   try {
     let res = await fetch(`${baseUrl}/tracks/?ids=${ids.join()}`, {
@@ -191,7 +209,7 @@ export const getAlbums = async (ids) => {
 }
 
 export const getAlbumInfo = async(id) => {
-  let spotifyToken = localStorage.spotifyToken
+  let spotifyToken = sessionStorage.spotifyToken
   try {
     let res= await fetch(`${baseUrl}/albums/${id}`,{
       headers: new Headers({
@@ -227,7 +245,7 @@ export const getPlaylistsTracks = async(listId) => {
 }
 
 export const getRecentlyPlayed = async(  ) => {
-  const spotifyToken = localStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken
   try {
     let res= await fetch(`${baseUrl}/me/player/recently-played`,{
       headers: new Headers({
@@ -249,7 +267,7 @@ export const getRecentlyPlayed = async(  ) => {
 }
 
 export const controls = async (action, body={}) => {
-  const spotifyToken = localStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken
   const method = ( action === 'play' || action === 'pause') ? 'PUT' : 'POST'
   try {
     const res = await fetch(`${baseUrl}/me/player/${action}`,{
@@ -284,7 +302,7 @@ export const play = async ( body={}) => {
   }
 }
 export const seek = async ( queries={}) => {
-  const spotifyToken = localStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken
   let query = new URLSearchParams(queries).toString()
   try {
     await fetch(`${baseUrl}/me/player/seek?${query}`,{
@@ -303,7 +321,7 @@ export const seek = async ( queries={}) => {
 }
 
 export const currentPlaying = async () => {
-  const spotifyToken = localStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken
 
     let res = await fetch(`${baseUrl}/me/player/currently-playing`,{
       headers: new Headers({
@@ -319,6 +337,49 @@ export const currentPlaying = async () => {
  
 }
 
+export const saveTracks = async ids => {
+  if ( ids.length > 50 ) {
+    throw Error('max of 50 tracks can be saved at a time')
+  }
+  try {
+    let res = await fetch(`${baseUrl}/me/tracks`,{
+      ...headers,
+      method: 'PUT',
+      body: JSON.stringify({ids: [].concat(ids)})
+      })
+    isOk(res)
+
+    return true
+  } catch (err) {
+    return false
+  }
+}
+export const removeTracks = async ids => {
+  if ( ids.length > 50 ) {
+    throw Error('max of 50 tracks can be saved at a time')
+  }
+  try {
+    let res = await fetch(`${baseUrl}/me/tracks`,{
+      ...headers,
+      method: 'DELETE',
+      body: JSON.stringify({ids: [].concat(ids)})
+      })
+    isOk(res)
+
+    return true
+  } catch (err) {
+    return false
+  }
+}
+
+export const getDevices = async () => {
+  
+  let res = fetch(`${baseUrl}me/player/devices`, headers)
+  isOk(res)
+  is204(res)
+
+  return res.json()
+}
 
 export default {
   getMe,
@@ -335,7 +396,10 @@ export default {
   seek,
   currentPlaying,
   getFollowingState,
-  
+  getSavedState,
+  saveTracks,
+  removeTracks,
+  getDevices,
 }
 
 // href: string

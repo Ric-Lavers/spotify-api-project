@@ -8,7 +8,7 @@ export const searchDiscogs = async(queryObj) => {
     let res= await fetch(`https://api.discogs.com/database/search?${query}`)
     return res.json()
   } catch (error) {
-    return error
+    throw error
   }
 }
 
@@ -18,7 +18,7 @@ export const labelReleases = async(labelId, queryObj ) => {
       let res= await fetch(`https://api.discogs.com/labels/${labelId}/releases?${query}`)
       return res.json()
     } catch (error) {
-      return error
+      throw error
     }
   }
 

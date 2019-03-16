@@ -19,6 +19,17 @@ code {
 tr td {
   border-bottom:1pt solid rgba(#fff, 0.6);
 }
+input[type='checkbox'] {
+  min-width: 16px;
+  min-height: 16px;
+}
+
+@mixin font-md {
+  font-size: calc(10px + 2vmin);
+}
+@mixin font-sm {
+  font-size: calc(10px + 1vmin);
+}
 
 .header {
   opacity: $header-opacity;
