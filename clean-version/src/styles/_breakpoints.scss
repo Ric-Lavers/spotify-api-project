@@ -1,3 +1,48 @@
+// Breakpoint options. Widths in PX to be mapped to the named sizes below.
+// Generally you shouldn't need to change the defaults
+$bp-xxs-min: 359 !default;
+$bp-xs-min: 480 !default;
+$bp-sm-min: 640 !default;
+$bp-md-min: 768 !default;
+$bp-lg-min: 1024 !default;
+$bp-xl-min: 1244 !default;
+$bp-xxl-min: 1410 !default;
+
+
+
+
+
+
+
+.app-grid {
+	padding: $lg;
+	display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-auto-rows: minmax(auto, auto);
+	grid-template-areas:
+	"... device  ..."
+	"stats player  playlists"
+	"results results  playlists";
+}
+
+.device-area {
+	grid-area: device;
+}
+.player-area {
+	grid-area: player;
+}
+.results-area {
+	grid-area: results;
+}
+.stats-area {
+	grid-area: stats;
+}
+.playlists-area {
+	position: sticky;
+  top: 0;
+	grid-area: playlists;
+}
+
 @media (max-width: 0px) {
   .hide-up-xs {
     display: none;
@@ -10,12 +55,21 @@
   .hide-xs {
     display: none;
   }
+
 }
 
 @media (max-width: 600px) {
   .hide-up-sm {
     display: none;
   }
+  // .app-grid {
+  //   grid-template-columns: 1fr;
+  //   grid-template-areas:
+  //   "device"
+  //   "playlists"
+  //   "player"
+  //   "results";
+  // }
 }
 @media (min-width: 600px) {
   .sm {
@@ -30,6 +84,15 @@
   .hide-up-md {
     display: none;
   }
+  .app-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-rows: minmax(auto, 550px);
+    grid-template-areas:
+    "... device  ..."
+    "... player  playlists"
+    "... results  playlists"
+    "... results  playlists";
+  }
 }
 @media (min-width: 960px) {
   .md {
@@ -38,6 +101,7 @@
   .hide-md {
     display: none;
   }
+
 }
 
 @media (max-width: 1280px) {

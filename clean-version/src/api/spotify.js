@@ -406,6 +406,50 @@ export const getDevices = async () => {
     return []
   }
 }
+/**
+ * gets the top tracks/ artists
+ * *time_range*
+ * 'long_term', // years
+    'medium_term', // approx 6months (Default)
+    'short_term', // approx 4weeks
+ * max limit = 50
+ * 
+ */ 
+export const getTopTracks = async (query={}) => {
+  query =  new URLSearchParams({ limit: 50, time_range: 'medium_term', ...query }).toString()
+
+  let res = await fetch(`${baseUrl}/me/top/tracks?${query}`, headers)
+  isOk(res)
+  is204(res)
+  return res.json()
+}
+export const getTopArtists = async (query={}) => {
+  query =  new URLSearchParams({ limit: 50, time_range: 'medium_term', ...query }).toString()
+
+  let res = await fetch(`${baseUrl}/me/top/artists?${query}`, headers)
+  isOk(res)
+  is204(res)
+  return res.json()
+}
+/**
+ * Get Audio Features 
+ * https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/
+ * @param {(number|number[])} trackIds -  max=100
+ */
+export const getAudioFeatures = async (trackIds) => {
+
+  let res = await fetch(`${baseUrl}/audio-features?ids=[${[].concat(trackIds).join()}]`, headers)
+  isOk(res)
+  is204(res)
+  return res.json()
+}
+export const getOneAudioFeatures = async (trackId) => {
+
+  let res = await fetch(`${baseUrl}/audio-features/${trackId}`, headers)
+  isOk(res)
+  is204(res)
+  return res.json()
+}
 
 export default {
   getMe,
@@ -428,6 +472,9 @@ export default {
   getDevices,
   getMeSavedTracks,
   getMeSavedAlbums,
+  getTopArtists,
+  getTopTracks,
+  getAudioFeatures,
 }
 
 // href: string

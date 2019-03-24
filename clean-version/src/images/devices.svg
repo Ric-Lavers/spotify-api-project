@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
+	stroke='#FFFFFF'
+	opacity="0.8"
+	stroke-linejoin='round'
+	stroke-width='5.37px'
+	stroke-linecap='round'
+>
+	<defs>
+		<style>
+			.a,.b{fill:none;}
+			.c{fill:#fff;}
+			</style>
+	</defs>
+	<rect class="a" x="52.74" y="15.1" width="40.27" height="69.81"/>
+	<polyline class="b" points="37.97 66.24 6.99 66.24 6.99 15.1 37.97 15.1"/>
+	<circle class="a" cx="72.87" cy="58.12" r="8.12"/>
+	<circle class="c" cx="72.87" cy="31.27" r="2.28"/>
+	<line class="b" x1="22.84" y1="83.72" x2="37.11" y2="83.72"/>
+</svg>

@@ -3,7 +3,7 @@ import Slide from 'react-reveal/Slide'
 import Fade from 'react-reveal/Fade';
 
 import { GlobalContext } from '../../globalContext'
-import { getMePlaylists, getPlaylistsTracks, play, getMeSavedTracks, getMeSavedAlbums, getHref } from '../../api/spotify'
+import { getMePlaylists, getPlaylistsTracks, play, getMeSavedTracks, getTopTracks, getMeSavedAlbums, getHref } from '../../api/spotify'
 
 const PlaylistsItem = ({
   setSelected,
@@ -38,6 +38,11 @@ const PlaylistSongs = ({playlistId, context_uri, currentlyPlayingId}) => {
     if ( id ==='savedTracks' ) {
       let { items, next, ...data } = await getMeSavedTracks()
       setSongs(items)
+      setHref(next)
+    }else if ( id.includes('topTracks') ) {
+      let query = { time_range: id.split("-")[1] }
+      let { items, next, ...data } = await getTopTracks(query)
+      setSongs(items.map( item => ({ track: item }) ))
       setHref(next)
     }else {
       let { items, next, ...data } = await getPlaylistsTracks(id)
@@ -80,12 +85,19 @@ const PlaylistSongs = ({playlistId, context_uri, currentlyPlayingId}) => {
   )
 }
 
-const Playlists = () => {
+const top_time_range = [
+  {value: 'long_term', label: 'years'},
+  {value: 'medium_term', label: '6 months'},
+  {value: 'short_term', label: '4 weeks'},
+]
 
+const Playlists = () => {
   const [playlists, setPlaylists] = useState([])
   const [selected, setSelected] = useState({id: null, uri: null})
   const isHidden = useContext(GlobalContext)[0].visible.playlist
   const currentPlaying = useContext(GlobalContext)[0].currentPlaying.details
+
+  const [ topTrackTimeValue, setTopTrackTime ] = useState(top_time_range[1].value)
 
   useEffect(() => {
     fetchMePlaylists()
@@ -103,14 +115,34 @@ const Playlists = () => {
       <Fade big when={isHidden}>
       <Slide  duration={1000} right when={isHidden}>
         <ul className="playlists" style={isHidden?{}:{display: 'none' } } >
-          {(selected.id === null ||  selected.id === 'savedTracks' )&&
+
+          <>
+          {(selected.id === null || selected.id === 'savedTracks') &&
           <PlaylistsItem
             setSelected={setSelected}
             selectedId={selected.id}
-            name='Your saved songs'
+            name='Your saved tracks'
             id='savedTracks'
             isPublic={false}
           />}
+          {(selected.id === null || selected.id.includes('topTracks')) &&
+          <PlaylistsItem
+            enableSelect
+            setSelected={setSelected}
+            selectedId={selected.id}
+            name={
+              <>Your top tracks 
+                <select onChange={ ({target: {value}}) => {console.log(value);setTopTrackTime(value)} }>
+                  {top_time_range.map( ({label, value}, i) => (
+                    <option selected={topTrackTimeValue === value} value={value}>{label}</option>
+                  ) )}
+                </select>
+              </>}
+            id={`topTracks-${topTrackTimeValue}`}
+            isPublic={false}
+          />}
+          </>
+
           {playlists
             .filter(({id}) => selected.id === null ? true : id === selected.id  )
             .map( ({ id, name, public: isPublic, uri }) => 

@@ -9,6 +9,7 @@ import Details from './Details'
 import Search, { SearchResultsContext } from './Search'
 import SearchResults from './SearchResults'
 import { Up, Down } from '../../images/custom-svgs/arrows';
+import { ReactComponent as DeviceIcon } from '../../images/devices.svg'
 
 
 const noBorderTop = {
@@ -24,13 +25,11 @@ const PlayerAPI = () => {
 
   const [ touched, flashClass ] = useFlash('touched')
 
-console.log(state.visible.devices)
   return  (
 
       <div className='player' style={state.visible.devices? noBorderTop:{}} >
         <ActionButton
-          Icon={Up}
-          label='DEVICES'
+          Icon={DeviceIcon}
           action={() => {
             dispatch({ type: 'visible/toggle-devices' })
             fetchDevices()

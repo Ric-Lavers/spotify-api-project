@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GlobalUiState, GlobalContext } from './globalContext'
 import Search, { SearchResultsContext } from './components/Player/Search'
+import CurrentlyPlaying from './context'
 
 import logo from './logo.svg';
 import hooks from './images/hooks.svg'
@@ -10,6 +11,7 @@ import Player from './components/Player/Player';
 import SearchResults from './components/Player/SearchResults';
 import Playlists from './components/playlists/Playlists'
 import Devices from './components/settings/Devices'
+import Stats from './components/stats/Stats'
 
 import { useToggle } from './hooks'
 import { ReactComponent as GithubLogo } from './images/github-logo.svg'
@@ -57,53 +59,50 @@ const MainPage = () => {
           onClick={toggleShow}/>
         <img src={hooks} alt="logo" className="App-logo hooks" onClick={toggleShow}/>
           <br/>
-     {/*    <button onClick={toggleGrid} >
-          {grid ? 'grid' : 'not grid'}
-        </button>
-        {grid ? */}
-        (<>
+        <>
           {show && state.isSpotifyLoggedIn &&
         <div className="app-grid" >
           <div className='device-area' >
             <Devices/>
           </div>
-          <SearchResultsContext.Provider value={[data, setState]}>
-            <div className='player-area' >
-              <Player visible={show} />
+          <CurrentlyPlaying>
+            <SearchResultsContext.Provider value={[data, setState]}>
+              <div className='player-area' >
+                <Player visible={show} />
+              </div>
+              <div className='results-area' >
+                <SearchResults />
+              </div>
+            </SearchResultsContext.Provider>
+            <div className='playlists-area' >
+              <Playlists />
             </div>
-            <div className='results-area' >
-              <SearchResults />
+            <div className='stats-area' >
+              <Stats />
             </div>
-          </SearchResultsContext.Provider>
-          <div className='playlists-area' >
-            <Playlists />
-          </div>
+          </CurrentlyPlaying>
         </div>}
-        </>)
-
-       {/*  :
-        (<>
-        <div>
-          <Devices/>
-        </div>
-
-        <div style={{ display: 'flex' }} >
-        {show && state.isSpotifyLoggedIn &&
-          <>
-          <Player visible={show} />
-          <Playlists />
-          </>}
-        </div>
-        </>) */}
-
-
-        
+        </>     
 
       </section>
     </div>
   )
 }
 
+/* * pre grid layout w/ Playlists & Search result provider in Players
+    (<>
+    <div>
+      <Devices/>
+    </div>
+
+    <div style={{ display: 'flex' }} >
+    {show && state.isSpotifyLoggedIn &&
+      <>
+      <Player visible={show} />
+      <Playlists />
+      </>}
+    </div>
+    </>) */
 
 
 

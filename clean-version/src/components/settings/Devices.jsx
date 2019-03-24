@@ -1,15 +1,15 @@
 import React, { useContext } from 'react'
 import Slide from 'react-reveal/Slide'
-import Fade from 'react-reveal/Fade';
+import Flip from 'react-reveal/Flip';
 import { GlobalContext } from '../../globalContext'
 
 export default function Devices() {
 	const { devices, visible } = useContext(GlobalContext)[0]
 
 	return (
-		<Fade big when={visible.devices}>
-    <Slide duration={1000} top when={visible.devices}>
-		<div className='player devices'>
+		<Flip /* big */bottom when={visible.devices}>
+		
+		<div className='player devices' style={visible.devices?{}:{display: 'none' } }>
 			<ul>
 				{devices.map( ({ id, is_active, type, name }) => (
 					<li
@@ -21,7 +21,7 @@ export default function Devices() {
 				))}
 			</ul>
 		</div>
-		</Slide>
-    </Fade>
+
+    </Flip>
 	)
 }

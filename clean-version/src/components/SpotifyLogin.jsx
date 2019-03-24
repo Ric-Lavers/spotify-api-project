@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Favicon from 'react-favicon'
 
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
 import { checkToken } from '../api/spotify'
@@ -88,7 +89,7 @@ class SpotifyLogin extends Component {
      
     } else { // no token
       this.setState({tokenPresent: false})
-      // window.location.href = LOGIN_URL
+      window.location.href = LOGIN_URL
     } 
   }
 
@@ -128,7 +129,11 @@ class SpotifyLogin extends Component {
         <div>
           <SpotifyLogo style={{ ...styles.logo, ...logoColor }}/>
     { tokenValid && display_picture &&
-            <img src={display_picture} alt="display" style={styles.dp}/>}
+            <>
+              <Favicon url={display_picture} />
+              <img src={display_picture} alt="display" style={styles.dp}/>
+            </>
+            }
         </div>
         <a href={spotifyLink} style={styles.noLinkStyle} >
           {display_name?display_name:email}

@@ -7,6 +7,7 @@
     "node-sass": "^4.11.0",
     "react": "^16@next",
     "react-dom": "^16@next",
+    "react-favicon": "^0.0.14",
     "react-pose": "^4.0.6",
     "react-reveal": "^1.2.2",
     "react-scripts": "2.1.3",
