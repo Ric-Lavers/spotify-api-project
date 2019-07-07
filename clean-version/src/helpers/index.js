@@ -1,6 +1,8 @@
 let LOGIN_URL;
 if (process.env.REACT_APP_ENV === 'PROD') {
   LOGIN_URL= process.env.REACT_APP_LOGIN_URL_PROD || 'http://aeons-spotify.now.sh/login'
+} else if (process.env.REACT_APP_ENV === 'STAG') {
+  LOGIN_URL= process.env.REACT_APP_LOGIN_URL_PROD || 'http://aeons-spotify.now.sh/login'
 } else {
   LOGIN_URL= process.env.REACT_APP_LOGIN_URL_DEV || 'http://localhost:4000/login'
 }

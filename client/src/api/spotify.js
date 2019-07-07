@@ -114,7 +114,7 @@ export const getPlaylistsTracks = async(playlistId) => {
   const spotifyToken = localStorage.spotifyToken
   try {
     let res= await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, headers)
-    isOK(res)
+    // isOK(res)
     return res.json()
   } catch (error) {
     console.log(error.message)
