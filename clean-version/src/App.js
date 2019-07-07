@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route} from 'react-router-dom'
 import { GlobalUiState, GlobalContext } from './globalContext'
 import Search, { SearchResultsContext } from './components/Player/Search'
 import CurrentlyPlaying from './context'
@@ -6,7 +7,9 @@ import CurrentlyPlaying from './context'
 import logo from './logo.svg';
 import hooks from './images/hooks.svg'
 import './styles/_index.scss';
+import DiscogsCallbackPage from './pages/DiscogsCallbackPage'
 import SpotifyLogin from './components/SpotifyLogin';
+import DiscogsLogin from './components/DiscogsLogin';
 import Player from './components/Player/Player';
 import SearchResults from './components/Player/SearchResults';
 import Playlists from './components/playlists/Playlists'
@@ -19,12 +22,15 @@ import { ReactComponent as GithubLogo } from './images/github-logo.svg'
 
 const App = () => {
 
-  
-  
   return (
-    <GlobalUiState>
-      <MainPage/>
-    </GlobalUiState>
+    <Router>
+      <GlobalUiState>
+        <Route  path="/" render={() => (
+          <MainPage/>
+        )}/>
+        <Route path="/discogs-callback" component={DiscogsCallbackPage}/>        
+      </GlobalUiState>
+    </Router>
   );
 }
 
@@ -55,6 +61,7 @@ const MainPage = () => {
         }} >
 
         <SpotifyLogin onLogIn={handleSetLogin}/>
+        <DiscogsLogin />
         <img src={logo} className="App-logo" alt="logo"
           onClick={toggleShow}/>
         <img src={hooks} alt="logo" className="App-logo hooks" onClick={toggleShow}/>

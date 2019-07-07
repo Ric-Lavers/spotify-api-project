@@ -15,6 +15,7 @@ let app = express()
 const REDIRECT_URI = process.env.ENV ==='dev'
   ? 'http://localhost:4000/callback'
   : process.env.REDIRECT_URI
+
 console.log(process.env.ENV, REDIRECT_URI, process.env.REDIRECT_URI)
 
 const DISCOGS_CONSUMER_KEY= process.env.DISCOGS_CONSUMER_KEY
@@ -35,7 +36,7 @@ app.get('/login', function(req, res) {
 })
 
 app.get('/callback', function(req, res) {
-  console.log( 'callback' , req.query)
+  // console.log( 'callback' , req.query)
   //Recieves the code
   let code = req.query.code || null
   let authOptions = {
@@ -108,7 +109,7 @@ app.get('/---callback/discogs', (req, res) => {
   // });
   
 })
-
+var REQUESTDATA, ACCESSDATA;
 app.get('/authorize/discogs', function(req, res){
   var oAuth = new Discogs().oauth();
   
@@ -118,7 +119,9 @@ app.get('/authorize/discogs', function(req, res){
 		'http://localhost:4000/callback/discogs', 
 		function(err, requestData){
       // console.log(Object.keys(requestData), requestData)
-      var requestData = requestData
+      REQUESTDATA = requestData
+      console.log('REQUESTDATA')
+      console.log(REQUESTDATA)
 			// Persist "requestData" here so that the callback handler can 
       // access it later after returning from the authorize url
       console.log( requestData.authorizeUrl )
@@ -129,17 +132,26 @@ app.get('/authorize/discogs', function(req, res){
 
 app.get('/callback/discogs', async function(req, res){
   console.log( '/callback/discogs' , JSON.stringify(req.query))
-  var oAuth = new Discogs(req.query).oauth();
+  console.log('requestdata')
+  console.log(REQUESTDATA)
+  var oAuth = new Discogs(REQUESTDATA).oauth();
+  // var oAuth = new Discogs(requestData).oauth();
+
 	const token = await oAuth.getAccessToken(
 		req.query.oauth_verifier, // Verification code sent back by Discogs
 		function(err, accessData){
       console.log( "accessData: ",accessData )
-			// Persist "accessData" here for following OAuth calls 
-			res.send('Received access token!');
+      ACCESSDATA = accessData
+      // Persist "accessData" here for following OAuth calls
+      res.redirect('http://localhost:3000/discogs-callback?' + querystring.stringify(accessData)); 
+			// res.send(`Received access token! ${JSON.stringify(accessData,null, 2)}`);
 		}
   );
-  console.log({token})
 });
+
+
+
+
 /* end Discogs */
 
 let port = process.env.PORT || 4000

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Favicon from 'react-favicon'
+
 
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
 import { checkToken } from '../api/spotify'
@@ -8,7 +8,7 @@ import { LOGIN_URL } from '../helpers'
 
 const { colors } = variables;
 
-const styles = {
+export const styles = {
   container: {
     margin: variables.sizes.md,
   },
@@ -130,7 +130,7 @@ class SpotifyLogin extends Component {
           <SpotifyLogo style={{ ...styles.logo, ...logoColor }}/>
     { tokenValid && display_picture &&
             <>
-              <Favicon url={display_picture} />
+              
               <img src={display_picture} alt="display" style={styles.dp}/>
             </>
             }
