@@ -2,12 +2,20 @@ import React, { Component } from 'react'
 
 
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
-import { checkToken } from '../api/spotify'
+import { identity } from '../api/discogs'
 import variables from '../styles/variables';
 import { LOGIN_URL } from '../helpers'
 import { styles } from './SpotifyLogin'
 
 const { colors } = variables;
+
+const apiAuth = [
+  'consumerKey',
+  'consumerSecret',
+  'token',
+  'tokenSecret',
+]
+
 
 
 class DiscogsLogin extends Component {
@@ -19,29 +27,42 @@ class DiscogsLogin extends Component {
     display_name: null,
     display_picture:  null,
     spotifyLink: "",
+    data: "",
   }
 
   componentDidMount() {
     // const { discogsToken } = sessionStorage;
     // this.checkToken(discogsToken)
-    // this.setToken('oauth_token')
+    this.setToken()
   }
 
   isTokenPresent = yes => this.setState({ tokenPresent: yes || !!sessionStorage.discogsToken })
 
   setToken = (tokenName) => {
-    let token = new URLSearchParams(window.location.search).get(tokenName)
+    let urlParams = new URLSearchParams(window.location.search)
 
-    if (token) {
-      let oauthVerifier = new URLSearchParams(window.location.search).get('oauth_verifier')
 
-      sessionStorage.discogsToken = token
-      sessionStorage.oauthVerifier = oauthVerifier
+    if (urlParams.get('consumerKey') === 'zWqDQEdZNBUyXWjTcySJ' ) {
+      apiAuth.forEach(key => {
+        sessionStorage.setItem(
+          `discogs${key.charAt(0).toUpperCase()}${key.slice(1)}`,
+          urlParams.get(key)
+        )
+      });
+
       this.isTokenPresent(true)
       // window.location.replace( window.origin )
     } else {
       this.isTokenPresent()
     }
+  }
+
+  getIdentity = async(e) => {
+    e.preventDefault()
+
+    const data = await identity()
+console.log(data)
+    data && this.setState({ data })
   }
 
 
@@ -62,11 +83,15 @@ class DiscogsLogin extends Component {
 
     return (
       <div id="discogs-login" style={styles.container} >
+        <button onClick={this.getIdentity} >
+          identity
+        </button>
         <p>
           {tokenPresent 
             ? "discogsToken in session storage"
             : "discogsToken in session storage"}
         </p>
+        { JSON.stringify(this.state.data) }
       </div>
     )
   }
