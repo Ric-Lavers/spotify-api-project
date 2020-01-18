@@ -91,7 +91,6 @@ console.log(data)
             ? "discogsToken in session storage"
             : "discogsToken in session storage"}
         </p>
-        { JSON.stringify(this.state.data) }
       </div>
     )
   }

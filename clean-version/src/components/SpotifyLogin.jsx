@@ -61,7 +61,7 @@ class SpotifyLogin extends Component {
   setToken = () => {
     const address = window.location.href
     if ( address.includes('access_token=') ) {
-      let token=  new URLSearchParams(window.location.search).get('access_token')
+  let token=  new URLSearchParams(window.location.search).get('access_token')
 
       sessionStorage.spotifyToken = token
       window.location.replace( window.origin )

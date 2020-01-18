@@ -32,6 +32,17 @@ static scrollToTop = () =>
   static ucfirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+
+  static  searchToObj = () => {
+    const search = window.location.search
+    let obj = {}
+    search.substr(1, search.length).split('&').forEach(i => {
+      let [key, value] = i.split('=')
+      obj[key] = value
+    })
+    return obj
+  }
+
 }
 
 

@@ -1,12 +1,13 @@
 //@flow
-import { LOGIN_URL } from  '../helpers'
-import { async } from 'q';
+import {
+  LOGIN_URL
+} from '../helpers'
 
 const spotifyToken = sessionStorage.spotifyToken
 const baseUrl = 'https://api.spotify.com/v1'
 const headers = {
   headers: new Headers({
-    'Authorization': `Bearer ${spotifyToken}`, 
+    'Authorization': `Bearer ${spotifyToken}`,
     'Content-Type': 'application/json'
   })
 }
@@ -17,7 +18,7 @@ const isOk = res => {
   }
 }
 const is204 = res => {
-  if ( res.status === 204 ) {
+  if (res.status === 204) {
     throw Error("is 204");
   }
 }
@@ -31,19 +32,21 @@ export const getHref = async (href) => {
   } catch (error) {
     console.error(error)
   }
-} 
+}
 
 /* 
-  * Params can be genre, year, artist, album, label
-*/
-export const searchSpotify = async( query, type, params=[] ) => {
-  
-  params = [`type=${type}`, ...Object.keys(params).map(k => `${k}=${params[k]}`) ].join('&')
-  const search = new URLSearchParams({ q: query }).toString()
+ * Params can be genre, year, artist, album, label
+ */
+export const searchSpotify = async (query, type, params = []) => {
+
+  params = [`type=${type}`, ...Object.keys(params).map(k => `${k}=${params[k]}`)].join('&')
+  const search = new URLSearchParams({
+    q: query
+  }).toString()
 
   let res = await fetch(`${baseUrl}/search?${search}&${params}`, {
     headers: new Headers({
-      'Authorization': `Bearer ${spotifyToken}`, 
+      'Authorization': `Bearer ${spotifyToken}`,
       'Content-Type': 'application/json'
     })
   })
@@ -54,34 +57,34 @@ export const searchSpotify = async( query, type, params=[] ) => {
 albums.items.map(({artists, name, type, release_date}) => ({name, artists : artists[0].name, type,release_date})).sort((a,b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime()
 */
 
-export const getMe = async() => {
+export const getMe = async () => {
   try {
     let res = await fetch(baseUrl + '/me', headers)
     isOk(res)
     return res.json()
   } catch (error) {
-    console.error( error.message )
+    console.error(error.message)
   }
 }
 
 
-export const checkToken = async(
-  spotifyToken=sessionStorage.spotifyToken,
-  redirect=false
-  ) => {
+export const checkToken = async (
+  spotifyToken = sessionStorage.spotifyToken,
+  redirect = false
+) => {
   try {
     let res = await fetch(baseUrl + '/me', {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
+        'Authorization': `Bearer ${spotifyToken}`,
         'Content-Type': 'application/json'
       })
     })
     isOk(res)
-   
+
     return res.json()
   } catch (error) {
-    console.error( error.message )
-    if ( redirect ) {
+    console.error(error.message)
+    if (redirect) {
       window.location.replace(LOGIN_URL)
     }
     return error
@@ -90,25 +93,29 @@ export const checkToken = async(
 
 export const followMany = (ids, type) => {
 
-  let queryIds =  ids.splice(0,50)
-  if ( ids.length ) {
+  let queryIds = ids.splice(0, 50)
+  if (ids.length) {
     followMany(ids)
   }
   follow(queryIds)
 }
 
-export const unFollow = async(ids, type) => {
-  if ( type !== 'artist' && type !== 'user' ) {
+export const unFollow = async (ids, type) => {
+  if (type !== 'artist' && type !== 'user') {
     console.error(type, 'bad type')
     return
   }
-  let query = new URLSearchParams({ type }).toString()
+  let query = new URLSearchParams({
+    type
+  }).toString()
 
   try {
     let res = await fetch(`${baseUrl}/me/following?${query}`, {
       ...headers,
       method: 'DELETE',
-      body: JSON.stringify({ids: [].concat(ids)})
+      body: JSON.stringify({
+        ids: [].concat(ids)
+      })
     })
     isOk(res)
     return true
@@ -117,18 +124,22 @@ export const unFollow = async(ids, type) => {
     return false
   }
 }
-export const follow = async(ids, type) => {
-  if ( type !== 'artist' && type !== 'user' ) {
+export const follow = async (ids, type) => {
+  if (type !== 'artist' && type !== 'user') {
     console.error(type, 'bad type')
     return
   }
-  let query = new URLSearchParams({ type }).toString()
+  let query = new URLSearchParams({
+    type
+  }).toString()
 
   try {
     let res = await fetch(`${baseUrl}/me/following?${query}`, {
       ...headers,
       method: 'PUT',
-      body: JSON.stringify({ids: [].concat(ids)})
+      body: JSON.stringify({
+        ids: [].concat(ids)
+      })
     })
     isOk(res)
     return true
@@ -137,13 +148,16 @@ export const follow = async(ids, type) => {
     return false
   }
 }
-export const getFollowingState = async(ids, type) => {
-  if ( type !== 'artist' && type !== 'user' ) {
+export const getFollowingState = async (ids, type) => {
+  if (type !== 'artist' && type !== 'user') {
     console.error(type, 'bad type')
     return
   }
 
-  let query = new URLSearchParams({ids: ids.join(), type}).toString()
+  let query = new URLSearchParams({
+    ids: ids.join(),
+    type
+  }).toString()
   // type=${type}&ids
   try {
     let res = await fetch(`${baseUrl}/me/following/contains?${query}`, headers)
@@ -154,13 +168,16 @@ export const getFollowingState = async(ids, type) => {
   }
 }
 
-export const getSavedState = async(ids, type) => {
-  if ( type !== 'track') {
+export const getSavedState = async (ids, type) => {
+  if (type !== 'track') {
     console.error(type, 'bad type')
     return
   }
 
-  let query = new URLSearchParams({ids: [].concat(ids).join(), type}).toString()
+  let query = new URLSearchParams({
+    ids: [].concat(ids).join(),
+    type
+  }).toString()
   // type=${type}&ids
   try {
     let res = await fetch(`${baseUrl}/me/tracks/contains?${query}`, headers)
@@ -171,11 +188,11 @@ export const getSavedState = async(ids, type) => {
   }
 }
 
-export const getPlaylistInfo = async(spotifyToken, ids) => {
+export const getPlaylistInfo = async (spotifyToken, ids) => {
   try {
     let res = await fetch(`${baseUrl}/tracks/?ids=${ids.join()}`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
+        'Authorization': `Bearer ${spotifyToken}`,
         'Content-Type': 'application/json'
       })
     })
@@ -184,7 +201,7 @@ export const getPlaylistInfo = async(spotifyToken, ids) => {
     }
     return res.json()
   } catch (error) {
-    console.error( error.message )
+    console.error(error.message)
     return error
   }
 }
@@ -195,7 +212,7 @@ export const getAlbumById = async (id) => {
     isOk(res)
     return res.json()
   } catch (error) {
-    console.error( error.message )
+    console.error(error.message)
   }
 }
 export const getAlbums = async (ids) => {
@@ -204,16 +221,16 @@ export const getAlbums = async (ids) => {
     isOk(res)
     return res.json()
   } catch (error) {
-    console.error( error.message )
+    console.error(error.message)
   }
 }
 
-export const getAlbumInfo = async(id) => {
+export const getAlbumInfo = async (id) => {
   let spotifyToken = sessionStorage.spotifyToken
   try {
-    let res= await fetch(`${baseUrl}/albums/${id}`,{
+    let res = await fetch(`${baseUrl}/albums/${id}`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
+        'Authorization': `Bearer ${spotifyToken}`,
         'Content-Type': 'application/json'
       })
     })
@@ -224,18 +241,18 @@ export const getAlbumInfo = async(id) => {
   }
 }
 
-export const getMePlaylists = async() => {
+export const getMePlaylists = async () => {
   try {
-    let res= await fetch(`${baseUrl}/me/playlists`, headers)
+    let res = await fetch(`${baseUrl}/me/playlists`, headers)
     isOk(res)
     return res.json()
   } catch (error) {
     console.debug(error.message)
   }
 }
-export const getPlaylistsTracks = async(listId) => {
+export const getPlaylistsTracks = async (listId) => {
   try {
-    let res= await fetch(`${baseUrl}/playlists/${listId}/tracks`, headers)
+    let res = await fetch(`${baseUrl}/playlists/${listId}/tracks`, headers)
     isOk(res)
     return res.json()
   } catch (error) {
@@ -244,20 +261,20 @@ export const getPlaylistsTracks = async(listId) => {
   }
 }
 
-export const getRecentlyPlayed = async(  ) => {
+export const getRecentlyPlayed = async () => {
   const spotifyToken = sessionStorage.spotifyToken
   try {
-    let res= await fetch(`${baseUrl}/me/player/recently-played`,{
+    let res = await fetch(`${baseUrl}/me/player/recently-played`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
+        'Authorization': `Bearer ${spotifyToken}`,
         'Content-Type': 'application/json'
       })
     })
-    if ( !res.ok  ) {
-      throw Error( ' res not ok ' )
+    if (!res.ok) {
+      throw Error(' res not ok ')
     }
-    if ( typeof res !== 'object' ) {
-      throw Error( 'nothing is playing' )
+    if (typeof res !== 'object') {
+      throw Error('nothing is playing')
     }
     return res.json()
   } catch (error) {
@@ -266,19 +283,21 @@ export const getRecentlyPlayed = async(  ) => {
   }
 }
 
-export const controls = async (action, body={}) => {
+export const controls = async (action, body = {}) => {
   const spotifyToken = sessionStorage.spotifyToken
-  const method = ( action === 'play' || action === 'pause') ? 'PUT' : 'POST'
+  const method = (action === 'play' || action === 'pause') ? 'PUT' : 'POST'
   try {
-    const res = await fetch(`${baseUrl}/me/player/${action}`,{
+    const res = await fetch(`${baseUrl}/me/player/${action}`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
+        'Authorization': `Bearer ${spotifyToken}`,
         'Content-Type': 'application/json'
       }),
       method: method,
-      body: JSON.stringify({...body})
+      body: JSON.stringify({
+        ...body
+      })
     })
-    if ( !res.ok ) {
+    if (!res.ok) {
       throw res
     }
     return true
@@ -288,12 +307,14 @@ export const controls = async (action, body={}) => {
   }
 }
 
-export const play = async ( body={}) => {
+export const play = async (body = {}) => {
   try {
-    await fetch(`${baseUrl}/me/player/play`,{
+    await fetch(`${baseUrl}/me/player/play`, {
       ...headers,
       method: 'PUT',
-      body: JSON.stringify({...body})
+      body: JSON.stringify({
+        ...body
+      })
     })
     return true
   } catch (error) {
@@ -301,13 +322,13 @@ export const play = async ( body={}) => {
     return error
   }
 }
-export const seek = async ( queries={}) => {
+export const seek = async (queries = {}) => {
   const spotifyToken = sessionStorage.spotifyToken
   let query = new URLSearchParams(queries).toString()
   try {
-    await fetch(`${baseUrl}/me/player/seek?${query}`,{
+    await fetch(`${baseUrl}/me/player/seek?${query}`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
+        'Authorization': `Bearer ${spotifyToken}`,
         'Content-Type': 'application/json'
       }),
       method: 'PUT',
@@ -323,24 +344,24 @@ export const seek = async ( queries={}) => {
 export const currentPlaying = async () => {
   const spotifyToken = sessionStorage.spotifyToken
 
-    let res = await fetch(`${baseUrl}/me/player/currently-playing`,{
-      headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`, 
-        'Content-Type': 'application/json'
-      })
+  let res = await fetch(`${baseUrl}/me/player/currently-playing`, {
+    headers: new Headers({
+      'Authorization': `Bearer ${spotifyToken}`,
+      'Content-Type': 'application/json'
     })
-    isOk(res)
-    is204(res)
+  })
+  isOk(res)
+  is204(res)
 
-    const data = res.json()
-    return data
- 
+  const data = res.json()
+  return data
+
 }
 
 export const getMeSavedTracks = async () => {
-  
+
   try {
-    let res = await fetch(`${baseUrl}/me/tracks?limit=50`,headers)
+    let res = await fetch(`${baseUrl}/me/tracks?limit=50`, headers)
     isOk(res)
 
     return res.json()
@@ -349,9 +370,9 @@ export const getMeSavedTracks = async () => {
   }
 }
 export const getMeSavedAlbums = async () => {
-  
+
   try {
-    let res = await fetch(`${baseUrl}/me/albums`,headers)
+    let res = await fetch(`${baseUrl}/me/albums`, headers)
     isOk(res)
 
     return res.json()
@@ -361,15 +382,17 @@ export const getMeSavedAlbums = async () => {
 }
 
 export const saveTracks = async ids => {
-  if ( [].concat(ids).length > 50 ) {
+  if ([].concat(ids).length > 50) {
     throw Error('max of 50 tracks can be saved at a time')
   }
   try {
-    let res = await fetch(`${baseUrl}/me/tracks`,{
+    let res = await fetch(`${baseUrl}/me/tracks`, {
       ...headers,
       method: 'PUT',
-      body: JSON.stringify({ids: [].concat(ids)})
+      body: JSON.stringify({
+        ids: [].concat(ids)
       })
+    })
     isOk(res)
 
     return true
@@ -378,15 +401,17 @@ export const saveTracks = async ids => {
   }
 }
 export const removeTracks = async ids => {
-  if ( ids.length > 50 ) {
+  if (ids.length > 50) {
     throw Error('max of 50 tracks can be saved at a time')
   }
   try {
-    let res = await fetch(`${baseUrl}/me/tracks`,{
+    let res = await fetch(`${baseUrl}/me/tracks`, {
       ...headers,
       method: 'DELETE',
-      body: JSON.stringify({ids: [].concat(ids)})
+      body: JSON.stringify({
+        ids: [].concat(ids)
       })
+    })
     isOk(res)
 
     return true
@@ -414,17 +439,25 @@ export const getDevices = async () => {
     'short_term', // approx 4weeks
  * max limit = 50
  * 
- */ 
-export const getTopTracks = async (query={}) => {
-  query =  new URLSearchParams({ limit: 50, time_range: 'medium_term', ...query }).toString()
+ */
+export const getTopTracks = async (query = {}) => {
+  query = new URLSearchParams({
+    limit: 50,
+    time_range: 'medium_term',
+    ...query
+  }).toString()
 
   let res = await fetch(`${baseUrl}/me/top/tracks?${query}`, headers)
   isOk(res)
   is204(res)
   return res.json()
 }
-export const getTopArtists = async (query={}) => {
-  query =  new URLSearchParams({ limit: 50, time_range: 'medium_term', ...query }).toString()
+export const getTopArtists = async (query = {}) => {
+  query = new URLSearchParams({
+    limit: 50,
+    time_range: 'medium_term',
+    ...query
+  }).toString()
 
   let res = await fetch(`${baseUrl}/me/top/artists?${query}`, headers)
   isOk(res)
