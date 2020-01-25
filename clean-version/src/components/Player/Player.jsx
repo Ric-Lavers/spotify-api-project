@@ -6,32 +6,46 @@ import { useFlash } from '../../hooks'
 import ControlButtons from './ControlButtons'
 import Progress from './Progress'
 import Details from './Details'
-import Search, { SearchResultsContext, types } from './Search'
+import Search, { SearchResultsContext } from './Search'
 import SearchResults from './SearchResults'
+import { Up, Down } from '../../images/custom-svgs/arrows';
+import { ReactComponent as DeviceIcon } from '../../images/devices.svg'
+
+
+const noBorderTop = {
+  borderTopLeftRadius: 0,
+  borderTopRightRadius: 0,
+}
 
 /* 
-  * The Audio controls has the following features;
-    *[x] play / pause
-    *[x] previous / next 
-    * scrub track
-    * show track position
-    *[x] on successful API button flashes success color
-    *[x] on unsuccessful API button flashes fail color
+  * 
 */
 const PlayerAPI = () => {
-  const [state, dispatch] = useContext(GlobalContext)
-  const [ data, setState ] = useState(null)
+  const [state, dispatch, { fetchDevices }] = useContext(GlobalContext)
+
   const [ touched, flashClass ] = useFlash('touched')
-  
+
   return  (
-    <SearchResultsContext.Provider value={[data, setState]}>
-      <div className={`player`} >
-        <p className={`header pointer ${ touched }`}
-          onClick={() => {
+
+      <div className='player' style={state.visible.devices? noBorderTop:{}} >
+        <ActionButton
+          Icon={DeviceIcon}
+          action={() => {
+            dispatch({ type: 'visible/toggle-devices' })
+            fetchDevices()
+          }}
+          className="device-button pointer"
+        />
+
+        <p className={`header pointer ${ touched }`}>
+          <span onClick={() => {
             flashClass()
-            dispatch({ type: 'playlist/hide' })}
-          }
-        >{state.playListIsHidden ? 'hide ' : 'show '}PLAYLISTS</p>
+            dispatch({ type: 'visible/toggle-playlist' })}
+          } >
+          {state.visible.playlist ? 'hide ' : 'show '}PLAYLISTS
+          </span>
+        </p>
+
         <div className="audio-controls" >
           <CurrentlyPlaying>
             <Details />
@@ -40,14 +54,17 @@ const PlayerAPI = () => {
           </CurrentlyPlaying>
         </div>
         <Search query={state.searchQuery} />
-        <SearchResults/>
       </div>
-    </SearchResultsContext.Provider>
+
   )
 }
 
-// {!!currentSong 
-//   &&  <SongDetails details={currentSong.item} />
-//   }
+
+const ActionButton = ({ Icon, label, action, className }) => (
+  <div className={`action ${className}`}  onClick={action}>
+    <Icon /> {label}
+  </div>
+)
+
 
 export default PlayerAPI;

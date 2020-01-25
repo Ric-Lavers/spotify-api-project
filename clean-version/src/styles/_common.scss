@@ -1,6 +1,24 @@
 .flex {
 	display: flex;
 }
+.green {
+  color: $spotify-green;
+}
+
+.sm-txt {
+  font-size: $md;
+}
+@mixin no-list-style {
+  ul {
+		display: block;
+		list-style-type: none;
+		padding-inline-start: 0;
+		margin: 0;
+	}
+	li {
+		display: block;
+	}
+}
 
 body {
   margin: 0;
@@ -18,6 +36,20 @@ code {
 
 tr td {
   border-bottom:1pt solid rgba(#fff, 0.6);
+}
+input[type='checkbox'] {
+  min-width: 16px;
+  min-height: 16px;
+}
+
+@mixin font-md {
+  font-size: calc(10px + 2vmin);
+}
+@mixin font-sm {
+  font-size: calc(10px + 1vmin);
+}
+@mixin font-xs {
+  font-size: calc(10px + 0.5vmin);
 }
 
 .header {
@@ -51,3 +83,39 @@ tr td {
   100% { color: #fff }
 }
 
+/* SfCheck */
+.sfCheck {
+  display: inline;
+  margin: 0 $md;
+  position: relative;
+  width: $lg;height:$lg;
+  text-align: center;
+  
+  .icon {
+    position: absolute;
+    opacity: 0.6;
+    fill: none;
+    stroke: white;
+    width: $lg;
+  }
+  .sfCheck_tick {
+    stroke: $spotify-green;
+    opacity: 1;
+  }
+  .sfCheck_cross {
+    opacity: 0;
+  }
+  
+}
+
+.sfCheck:hover {
+  .sfCheck_tick {
+    opacity: 0;
+  }
+  .sfCheck_cross {
+    opacity: 1;
+  }
+  .sfCheck_plus {
+    opacity: 1;
+  }
+}

@@ -2,8 +2,8 @@ import React, { useContext, useState, useEffect } from 'react'
 import { CurrentPlayingContext } from '../../context'
 import { GlobalContext } from '../../globalContext'
 import { SpotifyHelpers } from '../../helpers'
-import { getAlbumById, currentPlaying } from '../../api/spotify.js'
-
+import { getAlbumById, saveTracks, removeTracks, getSavedState } from '../../api/spotify.js'
+import SfChecked from '../common/SfCheck'
 
 const DetailsData = () => {
 
@@ -15,6 +15,7 @@ const DetailsData = () => {
       artists,
       album,
       uri,
+      id: trackId,
       album: {
         id
       },
@@ -31,13 +32,15 @@ const DetailsData = () => {
         popularity,
         tracks,
       } = await getAlbumById(id)
-      setData( { genres, label, popularity, tracks } )
+      const [ saved ] = await getSavedState(trackId, 'track')
+
+      setData( { genres, label, popularity, tracks, saved } )
     } catch (error) {
       console.error(error.message)
-    }
-    
-    
+    }   
   }
+
+  const setSaved = saved => setData({...extraAlbumData, saved })
 
   useEffect(() => {
     id && handleGetAlbumById(id)
@@ -50,12 +53,14 @@ const DetailsData = () => {
       artists={artists}
       album={{...album, ...extraAlbumData}}
       uri={uri}
+      id={trackId}
+      setSaved={setSaved}
     />
     )
 }
 
 
-const Details = React.memo(({ uri, name, artists, album, getAlbumById }) => {
+const Details = React.memo(({ uri, name, artists, album, id, setSaved }) => {
   const [state, dispatch] = useContext(GlobalContext)
   if ( album.images.length && state.currentPlaying.image.src !== album.images[0].url) {
     dispatch({
@@ -65,10 +70,24 @@ const Details = React.memo(({ uri, name, artists, album, getAlbumById }) => {
         alt: 'currently playing'
       }
     })
+    dispatch({
+      type: 'currentPlaying/details',
+      payload: { uri, name, artists, album, id }
+    })
   }
+
   return ( 
     <>
-      <h3 onClick={() => alert(uri)} >{name} - {album.name}</h3>
+      <h3>
+        <span onClick={() => alert(uri)} > {name} - {album.name} </span>
+        <SfChecked
+        checked={album.saved}
+        onClick={() => {
+          let success = album.saved ? removeTracks(id) : saveTracks(id);
+          success.then(b => b && setSaved(!album.saved))
+          }}
+        />
+      </h3>
       <h4>
         <i>{ SpotifyHelpers.combineArtists(artists) }</i>
         {` ( ${album.release_date} )`}
@@ -79,7 +98,7 @@ const Details = React.memo(({ uri, name, artists, album, getAlbumById }) => {
           type:'search/set',
           payload: {
             type: 'artist',
-            searchText: album.label,
+            searchText: album.label.replace(' Recordings', ''),
             searchLabel: true,
           }}
         )}
@@ -91,6 +110,9 @@ const Details = React.memo(({ uri, name, artists, album, getAlbumById }) => {
 }, (prevProps, nextProps) => {
   
   if ( prevProps.album.label !== nextProps.album.label ) {
+    return false
+  }
+  if ( prevProps.album.saved !== nextProps.album.saved ) {
     return false
   }
   if ( prevProps.name === nextProps.name ) {

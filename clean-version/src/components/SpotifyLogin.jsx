@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
 import { checkToken } from '../api/spotify'
 import variables from '../styles/variables';
@@ -7,7 +8,7 @@ import { LOGIN_URL } from '../helpers'
 
 const { colors } = variables;
 
-const styles = {
+export const styles = {
   container: {
     margin: variables.sizes.md,
   },
@@ -51,7 +52,7 @@ class SpotifyLogin extends Component {
   }
 
   componentDidMount() {
-    const { spotifyToken } = localStorage;
+    const { spotifyToken } = sessionStorage;
     
     this.checkToken(spotifyToken)
     this.setToken()
@@ -60,9 +61,9 @@ class SpotifyLogin extends Component {
   setToken = () => {
     const address = window.location.href
     if ( address.includes('access_token=') ) {
-      let token=  new URLSearchParams(window.location.search).get('access_token')
+  let token=  new URLSearchParams(window.location.search).get('access_token')
 
-      localStorage.spotifyToken = token
+      sessionStorage.spotifyToken = token
       window.location.replace( window.origin )
     }
   }
@@ -128,7 +129,11 @@ class SpotifyLogin extends Component {
         <div>
           <SpotifyLogo style={{ ...styles.logo, ...logoColor }}/>
     { tokenValid && display_picture &&
-            <img src={display_picture} alt="display" style={styles.dp}/>}
+            <>
+              
+              <img src={display_picture} alt="display" style={styles.dp}/>
+            </>
+            }
         </div>
         <a href={spotifyLink} style={styles.noLinkStyle} >
           {display_name?display_name:email}

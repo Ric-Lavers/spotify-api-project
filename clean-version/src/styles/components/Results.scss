@@ -1,0 +1,17 @@
+
+.results {
+  @include container;
+  border-radius: 0 0 $md $md;
+  text-align: left;
+
+  font-size: 0.9em;
+}
+.next-icon__contatiner {
+  text-align: center;
+  .next-icon {
+    fill: $spotify-green;
+  }
+}
+.popularity-meter {
+  height: $md;
+}
