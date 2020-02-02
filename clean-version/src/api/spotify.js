@@ -1,436 +1,431 @@
 //@flow
-import {
-  LOGIN_URL
-} from '../helpers'
+import { LOGIN_URL } from "../helpers";
 
-const spotifyToken = sessionStorage.spotifyToken
-const baseUrl = 'https://api.spotify.com/v1'
+const spotifyToken = sessionStorage.spotifyToken;
+const baseUrl = "https://api.spotify.com/v1";
 const headers = {
   headers: new Headers({
-    'Authorization': `Bearer ${spotifyToken}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${spotifyToken}`,
+    "Content-Type": "application/json"
   })
-}
+};
 
 const isOk = res => {
   if (!res.ok) {
     throw Error(res.statusText);
   }
-}
+};
 const is204 = res => {
   if (res.status === 204) {
     throw Error("is 204");
   }
-}
+};
 
-export const getHref = async (href) => {
+export const getHref = async href => {
   try {
-    const res = await fetch(href, headers)
-    isOk(res)
+    const res = await fetch(href, headers);
+    isOk(res);
 
-    return res.json()
+    return res.json();
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
 
-/* 
+/*
  * Params can be genre, year, artist, album, label
  */
 export const searchSpotify = async (query, type, params = []) => {
-
-  params = [`type=${type}`, ...Object.keys(params).map(k => `${k}=${params[k]}`)].join('&')
+  params = [
+    `type=${type}`,
+    ...Object.keys(params).map(k => `${k}=${params[k]}`)
+  ].join("&");
   const search = new URLSearchParams({
     q: query
-  }).toString()
+  }).toString();
 
   let res = await fetch(`${baseUrl}/search?${search}&${params}`, {
     headers: new Headers({
-      'Authorization': `Bearer ${spotifyToken}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${spotifyToken}`,
+      "Content-Type": "application/json"
     })
-  })
-  isOk(res)
-  return res.json()
-}
+  });
+  isOk(res);
+  return res.json();
+};
 /* sort by year
 albums.items.map(({artists, name, type, release_date}) => ({name, artists : artists[0].name, type,release_date})).sort((a,b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime()
 */
 
 export const getMe = async () => {
   try {
-    let res = await fetch(baseUrl + '/me', headers)
-    isOk(res)
-    return res.json()
+    let res = await fetch(baseUrl + "/me", headers);
+    isOk(res);
+    return res.json();
   } catch (error) {
-    console.error(error.message)
+    console.error(error.message);
   }
-}
-
+};
 
 export const checkToken = async (
   spotifyToken = sessionStorage.spotifyToken,
   redirect = false
 ) => {
   try {
-    let res = await fetch(baseUrl + '/me', {
+    let res = await fetch(baseUrl + "/me", {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${spotifyToken}`,
+        "Content-Type": "application/json"
       })
-    })
-    isOk(res)
+    });
+    isOk(res);
 
-    return res.json()
+    return res.json();
   } catch (error) {
-    console.error(error.message)
+    console.error(error.message);
     if (redirect) {
-      window.location.replace(LOGIN_URL)
+      window.location.replace(LOGIN_URL);
     }
-    return error
+    return error;
   }
-}
+};
 
 export const followMany = (ids, type) => {
-
-  let queryIds = ids.splice(0, 50)
+  let queryIds = ids.splice(0, 50);
   if (ids.length) {
-    followMany(ids)
+    followMany(ids);
   }
-  follow(queryIds)
-}
+  follow(queryIds);
+};
 
 export const unFollow = async (ids, type) => {
-  if (type !== 'artist' && type !== 'user') {
-    console.error(type, 'bad type')
-    return
+  if (type !== "artist" && type !== "user") {
+    console.error(type, "bad type");
+    return;
   }
   let query = new URLSearchParams({
     type
-  }).toString()
+  }).toString();
 
   try {
     let res = await fetch(`${baseUrl}/me/following?${query}`, {
       ...headers,
-      method: 'DELETE',
+      method: "DELETE",
       body: JSON.stringify({
         ids: [].concat(ids)
       })
-    })
-    isOk(res)
-    return true
+    });
+    isOk(res);
+    return true;
   } catch (error) {
-    console.error(error.message)
-    return false
+    console.error(error.message);
+    return false;
   }
-}
+};
 export const follow = async (ids, type) => {
-  if (type !== 'artist' && type !== 'user') {
-    console.error(type, 'bad type')
-    return
+  if (type !== "artist" && type !== "user") {
+    console.error(type, "bad type");
+    return;
   }
   let query = new URLSearchParams({
     type
-  }).toString()
+  }).toString();
 
   try {
     let res = await fetch(`${baseUrl}/me/following?${query}`, {
       ...headers,
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({
         ids: [].concat(ids)
       })
-    })
-    isOk(res)
-    return true
+    });
+    isOk(res);
+    return true;
   } catch (error) {
-    console.error(error.message)
-    return false
+    console.error(error.message);
+    return false;
   }
-}
+};
 export const getFollowingState = async (ids, type) => {
-  if (type !== 'artist' && type !== 'user') {
-    console.error(type, 'bad type')
-    return
+  if (type !== "artist" && type !== "user") {
+    console.error(type, "bad type");
+    return;
   }
 
   let query = new URLSearchParams({
     ids: ids.join(),
     type
-  }).toString()
+  }).toString();
   // type=${type}&ids
   try {
-    let res = await fetch(`${baseUrl}/me/following/contains?${query}`, headers)
-    isOk(res)
-    return res.json()
+    let res = await fetch(`${baseUrl}/me/following/contains?${query}`, headers);
+    isOk(res);
+    return res.json();
   } catch (error) {
-    console.error(error.message)
+    console.error(error.message);
   }
-}
+};
 
 export const getSavedState = async (ids, type) => {
-  if (type !== 'track') {
-    console.error(type, 'bad type')
-    return
+  if (type !== "track") {
+    console.error(type, "bad type");
+    return;
   }
 
   let query = new URLSearchParams({
     ids: [].concat(ids).join(),
     type
-  }).toString()
+  }).toString();
   // type=${type}&ids
   try {
-    let res = await fetch(`${baseUrl}/me/tracks/contains?${query}`, headers)
-    isOk(res)
-    return res.json()
+    let res = await fetch(`${baseUrl}/me/tracks/contains?${query}`, headers);
+    isOk(res);
+    return res.json();
   } catch (error) {
-    console.error(error.message)
+    console.error(error.message);
   }
-}
+};
 
 export const getPlaylistInfo = async (spotifyToken, ids) => {
   try {
     let res = await fetch(`${baseUrl}/tracks/?ids=${ids.join()}`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${spotifyToken}`,
+        "Content-Type": "application/json"
       })
-    })
+    });
     if (!res.ok) {
       throw Error(res.statusText);
     }
-    return res.json()
+    return res.json();
   } catch (error) {
-    console.error(error.message)
-    return error
+    console.error(error.message);
+    return error;
   }
-}
+};
 
-export const getAlbumById = async (id) => {
+export const getAlbumById = async id => {
   try {
-    let res = await fetch(`${baseUrl}/albums/${id}`, headers)
-    isOk(res)
-    return res.json()
+    let res = await fetch(`${baseUrl}/albums/${id}`, headers);
+    isOk(res);
+    return res.json();
   } catch (error) {
-    console.error(error.message)
+    console.error(error.message);
   }
-}
-export const getAlbums = async (ids) => {
+};
+export const getAlbums = async ids => {
   try {
-    let res = await fetch(`${baseUrl}/albums/?ids=${ids.join()}`, headers)
-    isOk(res)
-    return res.json()
+    let res = await fetch(`${baseUrl}/albums/?ids=${ids.join()}`, headers);
+    isOk(res);
+    return res.json();
   } catch (error) {
-    console.error(error.message)
+    console.error(error.message);
   }
-}
+};
 
-export const getAlbumInfo = async (id) => {
-  let spotifyToken = sessionStorage.spotifyToken
+export const getAlbumInfo = async id => {
+  let spotifyToken = sessionStorage.spotifyToken;
   try {
     let res = await fetch(`${baseUrl}/albums/${id}`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${spotifyToken}`,
+        "Content-Type": "application/json"
       })
-    })
-    return res.json()
+    });
+    return res.json();
   } catch (error) {
-    console.debug(error.message)
-    return error
+    console.debug(error.message);
+    return error;
   }
-}
+};
 
 export const getMePlaylists = async () => {
   try {
-    let res = await fetch(`${baseUrl}/me/playlists`, headers)
-    isOk(res)
-    return res.json()
+    let res = await fetch(`${baseUrl}/me/playlists`, headers);
+    isOk(res);
+    return res.json();
   } catch (error) {
-    console.debug(error.message)
+    console.debug(error.message);
   }
-}
-export const getPlaylistsTracks = async (listId) => {
+};
+export const getPlaylistsTracks = async listId => {
   try {
-    let res = await fetch(`${baseUrl}/playlists/${listId}/tracks`, headers)
-    isOk(res)
-    return res.json()
+    let res = await fetch(`${baseUrl}/playlists/${listId}/tracks`, headers);
+    isOk(res);
+    return res.json();
   } catch (error) {
-    console.debug(error.message)
-    return error
+    console.debug(error.message);
+    return error;
   }
-}
+};
 
 export const getRecentlyPlayed = async () => {
-  const spotifyToken = sessionStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken;
   try {
     let res = await fetch(`${baseUrl}/me/player/recently-played`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${spotifyToken}`,
+        "Content-Type": "application/json"
       })
-    })
+    });
     if (!res.ok) {
-      throw Error(' res not ok ')
+      throw Error(" res not ok ");
     }
-    if (typeof res !== 'object') {
-      throw Error('nothing is playing')
+    if (typeof res !== "object") {
+      throw Error("nothing is playing");
     }
-    return res.json()
+    return res.json();
   } catch (error) {
-    console.debug(error.message)
-    return null
+    console.debug(error.message);
+    return null;
   }
-}
+};
 
 export const controls = async (action, body = {}) => {
-  const spotifyToken = sessionStorage.spotifyToken
-  const method = (action === 'play' || action === 'pause') ? 'PUT' : 'POST'
+  const spotifyToken = sessionStorage.spotifyToken;
+  const method = action === "play" || action === "pause" ? "PUT" : "POST";
   try {
     const res = await fetch(`${baseUrl}/me/player/${action}`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${spotifyToken}`,
+        "Content-Type": "application/json"
       }),
       method: method,
       body: JSON.stringify({
         ...body
       })
-    })
+    });
     if (!res.ok) {
-      throw res
+      throw res;
     }
-    return true
+    return true;
   } catch (error) {
-    console.log('controls failed', error.message)
-    return false
+    console.log("controls failed", error.message);
+    return false;
   }
-}
+};
 
 export const play = async (body = {}) => {
   try {
     await fetch(`${baseUrl}/me/player/play`, {
       ...headers,
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({
         ...body
       })
-    })
-    return true
+    });
+    return true;
   } catch (error) {
-    console.debug(error.message)
-    return error
+    console.debug(error.message);
+    return error;
   }
-}
+};
 export const seek = async (queries = {}) => {
-  const spotifyToken = sessionStorage.spotifyToken
-  let query = new URLSearchParams(queries).toString()
+  const spotifyToken = sessionStorage.spotifyToken;
+  let query = new URLSearchParams(queries).toString();
   try {
     await fetch(`${baseUrl}/me/player/seek?${query}`, {
       headers: new Headers({
-        'Authorization': `Bearer ${spotifyToken}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${spotifyToken}`,
+        "Content-Type": "application/json"
       }),
-      method: 'PUT',
+      method: "PUT"
       // query: JSON.stringify({...queries})
-    })
-    return true
+    });
+    return true;
   } catch (error) {
-    console.debug(error.message)
-    return error
+    console.debug(error.message);
+    return error;
   }
-}
+};
 
 export const currentPlaying = async () => {
-  const spotifyToken = sessionStorage.spotifyToken
+  const spotifyToken = sessionStorage.spotifyToken;
 
   let res = await fetch(`${baseUrl}/me/player/currently-playing`, {
     headers: new Headers({
-      'Authorization': `Bearer ${spotifyToken}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${spotifyToken}`,
+      "Content-Type": "application/json"
     })
-  })
-  isOk(res)
-  is204(res)
+  });
+  isOk(res);
+  is204(res);
 
-  const data = res.json()
-  return data
-
-}
+  const data = res.json();
+  return data;
+};
 
 export const getMeSavedTracks = async () => {
-
   try {
-    let res = await fetch(`${baseUrl}/me/tracks?limit=50`, headers)
-    isOk(res)
+    let res = await fetch(`${baseUrl}/me/tracks?limit=50`, headers);
+    isOk(res);
 
-    return res.json()
+    return res.json();
   } catch (err) {
-    return []
+    return [];
   }
-}
+};
 export const getMeSavedAlbums = async () => {
-
   try {
-    let res = await fetch(`${baseUrl}/me/albums`, headers)
-    isOk(res)
+    let res = await fetch(`${baseUrl}/me/albums`, headers);
+    isOk(res);
 
-    return res.json()
+    return res.json();
   } catch (err) {
-    return []
+    return [];
   }
-}
+};
 
 export const saveTracks = async ids => {
   if ([].concat(ids).length > 50) {
-    throw Error('max of 50 tracks can be saved at a time')
+    throw Error("max of 50 tracks can be saved at a time");
   }
   try {
     let res = await fetch(`${baseUrl}/me/tracks`, {
       ...headers,
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({
         ids: [].concat(ids)
       })
-    })
-    isOk(res)
+    });
+    isOk(res);
 
-    return true
+    return true;
   } catch (err) {
-    return false
+    return false;
   }
-}
+};
 export const removeTracks = async ids => {
   if (ids.length > 50) {
-    throw Error('max of 50 tracks can be saved at a time')
+    throw Error("max of 50 tracks can be saved at a time");
   }
   try {
     let res = await fetch(`${baseUrl}/me/tracks`, {
       ...headers,
-      method: 'DELETE',
+      method: "DELETE",
       body: JSON.stringify({
         ids: [].concat(ids)
       })
-    })
-    isOk(res)
+    });
+    isOk(res);
 
-    return true
+    return true;
   } catch (err) {
-    return false
+    return false;
   }
-}
+};
 
 export const getDevices = async () => {
   try {
-    let res = await fetch(`${baseUrl}/me/player/devices`, headers)
-    isOk(res)
-    is204(res)
-    return res.json()
+    let res = await fetch(`${baseUrl}/me/player/devices`, headers);
+    isOk(res);
+    is204(res);
+    return res.json();
   } catch (error) {
-    console.error(error)
-    return []
+    console.error(error);
+    return [];
   }
-}
+};
 /**
  * gets the top tracks/ artists
  * *time_range*
@@ -443,46 +438,47 @@ export const getDevices = async () => {
 export const getTopTracks = async (query = {}) => {
   query = new URLSearchParams({
     limit: 50,
-    time_range: 'medium_term',
+    time_range: "short_term",
     ...query
-  }).toString()
+  }).toString();
 
-  let res = await fetch(`${baseUrl}/me/top/tracks?${query}`, headers)
-  isOk(res)
-  is204(res)
-  return res.json()
-}
+  let res = await fetch(`${baseUrl}/me/top/tracks?${query}`, headers);
+  isOk(res);
+  is204(res);
+  return res.json();
+};
 export const getTopArtists = async (query = {}) => {
   query = new URLSearchParams({
     limit: 50,
-    time_range: 'medium_term',
+    time_range: "short_term",
     ...query
-  }).toString()
+  }).toString();
 
-  let res = await fetch(`${baseUrl}/me/top/artists?${query}`, headers)
-  isOk(res)
-  is204(res)
-  return res.json()
-}
+  let res = await fetch(`${baseUrl}/me/top/artists?${query}`, headers);
+  isOk(res);
+  is204(res);
+  return res.json();
+};
 /**
- * Get Audio Features 
+ * Get Audio Features
  * https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/
  * @param {(number|number[])} trackIds -  max=100
  */
-export const getAudioFeatures = async (trackIds) => {
-
-  let res = await fetch(`${baseUrl}/audio-features?ids=[${[].concat(trackIds).join()}]`, headers)
-  isOk(res)
-  is204(res)
-  return res.json()
-}
-export const getOneAudioFeatures = async (trackId) => {
-
-  let res = await fetch(`${baseUrl}/audio-features/${trackId}`, headers)
-  isOk(res)
-  is204(res)
-  return res.json()
-}
+export const getAudioFeatures = async trackIds => {
+  let res = await fetch(
+    `${baseUrl}/audio-features?ids=[${[].concat(trackIds).join()}]`,
+    headers
+  );
+  isOk(res);
+  is204(res);
+  return res.json();
+};
+export const getOneAudioFeatures = async trackId => {
+  let res = await fetch(`${baseUrl}/audio-features/${trackId}`, headers);
+  isOk(res);
+  is204(res);
+  return res.json();
+};
 
 export default {
   getMe,
@@ -507,5 +503,5 @@ export default {
   getMeSavedAlbums,
   getTopArtists,
   getTopTracks,
-  getAudioFeatures,
-}
+  getAudioFeatures
+};

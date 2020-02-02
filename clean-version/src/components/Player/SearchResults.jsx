@@ -233,7 +233,7 @@ export const handlePlay = (type, uri) => {
 	play(body)
 }
 
-const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
+export const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
 	<table id="search-results" >
 		<thead>
 			<tr>
@@ -242,14 +242,15 @@ const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
 				<th>Album</th>
 				<th className="hide-up-sm" >Popular</th>
 				<th className="hide-up-md" >Released</th>
+		{toggleSaveAll && 
 				<th style={{ textAlign: 'center' }} >Like
-						<input
-							onChange={({target: {checked}}) => {toggleSaveAll(checked)}}
-							id="follow-check"
-							type="checkbox"
-							name="followingLabel"
-						/>
-					</th>
+					<input
+						onChange={({target: {checked}}) => {toggleSaveAll(checked)}}
+						id="follow-check"
+						type="checkbox"
+						name="followingLabel"
+					/>
+				</th>}
 			</tr>
 		</thead>
 		<tbody>
@@ -261,6 +262,7 @@ const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
 						<td>{albumName}</td>
 						<td className="hide-up-sm" ><PopularityMeter className="popularity-meter" popularity={popularity} /></td>
 						<td className="hide-up-md" >{release_date}</td>
+	{saveTrack &&
 						<td style={{ textAlign: 'center' }} >
 							<input
 								onChange={({target: {checked}}) => saveTrack(id, checked) }
@@ -268,7 +270,7 @@ const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
 								type="checkbox"
 								checked={saved}
 								name="followingLabel" />
-						</td>
+						</td>}
 					</tr>
 					)
 			})

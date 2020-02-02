@@ -1,28 +1,28 @@
-
-
 @mixin audio-buttons {
   display: flex;
   justify-content: space-between;
   margin: $md;
-  
+
   .icon {
     cursor: pointer;
     text-align: center;
-    border: 1px solid rgba($spotify-white, 0.6 );
-    color: rgba($spotify-white, 0.8 );
+    border: 1px solid rgba($spotify-white, 0.6);
+    color: rgba($spotify-white, 0.8);
     padding: $sm;
   }
+
   .arrow-right {
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-top: $md solid transparent;
     border-bottom: $md solid transparent;
     border-left: $lg solid transparent;
     border-left-color: $spotify-green;
   }
+
   .square {
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border: $md solid $spotify-white;
   }
 
@@ -34,6 +34,7 @@
     width: 100%;
   }
 }
+
 @mixin container {
   display: flex;
   flex-direction: column;
@@ -46,7 +47,9 @@
 
 .with-results {
   border-radius: $md $md 0 0;
-};
+}
+
+;
 
 .player {
   border: 1px solid aliceblue;
@@ -56,24 +59,27 @@
   // height: 100%;
   justify-content: flex-start;
   position: relative;
-  .device-button {
-    position: absolute;
-    @include font-xs;
-    svg {
-      height: 1.8em;
-      stroke: $spotify-white; 
-      fill: none;
-    }
-  }
-
-  .audio-controls {
-    width: 100%;
-    .audio-buttons {
-      @include audio-buttons;
-    }
-    
-    @include seek;
-  }
   @import 'search-bar';
 
+}
+
+.device-button {
+  position: absolute;
+  @include font-xs;
+
+  svg {
+    height: 1.8em;
+    stroke: $spotify-white;
+    fill: none;
+  }
+}
+
+.audio-controls {
+  width: 100%;
+
+  .audio-buttons {
+    @include audio-buttons;
+  }
+
+  @include seek;
 }

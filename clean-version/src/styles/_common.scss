@@ -1,6 +1,7 @@
 .flex {
-	display: flex;
+  display: flex;
 }
+
 .green {
   color: $spotify-green;
 }
@@ -8,16 +9,18 @@
 .sm-txt {
   font-size: $md;
 }
+
 @mixin no-list-style {
   ul {
-		display: block;
-		list-style-type: none;
-		padding-inline-start: 0;
-		margin: 0;
-	}
-	li {
-		display: block;
-	}
+    display: block;
+    list-style-type: none;
+    padding-inline-start: 0;
+    margin: 0;
+  }
+
+  li {
+    display: block;
+  }
 }
 
 body {
@@ -35,8 +38,9 @@ code {
 }
 
 tr td {
-  border-bottom:1pt solid rgba(#fff, 0.6);
+  border-bottom: 1pt solid rgba(#fff, 0.6);
 }
+
 input[type='checkbox'] {
   min-width: 16px;
   min-height: 16px;
@@ -45,9 +49,11 @@ input[type='checkbox'] {
 @mixin font-md {
   font-size: calc(10px + 2vmin);
 }
+
 @mixin font-sm {
   font-size: calc(10px + 1vmin);
 }
+
 @mixin font-xs {
   font-size: calc(10px + 0.5vmin);
 }
@@ -57,30 +63,62 @@ input[type='checkbox'] {
   text-transform: uppercase;
 }
 
-.pointer {
+@mixin pointer {
   cursor: pointer;
+}
+
+.pointer {
+  @include pointer
+}
+
+.action {
+  @include pointer
 }
 
 /* touched animation */
 .touched {
-  animation: touched-success 1s ;
+  animation: touched-success 1s;
 }
+
 .touched-success {
-  animation: touched-success 1s ;
+  animation: touched-success 1s;
 }
+
 .touched-error {
-  animation: touched-error 1s ;
+  animation: touched-error 1s;
+}
+
+.success {
+  color: $spotify-green;
+  border: 1px solid $spotify-green
 }
 
 @keyframes touched-success {
-  0% { color: #fff }
-  50% { color: $spotify-green }
-  100% { color: #fff }
+  0% {
+    color: #fff
+  }
+
+  50% {
+    color: $spotify-green
+  }
+
+  100% {
+    color: #fff
+  }
 }
+
 @keyframes touched-error {
-  0% { color: #fff }
-  50% { color: $error }
-  100% { color: #fff }
+  0% {
+    color: #fff
+  }
+
+  50% {
+    color: $error
+  }
+
+  100% {
+    color: #fff
+  }
 }
 
 /* SfCheck */
@@ -88,9 +126,10 @@ input[type='checkbox'] {
   display: inline;
   margin: 0 $md;
   position: relative;
-  width: $lg;height:$lg;
+  width: $lg;
+  height: $lg;
   text-align: center;
-  
+
   .icon {
     position: absolute;
     opacity: 0.6;
@@ -98,23 +137,27 @@ input[type='checkbox'] {
     stroke: white;
     width: $lg;
   }
+
   .sfCheck_tick {
     stroke: $spotify-green;
     opacity: 1;
   }
+
   .sfCheck_cross {
     opacity: 0;
   }
-  
+
 }
 
 .sfCheck:hover {
   .sfCheck_tick {
     opacity: 0;
   }
+
   .sfCheck_cross {
     opacity: 1;
   }
+
   .sfCheck_plus {
     opacity: 1;
   }
