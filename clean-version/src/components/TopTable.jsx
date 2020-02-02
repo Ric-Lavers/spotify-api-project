@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { get } from "lodash";
 
 import { TrackTable } from "./Player/TrackTable";
 import ArtistTable from "./Player/ArtistTable";
@@ -25,7 +26,7 @@ const useTopData = (type, range) => {
   const [rawData, setData] = useState({});
 
   const [genres, setGenres] = useState([]);
-  const [items, setItems] = useState([]);
+  const [, setItems] = useState([]);
   const key = `${type}_${range}`;
 
   const getData = async () => {
@@ -62,25 +63,23 @@ const useTopData = (type, range) => {
   };
 
   React.useEffect(() => {
-    console.log({ rawData });
-
     if (!rawData[key]) {
       getData();
     } else {
-      setItems(rawData[key]);
+      setItems(rawData[key].items);
     }
   }, [type, range]);
 
   return {
-    items,
+    items: get(rawData, `${key}.items`, []),
     genres
   };
 };
 
 const TopTable = () => {
-  const [isTrack, setTrack] = useState(true);
   const [rangeValue, setTimeRange] = useState(top_time_range[0].value);
-  const { genres, items } = useTopData(
+  const [isTrack, setTrack] = useState(true);
+  let { genres, items } = useTopData(
     isTrack ? "tracks" : "artists",
     rangeValue
   );
@@ -91,17 +90,13 @@ const TopTable = () => {
       <button
         style={button}
         className={isTrack ? "success" : ""}
-        onClick={() => {
-          setTrack(true);
-        }}>
+        onClick={() => setTrack(true)}>
         Tracks
       </button>
       <button
         style={button}
         className={!isTrack ? "success" : ""}
-        onClick={() => {
-          setTrack(false);
-        }}>
+        onClick={() => setTrack(false)}>
         Artists
       </button>
     </div>
@@ -127,7 +122,7 @@ const TopTable = () => {
           <ToggleButtons />
           <SwitchTimeRangeButtons />
         </div>
-        {topThreeGenres.length && (
+        {!topThreeGenres.length ? null : (
           <div>
             Top Three Genres:
             <ol>
