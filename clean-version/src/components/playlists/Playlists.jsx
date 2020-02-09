@@ -12,6 +12,7 @@ import {
   getMeSavedAlbums,
   getHref
 } from "../../api/spotify";
+import ActionButton from "components/common/ActionButton";
 
 const PlaylistsItem = ({
   setSelected,
@@ -107,8 +108,13 @@ const top_time_range = [
 const Playlists = () => {
   const [playlists, setPlaylists] = useState([]);
   const [selected, setSelected] = useState({ id: null, uri: null });
-  const isHidden = useContext(GlobalContext)[0].visible.playlist;
-  const currentPlaying = useContext(GlobalContext)[0].currentPlaying.details;
+  const [
+    {
+      visible: { playlist: isHidden },
+      currentPlaying: { details: currentPlaying }
+    },
+    dispatch
+  ] = useContext(GlobalContext);
 
   const [topTrackTimeValue, setTopTrackTime] = useState(
     top_time_range[1].value
@@ -130,6 +136,11 @@ const Playlists = () => {
       <Fade big when={isHidden}>
         <Slide duration={1000} right when={isHidden}>
           <ul className="playlists" style={isHidden ? {} : { display: "none" }}>
+            <p
+              className="header pointer"
+              onClick={() => dispatch({ type: "visible/toggle-playlist" })}>
+              hide{" "}
+            </p>
             <>
               {(selected.id === null || selected.id === "savedTracks") && (
                 <PlaylistsItem

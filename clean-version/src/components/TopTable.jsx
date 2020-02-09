@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { get } from "lodash";
+import Slide from "react-reveal/Slide";
+import Fade from "react-reveal/Fade";
 
+import { GlobalContext } from "globalContext";
 import { TrackTable } from "./Player/TrackTable";
 import ArtistTable from "./Player/ArtistTable";
 import topTacksData from "__tests__/mocks/topTracks.json";
@@ -78,6 +81,12 @@ const useTopData = (type, range) => {
 
 const TopTable = () => {
   const [rangeValue, setTimeRange] = useState(top_time_range[0].value);
+  const [
+    {
+      visible: { topTable: isHidden }
+    },
+    dispatch
+  ] = useContext(GlobalContext);
   const [isTrack, setTrack] = useState(true);
   let { genres, items } = useTopData(
     isTrack ? "tracks" : "artists",
@@ -115,30 +124,46 @@ const TopTable = () => {
     </div>
   );
 
+  console.log({ isHidden });
+
   return (
-    <>
-      <div style={TopRow}>
-        <div>
-          <ToggleButtons />
-          <SwitchTimeRangeButtons />
-        </div>
-        {!topThreeGenres.length ? null : (
-          <div>
-            Top Three Genres:
-            <ol>
-              {topThreeGenres.map(({ name }) => (
-                <li>{name}</li>
-              ))}
-            </ol>
+    <Fade big when={true || isHidden}>
+      <Slide duration={1000} left when={true || isHidden}>
+        <div
+          style={(isHidden && {}) || { display: "none" }}
+          className="results top-table">
+          <p className={`header pointer`}>
+            <span
+              onClick={() => {
+                dispatch({ type: "visible/toggle-top-table" });
+              }}>
+              {(isHidden && "hide ") || "show "}TOP TABLE
+            </span>
+          </p>
+          <div style={TopRow}>
+            <div>
+              <ToggleButtons />
+              <SwitchTimeRangeButtons />
+            </div>
+            {!topThreeGenres.length ? null : (
+              <div>
+                Top Three Genres:
+                <ol>
+                  {topThreeGenres.map(({ name }) => (
+                    <li>{name}</li>
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      {isTrack ? (
-        <TrackTable items={items} iterate />
-      ) : (
-        <ArtistTable items={items} iterate />
-      )}
-    </>
+          {isTrack ? (
+            <TrackTable id="top-table" items={items} iterate />
+          ) : (
+            <ArtistTable id="top-table" items={items} iterate />
+          )}
+        </div>
+      </Slide>
+    </Fade>
   );
 };
 

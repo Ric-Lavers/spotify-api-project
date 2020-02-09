@@ -63,9 +63,13 @@
 
 }
 
-.device-button {
-  position: absolute;
+.icon-button {
+
   @include font-xs;
+
+  & {
+    margin-right: 14px;
+  }
 
   svg {
     height: 1.8em;
@@ -73,6 +77,12 @@
     fill: none;
   }
 }
+
+.action-button-group {
+  position: absolute;
+  display: flex;
+}
+
 
 .audio-controls {
   width: 100%;

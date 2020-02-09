@@ -411,7 +411,8 @@ const SearchResults = ({ type, next, items, href, addData, followArtist, toggleF
 	{ next &&
 					<ArrowDown onClick={ () => addData(next) } className="arrow-icon next-icon" /> }
 					<p onClick={ () => {
-						 showAll(next)
+						const r = window.confirm(`look up ${total} more results?`)
+						r && showAll(next)
 						}} > {more} more  </p>
 					</>}
 			</div>

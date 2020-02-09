@@ -16,6 +16,7 @@ import Playlists from "./components/playlists/Playlists";
 import Devices from "./components/settings/Devices";
 import Stats from "./components/stats/Stats";
 import TopTable from "./components/TopTable";
+import SpotifyLogo from "./images/custom-svgs/SpotifyLogo";
 
 import { useToggle } from "./hooks";
 import { ReactComponent as GithubLogo } from "./images/github-logo.svg";
@@ -68,20 +69,25 @@ const MainPage = () => {
         }}>
         <SpotifyLogin onLogIn={handleSetLogin} />
         <DiscogsLogin />
+
         <img src={logo} className="App-logo" alt="logo" onClick={toggleShow} />
-        <img
+
+        <SpotifyLogo
+          style={{ opacity: "1", fill: "#1DB954" }}
+          className={"App-logo hooks"}
+        />
+        {/* <img
           src={hooks}
           alt="logo"
           className="App-logo hooks"
           onClick={toggleShow}
-        />
+        /> */}
+
         <br />
         <>
           {show &&
             state.isSpotifyLoggedIn && [
-              <div className="results ">
-                <TopTable />
-              </div>,
+              <TopTable />,
               <div className="app-grid">
                 <div className="device-area">
                   <Devices />

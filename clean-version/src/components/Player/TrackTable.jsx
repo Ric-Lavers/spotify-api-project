@@ -3,8 +3,15 @@ import React from "react";
 import { SpotifyHelpers, handlePlay } from "helpers";
 import PopularityMeter from "images/custom-svgs/PopularityMeter";
 
-export const TrackTable = ({ items, saveTrack, toggleSaveAll, iterate }) => (
-  <table id="search-results">
+export const TrackTable = ({
+  items,
+  saveTrack,
+  toggleSaveAll,
+  iterate,
+  id,
+  ...props
+}) => (
+  <table id={id}>
     <thead>
       <tr>
         {iterate && <th></th>}
@@ -78,3 +85,7 @@ export const TrackTable = ({ items, saveTrack, toggleSaveAll, iterate }) => (
     </tbody>
   </table>
 );
+
+TrackTable.defaultProps = {
+  id: "search-results"
+};

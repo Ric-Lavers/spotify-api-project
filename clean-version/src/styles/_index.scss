@@ -8,6 +8,8 @@
 @import './components/Devices';
 @import './components/Playlists';
 @import './components/Results';
+@import './components/Top-table';
+@import './components/toolTip';
 
 
 .dev {
@@ -22,19 +24,26 @@
 
 	svg {
 		cursor: pointer;
-		height: $lg; width: $lg;
+		height: $lg;
+		width: $lg;
 		fill: white;
+
 		text {
-			fill:black;
+			fill: black;
 		}
-	};
+	}
+
+	;
 }
+
 .arrow-icon {
 
 	cursor: pointer;
-	height: $lg; width: $lg;
+	height: $lg;
+	width: $lg;
 	fill: white;
+
 	text {
-		fill:black;
+		fill: black;
 	}
 }
