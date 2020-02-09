@@ -11,7 +11,8 @@ const initalState = {
   visible: {
     playlist: false,
     topTable: false,
-    devices: false
+    devices: false,
+    stats: false
   },
   searchQuery: {
     type: "",
@@ -53,6 +54,11 @@ function reducer(state, action) {
       return {
         ...state,
         visible: { ...state.visible, topTable: !state.visible.topTable }
+      };
+    case "visible/toggle-stats":
+      return {
+        ...state,
+        visible: { ...state.visible, stats: !state.visible.stats }
       };
     case "search/set":
       return {

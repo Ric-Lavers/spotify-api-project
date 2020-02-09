@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import Slide from "react-reveal/Slide";
 import Fade from "react-reveal/Fade";
 
-import { GlobalContext } from "../../globalContext";
+import { GlobalContext } from "globalContext";
 import {
   getMePlaylists,
   getPlaylistsTracks,

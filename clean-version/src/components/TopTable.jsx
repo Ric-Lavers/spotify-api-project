@@ -124,8 +124,6 @@ const TopTable = () => {
     </div>
   );
 
-  console.log({ isHidden });
-
   return (
     <Fade big when={true || isHidden}>
       <Slide duration={1000} left when={true || isHidden}>
