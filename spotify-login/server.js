@@ -61,8 +61,16 @@ app.get("/callback", function(req, res) {
     },
     json: true
   };
+
   request.post(authOptions, function(error, response, body) {
-    var access_token = body.access_token;
+    // process.on("uncaughtException", function(err) {
+    //   console.log(err);
+    // });
+    if (error) {
+      console.log(error);
+    }
+
+    var access_token = body && body.access_token;
     let uri =
       process.env.ENV === "dev"
         ? "http://localhost:3000"
