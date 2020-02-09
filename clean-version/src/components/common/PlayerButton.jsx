@@ -7,6 +7,7 @@ const PlayerButton = ({ text, action, onClick }) => {
   const handleClick = () => {
     const isSuccess = onClick(action) ? "touched-success" : "touched-error";
     setSuccess(isSuccess);
+    window.navigator.vibrate(200);
     setTimeout(() => {
       setSuccess("");
     }, 1000);
