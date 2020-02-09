@@ -33,37 +33,64 @@ export const GlobalContext = createContext(initalState);
 function reducer(state, action) {
   switch (action.type) {
     case "user/loginSpotify":
-      return { ...state, isSpotifyLoggedIn: action.payload };
+      return {
+        ...state,
+        isSpotifyLoggedIn: action.payload
+      };
     case "user/me":
-      return { ...state, userData: action.payload };
+      return {
+        ...state,
+        userData: action.payload
+      };
     case "user/devices":
-      return { ...state, devices: action.payload };
+      return {
+        ...state,
+        devices: action.payload
+      };
     case "playlist/hide":
-      return { ...state, playListIsHidden: !state.playListIsHidden };
+      return {
+        ...state,
+        playListIsHidden: !state.playListIsHidden
+      };
     case "visible/toggle-devices":
       return {
         ...state,
-        visible: { ...state.visible, devices: !state.visible.devices }
+        visible: {
+          ...state.visible,
+          devices: !state.visible.devices
+        }
       };
     case "visible/toggle-playlist":
       return {
         ...state,
-        visible: { ...state.visible, playlist: !state.visible.playlist }
+        visible: {
+          ...state.visible,
+          playlist: !state.visible.playlist
+        }
       };
     case "visible/toggle-top-table":
       return {
         ...state,
-        visible: { ...state.visible, topTable: !state.visible.topTable }
+        visible: {
+          ...state.visible,
+          topTable: !state.visible.topTable
+        }
       };
     case "visible/toggle-stats":
       return {
         ...state,
-        visible: { ...state.visible, stats: !state.visible.stats }
+        visible: {
+          ...state.visible,
+          stats: !state.visible.stats
+        }
       };
     case "search/set":
       return {
         ...state,
-        searchQuery: { ...state.searchQuery, ...action.payload }
+        searchQuery: {
+          ...state.searchQuery,
+          ...action.payload
+        }
       };
     case "currentPlaying/image":
       return {
@@ -112,8 +139,17 @@ export const GlobalUiState = ({ children }) => {
   };
 
   return (
-    <GlobalContext.Provider value={[state, dispatch, { fetchDevices }]}>
-      {children}
+    <GlobalContext.Provider
+      value={[
+        state,
+        dispatch,
+        {
+          fetchDevices
+        }
+      ]}
+    >
+      {" "}
+      {children}{" "}
     </GlobalContext.Provider>
   );
 };

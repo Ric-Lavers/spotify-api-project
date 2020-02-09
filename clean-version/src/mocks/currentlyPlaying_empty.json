@@ -12,26 +12,23 @@
   "item": {
     "album": {
       "album_type": "",
-      "artists": [
-        {
-          "external_urls": {
-            "spotify": ""
-          },
-          "href": "",
-          "id": "",
-          "name": "",
-          "type": "",
-          "uri": ""
-        }
-      ],
+      "artists": [{
+        "external_urls": {
+          "spotify": ""
+        },
+        "href": "",
+        "id": "",
+        "name": "",
+        "type": "",
+        "uri": ""
+      }],
       "available_markets": [],
       "external_urls": {
         "spotify": ""
       },
       "href": "",
       "id": "",
-      "images": [
-        {
+      "images": [{
           "height": 640,
           "url": "",
           "width": 640
@@ -54,18 +51,16 @@
       "type": "",
       "uri": ""
     },
-    "artists": [
-      {
-        "external_urls": {
-          "spotify": ""
-        },
-        "href": "",
-        "id": "",
-        "name": "",
-        "type": "",
-        "uri": ""
-      }
-    ],
+    "artists": [{
+      "external_urls": {
+        "spotify": ""
+      },
+      "href": "",
+      "id": "",
+      "name": "",
+      "type": "",
+      "uri": ""
+    }],
     "available_markets": [],
     "disc_number": 0,
     "duration_ms": 0,

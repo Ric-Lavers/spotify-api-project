@@ -5,11 +5,13 @@ import { CurrentPlayingContext } from "../../context";
 import { getOneAudioFeatures } from "../../api/spotify";
 import { Utils } from "../../helpers";
 import { GlobalContext } from "globalContext";
+import PopularityMeter from "images/custom-svgs/PopularityMeter";
 
 const { ucfirst } = Utils;
 
 const stat = [
   "mode",
+  "popularity",
   "tempo",
   "key",
   "time_signature",
@@ -36,20 +38,19 @@ const StatsContainer = () => {
   const [audio_features, setFeatures] = useState(null);
   const song = useContext(CurrentPlayingContext);
 
-  useEffect(() => {
-    if (song.item.id.length) {
-      setAudioFeatures(song.item.id);
-    }
-  }, [song.item.id]);
-
   const setAudioFeatures = async trackId => {
     try {
       const audio_features = await getOneAudioFeatures(trackId);
-      setFeatures(audio_features);
+      setFeatures({ ...audio_features, popularity: song.item.popularity });
     } catch (error) {
       setFeatures(null);
     }
   };
+  useEffect(() => {
+    if (song.item.id.length) {
+      setAudioFeatures(song.item.id);
+    }
+  }, [song.item]);
 
   return audio_features ? (
     <Stats id={song.item.id} audio_features={audio_features} />
@@ -62,8 +63,6 @@ const Stats = memo(({ id, audio_features }) => {
       visible: { stats: isHidden }
     }
   ] = useContext(GlobalContext);
-
-  console.log({ isHidden });
 
   return (
     <Fade big when={isHidden}>
@@ -82,10 +81,15 @@ const Stats = memo(({ id, audio_features }) => {
                       return `${Math.round(audio_features[key])}bpm`;
                     case "duration_ms":
                       return millisToMinutesAndSeconds(audio_features[key]);
+                    case "popularity":
+                      return (
+                        <PopularityMeter popularity={audio_features[key]} />
+                      );
                     default:
                       return audio_features[key];
                   }
                 };
+
                 return (
                   <tr>
                     <td>{ucfirst(key.replace("_", " ").replace(" ms", ""))}</td>
