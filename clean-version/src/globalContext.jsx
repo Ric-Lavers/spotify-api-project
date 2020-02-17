@@ -10,7 +10,7 @@ const initalState = {
   playListIsHidden: false, //TODO refactor to visible object
   visible: {
     playlist: false,
-    topTable: false,
+    topTable: true,
     devices: false,
     stats: false
   },
