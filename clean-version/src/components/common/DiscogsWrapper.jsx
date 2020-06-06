@@ -1,6 +1,4 @@
 import React from "react";
-// import { Machine, assign } from "xstate";
-// import { useSetState } from "react-use";
 
 import { useHandleChange } from "../../hooks/commonHooks";
 import { Utils } from "../../helpers";
@@ -132,84 +130,47 @@ DiscogsSearch.Context = React.createContext({
 });
 
 DiscogsSearch.Wrapper = ({ recordLabel }) => {
-  const [, _setData] = React.useContext(DiscogsSearch.Context);
   let query = {
     type: "album",
-    searchText: recordLabel.replace(/records/g, ""),
-    isLabel: true
+    searchText: "pampa".replace(/records/g, ""),
+    searchLabel: true
   };
+  console.log("recordLabel", recordLabel);
 
-  /* ACTIONS */
-  const setData = _setData;
-
-  return <DiscogsSearch.Search query={query} setData={setData} />;
+  return <DiscogsSearch.Search query={query} />;
 };
 
-const DiscogsWrapper = ({ recordLabel, data }) => Search.Wrapper;
+const DiscogsWrapper = props =>
+  React.createElement(DiscogsSearch.Wrapper, props);
 
 export default DiscogsWrapper;
-export const DiscogsSearchContext = DiscogsSearch.Context;
-/* 
-DiscogsSearch.machine = () => {
-  const fetchMachine = Machine(
-    {
-      id: "fetch",
-      initial: "idle",
-      context: {
-        retries: 0
-      },
-      states: {
-        idle: {
-          on: {
-            FETCH: "loading"
-          }
-        },
-        loading: {
-          on: {
-            RESOLVE: "success",
-            REJECT: "failure"
-          }
-        },
-        success: {
-          type: "final"
-        },
-        failure: {
-          on: {
-            RETRY: {
-              target: "loading",
-              actions: "addToRetry"
-            }
-          }
-        }
-      }
-    },
-    {
-      services: {
-        invokeGetWordByGroup: ({
-          type,
-          searchTerm
-        }, event) => searchSpotify(query, type),
-        invokeAddWordToGroup: ({
-            groupName
-          }, {
-            word
-          }) =>
-          addWord(word, groupName),
-      },
-      actions: {
-        addToRetry: assign((context, event) => {
-          return {
-            retries: context.retries + 1
-          };
-        }),
 
-        reset: assign((context, event) => {
-          return {
-            word: "",
-            words: event.data.words
-          };
-        })
-      }
-    }
-  );
-}; */
+export const DiscogsSearchContext = DiscogsSearch.Context;
+
+// DiscogsSearch.Search = () => {
+//   /**
+//    * EVENTS
+//    */
+
+//   /**
+//    * ACTIONS
+//    */
+//   function handleSubmit() {}
+//   function handleFormState() {}
+//   const isFetching = false;
+//   const isError = false;
+//   const type = "album";
+//   const setType = () => console.log("?setType");
+//   const types = [];
+
+//   return React.createElement(DiscogsSearch.Template, {
+//     handleSubmit,
+//     handleFormState,
+//     formState: { searchLabel: "{searchLabel}", searchText: "{searchText}" },
+//     isFetching,
+//     isError,
+//     type,
+//     setType,
+//     types
+//   });
+// };

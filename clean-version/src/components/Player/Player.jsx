@@ -11,8 +11,7 @@ import SearchResults from "./SearchResults";
 import { Up, Down } from "../../images/custom-svgs/arrows";
 import { ReactComponent as DeviceIcon } from "../../images/devices.svg";
 
-// import DiscogsWrapper from "../common/DiscogsWrapper";
-
+import DiscogsWrapper from "../common/DiscogsWrapper";
 const noBorderTop = {
   borderTopLeftRadius: 0,
   borderTopRightRadius: 0
@@ -47,7 +46,7 @@ const PlayerAPI = () => {
           {state.visible.playlist ? "hide " : "show "}PLAYLISTS
         </span>
       </p>
-
+      <DiscogsWrapper recordLabel="recordLabel" />
       <div className="audio-controls">
         <CurrentlyPlaying>
           <Details />
@@ -56,7 +55,6 @@ const PlayerAPI = () => {
         </CurrentlyPlaying>
       </div>
       <Search query={state.searchQuery} />
-      {/*  <DiscogsWrapper query="warp records" /> */}
     </div>
   );
 };
