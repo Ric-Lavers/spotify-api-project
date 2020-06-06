@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start:prod": "REACT_APP_ENV=PROD react-scripts start",
-    "start:stag": "REACT_APP_ENV=STAG react-scripts start",
+    "start:stag": "REACT_APP_ENV=STAG PORT=2626 react-scripts start",
     "start:dev": "REACT_APP_ENV=DEV react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
