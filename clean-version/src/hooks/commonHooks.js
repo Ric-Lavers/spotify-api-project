@@ -21,7 +21,7 @@ export const useHandleChange = (inialState) => {
 	}
 
 	return [ formState, handleChange, setFormState ]
-}
+};
 
 export function useFlash (className, timeout=1000) {
   const [value, setClass] = useState("")
