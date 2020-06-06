@@ -18,7 +18,8 @@
     "request": "^2.81.0"
   },
   "now": {
-    "alias": "aeons-spotify"
+    "alias": "aeons-spotify",
+    "version": 1
   },
   "devDependencies": {
     "nodemon": "^1.18.6"
