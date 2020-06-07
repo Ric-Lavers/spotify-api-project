@@ -2,27 +2,34 @@
 const TOKEN = process.env.REACT_APP_DISCOGS_TOKEN
 
 
-export const searchDiscogs = async(queryObj) => {
-  const query = new URLSearchParams({...queryObj, token: TOKEN}).toString()
+export const searchDiscogs = async (queryObj) => {
+
+  const query = new URLSearchParams({
+    ...queryObj,
+    token: TOKEN
+  }).toString()
+  console.log(query);
   try {
-    let res= await fetch(`https://api.discogs.com/database/search?${query}`)
+    let res = await fetch(`https://api.discogs.com/database/search?${query}`)
     return res.json()
   } catch (error) {
     throw error
   }
 }
 
-export const labelReleases = async(labelId, queryObj ) => {
-    const query = new URLSearchParams({ ...queryObj }).toString()
-    try {
-      let res= await fetch(`https://api.discogs.com/labels/${labelId}/releases?${query}`)
-      return res.json()
-    } catch (error) {
-      throw error
-    }
+export const labelReleases = async (labelId, queryObj) => {
+  const query = new URLSearchParams({
+    ...queryObj
+  }).toString()
+  try {
+    let res = await fetch(`https://api.discogs.com/labels/${labelId}/releases?${query}`)
+    return res.json()
+  } catch (error) {
+    throw error
   }
+}
 
-  
+
 // type labelReleasesQueryObj = {
 //   page: number,
 //   per_page: number,

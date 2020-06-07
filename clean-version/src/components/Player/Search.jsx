@@ -7,7 +7,7 @@ import { Utils } from "../../helpers";
 import SearchIcon from "../../images/custom-svgs/SearchIcon";
 import Results from "./SearchResults";
 
-export const SearchResultsContext = createContext({});
+export const SearchResultsContext = createContext({ data: {} });
 
 export const types = ["track", "artist", "album", "playlist"];
 
@@ -22,7 +22,7 @@ const useType = () => {
 };
 
 const Search = ({ query }) => {
-  const [data, setData] = useContext(SearchResultsContext);
+  const [{ data }, setData] = useContext(SearchResultsContext);
   const [type, setType] = useType();
 
   let [formState, handleFormState, setFormState] = useHandleChange({
@@ -67,7 +67,8 @@ const Search = ({ query }) => {
       );
       Utils.scrollIntoView("search-results");
       setLastSearchObject(formState);
-      setData(res);
+      console.log(formState);
+      setData({ data: res, searchText, isLabel: searchLabel });
     } catch (error) {
       console.error(error);
       flashError();
@@ -78,7 +79,7 @@ const Search = ({ query }) => {
   return (
     <>
       <form id="search" onSubmit={handleSubmit} onChange={handleFormState}>
-        <div className="search-bar">
+        <div className="search-bar ">
           <input
             name="searchText"
             aria-label="search-input"
@@ -89,7 +90,7 @@ const Search = ({ query }) => {
             placeholder="Search spotify"
             autoComplete="off"
           />
-          <button className="submit" type="submit" alt="submit">
+          <button className="submit radius-right" type="submit" alt="submit">
             <SearchIcon isLoading={isFetching} isError={isError} />
           </button>
         </div>

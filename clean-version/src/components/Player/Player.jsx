@@ -22,9 +22,10 @@ const noBorderTop = {
  */
 const PlayerAPI = () => {
   const [state, dispatch, { fetchDevices }] = useContext(GlobalContext);
+  const [{ searchText, isLabel }] = useContext(SearchResultsContext);
 
   const [touched, flashClass] = useFlash("touched");
-
+  // console.log({ searchText, isLabel });
   return (
     <div className="player" style={state.visible.devices ? noBorderTop : {}}>
       <ActionButton
@@ -46,7 +47,7 @@ const PlayerAPI = () => {
           {state.visible.playlist ? "hide " : "show "}PLAYLISTS
         </span>
       </p>
-      <DiscogsWrapper recordLabel="recordLabel" />
+
       <div className="audio-controls">
         <CurrentlyPlaying>
           <Details />
@@ -55,6 +56,11 @@ const PlayerAPI = () => {
         </CurrentlyPlaying>
       </div>
       <Search query={state.searchQuery} />
+      <DiscogsWrapper
+        recordLabel="recordLabel"
+        searchText={searchText}
+        isLabel={isLabel}
+      />
     </div>
   );
 };

@@ -1,22 +1,25 @@
 import React from "react";
+import styled from "styled-components";
 
 import { useHandleChange } from "../../hooks/commonHooks";
 import { Utils } from "../../helpers";
 import { searchSpotify } from "../../api/spotify";
+import { searchDiscogs } from "../../api/discogs";
 import SearchIcon from "../../images/custom-svgs/SearchIcon";
 
 import Search from "../Player/Search";
 
-let DiscogsSearch = {
+let Discogs = {
   Shell: "",
   Wrapper: ""
 };
+Discogs.Styles = {};
 
-DiscogsSearch.Template = ({
+Discogs.Template = ({
   onSubmit,
   onChange,
   toggleIsLabel,
-  formState = { isLabel: "{isLabel}", searchText: "{searchText}" },
+  formState = { isLabel: false, searchText: "{searchText}" },
   isFetching,
   isError,
   type,
@@ -28,30 +31,20 @@ DiscogsSearch.Template = ({
       <div className="search-bar">
         <input
           defaultValue={formState.searchText}
-          placeholder="Search spotify"
+          placeholder="Search discogs"
           autoComplete="off"
           type="text"
           className="query"
+          style={{ borderBottomLeftRadius: 0 }}
           name="searchText"
           tabIndex="1"
           aria-label="search-input"
         />
-        <button className="submit" type="submit" alt="submit">
+        <button className="submit radius-left" type="submit" alt="submit">
           <SearchIcon isLoading={isFetching} isError={isError} />
         </button>
       </div>
       <div className="search-bar select-types">
-        <label htmlFor="label-check" tabIndex="3">
-          by label
-          <input
-            onChange={toggleIsLabel}
-            checked={formState.isLabel}
-            id="label-check"
-            type="checkbox"
-            name="isLabel"
-          />
-        </label>
-
         <select
           tabIndex="2"
           name="type"
@@ -64,17 +57,28 @@ DiscogsSearch.Template = ({
             </option>
           ))}
         </select>
+        <label htmlFor="label-check" tabIndex="3">
+          by label
+          <input
+            onChange={toggleIsLabel}
+            checked={formState.isLabel}
+            id="label-check"
+            type="checkbox"
+            name="isLabel"
+          />
+        </label>
       </div>
     </form>
   </>
 );
-DiscogsSearch.Constants = {
+Discogs.Constants = {
   types: ["track", "artist", "album", "playlist"]
 };
-DiscogsSearch.Search = ({ query, setData }) => {
+
+Discogs.Search = ({ query, setData }) => {
   //Constants
   let types;
-  types = DiscogsSearch.Constants.types;
+  types = Discogs.Constants.types;
   //* STATE */
   const [{ isFetching, hasError }] = React.useState({
     isFetching: false,
@@ -112,11 +116,11 @@ DiscogsSearch.Search = ({ query, setData }) => {
   const toggleIsLabel = () =>
     setFormState(s => ({ ...s, isLabel: !s.isLabel }));
 
-  return React.createElement(DiscogsSearch.Template, {
+  return React.createElement(Discogs.Template, {
     onSubmit,
     onChange,
     toggleIsLabel,
-    formState: { isLabel: "{isLabel}", searchText: "{searchText}" },
+    formState: { isLabel: false, searchText: "" },
     isFetching,
     isError: hasError,
     type,
@@ -125,52 +129,27 @@ DiscogsSearch.Search = ({ query, setData }) => {
   });
 };
 
-DiscogsSearch.Context = React.createContext({
+Discogs.Context = React.createContext({
   data: {}
 });
 
-DiscogsSearch.Wrapper = ({ recordLabel }) => {
-  let query = {
-    type: "album",
-    searchText: "pampa".replace(/records/g, ""),
-    searchLabel: true
-  };
-  console.log("recordLabel", recordLabel);
+Discogs.Wrapper = ({ recordLabel, searchText, isLabel, type }) => {
+  console.log({ recordLabel, searchText, isLabel, type });
+  React.useEffect(() => {
+    searchText &&
+      searchDiscogs({
+        [isLabel ? "label" : "q"]: searchText,
+        type: "albums"
+      }).then(data => {
+        console.log(data.results.map(({ title }) => title));
+      });
+  }, [searchText]);
 
-  return <DiscogsSearch.Search query={query} />;
+  return <Discogs.Search query={{ searchText, isLabel, type: "artist" }} />;
 };
 
-const DiscogsWrapper = props =>
-  React.createElement(DiscogsSearch.Wrapper, props);
+const DiscogsWrapper = props => React.createElement(Discogs.Wrapper, props);
 
 export default DiscogsWrapper;
 
-export const DiscogsSearchContext = DiscogsSearch.Context;
-
-// DiscogsSearch.Search = () => {
-//   /**
-//    * EVENTS
-//    */
-
-//   /**
-//    * ACTIONS
-//    */
-//   function handleSubmit() {}
-//   function handleFormState() {}
-//   const isFetching = false;
-//   const isError = false;
-//   const type = "album";
-//   const setType = () => console.log("?setType");
-//   const types = [];
-
-//   return React.createElement(DiscogsSearch.Template, {
-//     handleSubmit,
-//     handleFormState,
-//     formState: { searchLabel: "{searchLabel}", searchText: "{searchText}" },
-//     isFetching,
-//     isError,
-//     type,
-//     setType,
-//     types
-//   });
-// };
+export const DiscogsContext = Discogs.Context;
