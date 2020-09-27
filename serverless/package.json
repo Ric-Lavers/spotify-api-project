@@ -1,0 +1,16 @@
+{
+  "name": "serverless",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "disconnect": "^1.2.1",
+    "dotenv": "^8.2.0",
+    "micro-cors": "^0.1.1",
+    "oauth-1.0a": "^2.2.5",
+    "querystring": "^0.2.0",
+    "request": "^2.81.0"
+  },
+  "scripts": {}
+}
