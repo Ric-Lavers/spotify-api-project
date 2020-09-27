@@ -1,7 +1,8 @@
 require("dotenv").config();
 const querystring = require("querystring");
 
-const allPermisions = require("./config/permissions").allPermisions;
+const topTablePermissions = require("./config/permissions").topTablePermissions;
+
 const REDIRECT_URI = require("./index").REDIRECT_URI;
 
 module.exports = function (req, res) {
@@ -12,7 +13,7 @@ module.exports = function (req, res) {
     querystring.stringify({
       response_type: "code",
       client_id: process.env.SPOTIFY_CLIENT_ID,
-      scope: allPermisions,
+      scope: topTablePermissions,
       redirect_uri: REDIRECT_URI,
     })
   );
