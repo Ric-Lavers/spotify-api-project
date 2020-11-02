@@ -12,7 +12,7 @@ import SfChecked from "../common/SfCheck";
 
 const DetailsData = () => {
   const song = useContext(CurrentPlayingContext);
-  if (!song) {
+  if (!song || !song.item) {
     return null;
   }
   console.log(song);
