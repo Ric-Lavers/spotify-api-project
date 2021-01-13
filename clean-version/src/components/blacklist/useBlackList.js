@@ -1,6 +1,5 @@
 var BlackList = [];
-function useBlackList() {
-    this.append();
-    read;
-    return ["BlackList"];
+export function useBlackList() {
+  this.append();
+  return ["BlackList"];
 }

@@ -1,23 +1,21 @@
-const BlackList = {
-  ids: [],
-}
+export const BlackList = {
+  ids: []
+};
 
 interface limitList {
-  ids: string[]
+  ids: string[];
   tracks: {
     [key: string]: {
-      name: string
-      album: string
-      artists: string
-      index: number | string
-    }
-  }
+      name: string;
+      album: string;
+      artists: string;
+      index: number | string;
+    };
+  };
 }
 function useBlackList(): string[] {
   function append() {}
-  function read() {
-    BlackList
-  }
+  function read() {}
 
-  return ["BlackList"]
+  return ["BlackList"];
 }

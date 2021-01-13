@@ -6,8 +6,10 @@ import {
   getAlbumById,
   saveTracks,
   removeTracks,
-  getSavedState
+  getSavedState,
+  controls,
 } from "../../api/spotify.js";
+
 import SfChecked from "../common/SfCheck";
 
 const DetailsData = () => {
@@ -15,7 +17,7 @@ const DetailsData = () => {
   if (!song || !song.item) {
     return null;
   }
-  console.log(song);
+  // console.log(song);
 
   const {
     item: {
@@ -24,9 +26,17 @@ const DetailsData = () => {
       album,
       uri,
       id: trackId,
-      album: { id }
-    }
+      album: { id },
+    },
   } = song;
+
+  useEffect(() => {
+    console.log("!");
+    if (trackId === "5jKLIBeOfBeGLc6GGr482n") {
+      console.log("strawberry");
+      controls("next");
+    }
+  }, [trackId]);
   const [extraAlbumData, setData] = useState({});
 
   async function handleGetAlbumById(id) {
@@ -41,7 +51,7 @@ const DetailsData = () => {
     }
   }
 
-  const setSaved = saved => setData({ ...extraAlbumData, saved });
+  const setSaved = (saved) => setData({ ...extraAlbumData, saved });
 
   useEffect(() => {
     id && handleGetAlbumById(id);
@@ -71,12 +81,12 @@ const Details = React.memo(
         type: "currentPlaying/image",
         payload: {
           src: album.images[0].url,
-          alt: "currently playing"
-        }
+          alt: "currently playing",
+        },
       });
       dispatch({
         type: "currentPlaying/details",
-        payload: { uri, name, artists, album, id }
+        payload: { uri, name, artists, album, id },
       });
     }
 
@@ -91,7 +101,7 @@ const Details = React.memo(
             checked={album.saved}
             onClick={() => {
               let success = album.saved ? removeTracks(id) : saveTracks(id);
-              success.then(b => b && setSaved(!album.saved));
+              success.then((b) => b && setSaved(!album.saved));
             }}
           />
         </h3>
@@ -107,8 +117,8 @@ const Details = React.memo(
               payload: {
                 type: "artist",
                 searchText: album.label.replace(" Recordings", ""),
-                searchLabel: true
-              }
+                searchLabel: true,
+              },
             })
           }
         >
