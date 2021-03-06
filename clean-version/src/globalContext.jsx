@@ -9,8 +9,8 @@ const initalState = {
   devices: [],
   playListIsHidden: false, //TODO refactor to visible object
   visible: {
-    playlist: false,
-    topTable: true,
+    playlist: true,
+    topTable: false,
     devices: false,
     stats: false
   },

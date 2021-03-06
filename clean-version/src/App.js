@@ -17,6 +17,7 @@ import Devices from "./components/settings/Devices";
 import Stats from "./components/stats/Stats";
 import TopTable from "./components/TopTable";
 import SpotifyLogo from "./images/custom-svgs/SpotifyLogo";
+import AnalysisPlaylistsPage from "./pages/AnalysisPlaylists";
 
 import { useToggle } from "./hooks";
 import { ReactComponent as GithubLogo } from "./images/github-logo.svg";
@@ -25,27 +26,23 @@ const App = () => {
   return (
     <Router>
       <GlobalUiState>
-        <Route path="/" render={() => <MainPage />} />
-        <Route path="/discogs-callback" component={DiscogsCallbackPage} />
+        <Layout>
+          <Route exact path="/" render={() => <MainPage />} />
+          <Route
+            path="/analysis/:playlistId"
+            // render={() => <section>analysis</section>}
+            component={AnalysisPlaylistsPage}
+          />
+          <Route path="/discogs-callback" component={DiscogsCallbackPage} />
+        </Layout>
       </GlobalUiState>
     </Router>
   );
 };
 
-const MainPage = () => {
-  const [show, toggleShow] = useToggle(true);
+const Layout = ({ children }) => {
   const [showToken, toggleToken] = useToggle(false);
-  const [state, dispatch] = React.useContext(GlobalContext);
-  const [data, setState] = useState(null);
-
-  const [grid, toggleGrid] = useToggle(true);
-
-  const handleSetLogin = payload => {
-    dispatch({
-      type: "user/loginSpotify",
-      payload
-    });
-  };
+  const [state] = React.useContext(GlobalContext);
 
   return (
     <div className="App">
@@ -58,7 +55,8 @@ const MainPage = () => {
       )}
       <a
         target="_blank"
-        href="https://github.com/Ric-Lavers/spotify-api-project">
+        href="https://github.com/Ric-Lavers/spotify-api-project"
+      >
         <GithubLogo />
       </a>
       <section
@@ -66,53 +64,74 @@ const MainPage = () => {
         style={{
           backgroundImage: `url(${state.currentPlaying.image.src})`,
           backgroundPosition: "top"
-        }}>
-        <SpotifyLogin onLogIn={handleSetLogin} />
-        <DiscogsLogin />
+        }}
+      >
+        {" "}
+        {children}{" "}
+      </section>
+    </div>
+  );
+};
 
-        <img src={logo} className="App-logo" alt="logo" onClick={toggleShow} />
+const MainPage = () => {
+  const [show, toggleShow] = useToggle(true);
+  const [state, dispatch] = React.useContext(GlobalContext);
+  const [data, setState] = useState(null);
 
-        <SpotifyLogo
-          style={{ opacity: "1", fill: "#1DB954" }}
-          className={"App-logo hooks"}
-        />
-        {/* <img
+  const handleSetLogin = payload => {
+    dispatch({
+      type: "user/loginSpotify",
+      payload
+    });
+  };
+
+  return (
+    <>
+      <SpotifyLogin onLogIn={handleSetLogin} />
+      <DiscogsLogin />
+
+      <img src={logo} className="App-logo" alt="logo" onClick={toggleShow} />
+
+      <SpotifyLogo
+        style={{ opacity: "1", fill: "#1DB954" }}
+        className={"App-logo hooks"}
+      />
+      {/* <img
           src={hooks}
           alt="logo"
           className="App-logo hooks"
           onClick={toggleShow}
         /> */}
 
-        <br />
-        <>
-          {show &&
-            state.isSpotifyLoggedIn && [
-              <TopTable />,
-              <div className="app-grid">
-                <div className="device-area">
-                  <Devices />
-                </div>
-                <CurrentlyPlaying>
-                  <SearchResultsContext.Provider value={[data, setState]}>
-                    <div className="player-area">
-                      <Player visible={show} />
-                    </div>
-                    <div className="results-area">
-                      <SearchResults />
-                    </div>
-                  </SearchResultsContext.Provider>
-                  <div className="playlists-area">
-                    <Playlists />
-                  </div>
-                  <div className="stats-area">
-                    <Stats />
-                  </div>
-                </CurrentlyPlaying>
+      <br />
+      <>
+        {show &&
+          state.isSpotifyLoggedIn && [
+            <TopTable />,
+            <div className="app-grid">
+              <div className="device-area">
+                <Devices />
               </div>
-            ]}
-        </>
-      </section>
-    </div>
+              <CurrentlyPlaying>
+                <SearchResultsContext.Provider value={[data, setState]}>
+                  <div className="player-area">
+                    <Player visible={show} />
+                  </div>
+                  <div className="results-area">
+                    <SearchResults />
+                  </div>
+                </SearchResultsContext.Provider>
+                <div className="playlists-area">
+                  <Playlists />
+                </div>
+                <div className="stats-area">
+                  <Stats />
+                </div>
+              </CurrentlyPlaying>
+            </div>
+          ]}
+      </>
+    </>
   );
 };
 

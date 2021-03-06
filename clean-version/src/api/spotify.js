@@ -258,6 +258,64 @@ export const getPlaylistsTracks = async listId => {
     return error;
   }
 };
+const fetchNextItems = async next => {
+  let items = [];
+  const getNext = async () => {
+    const data = await getHref(next);
+
+    items.concat(data.items);
+    items = [...items, ...data.items];
+    if (data.next) {
+      return await fetchNextItems(data.next);
+    } else {
+      return items;
+    }
+  };
+  return await getNext();
+};
+export const getAllPlaylistsTracks = async playlistId => {
+  try {
+    const data = await getPlaylistsTracks(playlistId);
+
+    if (data.next) {
+      const items = await fetchNextItems(data.next);
+      data.items = [...data.items, ...items];
+      delete data.limit;
+    }
+
+    return data;
+  } catch (error) {}
+};
+
+export const _getAllPlaylistsTracks = async listId => {
+  console.log("getAllPlaylistsTracks");
+  try {
+    let res = await fetch(`${baseUrl}/playlists/${listId}/tracks`, headers)
+      .then(isOk)
+      .then(res => {
+        console.log(res);
+        return res.json();
+      })
+      .then(async data => {
+        let next = data.next;
+        console.log(1, data, next);
+
+        while (next) {
+          console.log(2, next);
+          const more = await fetch(data.next, headers);
+          const { items } = more.json();
+          data.items.concat(items);
+        }
+        console.log(3);
+        return data;
+      });
+
+    return res;
+  } catch (error) {
+    console.debug(error.message);
+    return error;
+  }
+};
 
 export const getRecentlyPlayed = async () => {
   const spotifyToken = sessionStorage.spotifyToken;
@@ -478,6 +536,18 @@ export const getOneAudioFeatures = async trackId => {
   isOk(res);
   is204(res);
   return res.json();
+};
+export const getManyAudioFeatures = async trackIds => {
+  const arrayOrIds = [];
+  for (let i = 0; i < trackIds.length; i += 100) {
+    arrayOrIds.push(trackIds.slice(i, 100));
+  }
+  console.log(audio_features);
+  let res = await fetch(`${baseUrl}/audio-features/${trackIds}`, headers);
+  const { audio_features } = res.json();
+  isOk(res);
+  is204(res);
+  return audio_features;
 };
 
 export default {

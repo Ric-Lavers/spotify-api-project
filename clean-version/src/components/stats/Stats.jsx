@@ -1,15 +1,15 @@
-import React, { memo, useState, useContext, useEffect } from "react"
-import Fade from "react-reveal/Fade"
-import Slide from "react-reveal/Slide"
-import { CurrentPlayingContext } from "../../context"
-import { getOneAudioFeatures } from "../../api/spotify"
-import { Utils } from "../../helpers"
-import { GlobalContext } from "globalContext"
-import PopularityMeter from "images/custom-svgs/PopularityMeter"
+import React, { memo, useState, useContext, useEffect } from "react";
+import Fade from "react-reveal/Fade";
+import Slide from "react-reveal/Slide";
+import { CurrentPlayingContext } from "../../context";
+import { getOneAudioFeatures } from "../../api/spotify";
+import { Utils } from "../../helpers";
+import { GlobalContext } from "globalContext";
+import PopularityMeter from "images/custom-svgs/PopularityMeter";
 
-const { ucfirst } = Utils
+const { ucfirst } = Utils;
 
-const stat = [
+export const stats = [
   "mode",
   "popularity",
   "tempo",
@@ -24,45 +24,47 @@ const stat = [
   "acousticness",
   "instrumentalness",
   "liveness",
-  "valence",
-]
+  "valence"
+];
 
 function millisToMinutesAndSeconds(millis) {
-  var minutes = Math.floor(millis / 60000)
-  var seconds = ((millis % 60000) / 1000).toFixed(0)
-  return minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+  var minutes = Math.floor(millis / 60000);
+  var seconds = ((millis % 60000) / 1000).toFixed(0);
+  return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 }
-const keys = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+const keys = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
-const StatsContainer = () => {
-  const [audio_features, setFeatures] = useState(null)
-  const song = useContext(CurrentPlayingContext)
-
-  const setAudioFeatures = async (trackId) => {
-    try {
-      const audio_features = await getOneAudioFeatures(trackId)
-      setFeatures({ ...audio_features, popularity: song.item.popularity })
-    } catch (error) {
-      setFeatures(null)
-    }
+const StatsContainer = ({ song }) => {
+  const [audio_features, setFeatures] = useState(null);
+  if (!song) {
+    song = useContext(CurrentPlayingContext);
   }
+
+  const setAudioFeatures = async trackId => {
+    try {
+      const audio_features = await getOneAudioFeatures(trackId);
+      setFeatures({ ...audio_features, popularity: song.item.popularity });
+    } catch (error) {
+      setFeatures(null);
+    }
+  };
   useEffect(() => {
     if (song.item.id.length) {
-      setAudioFeatures(song.item.id)
+      setAudioFeatures(song.item.id);
     }
-  }, [song.item.id])
+  }, [song.item.id]);
 
   return audio_features ? (
     <Stats id={song.item.id} audio_features={audio_features} />
-  ) : null
-}
+  ) : null;
+};
 
 const Stats = memo(({ id, audio_features }) => {
   const [
     {
-      visible: { stats: isHidden },
-    },
-  ] = useContext(GlobalContext)
+      visible: { stats: isHidden }
+    }
+  ] = useContext(GlobalContext);
 
   return (
     <Fade big when={isHidden}>
@@ -70,42 +72,42 @@ const Stats = memo(({ id, audio_features }) => {
         <div style={isHidden ? {} : { display: "none" }} className="player">
           <table>
             <tbody>
-              {stat.map((key, i) => {
+              {stats.map((key, i) => {
                 let value = () => {
                   switch (key) {
                     case "key":
-                      return keys[audio_features[key]]
+                      return keys[audio_features[key]];
                     case "mode":
-                      return key ? "Major" : "Minor"
+                      return key ? "Major" : "Minor";
                     case "tempo":
-                      return `${Math.round(audio_features[key])}bpm`
+                      return `${Math.round(audio_features[key])}bpm`;
                     case "duration_ms":
-                      return millisToMinutesAndSeconds(audio_features[key])
+                      return millisToMinutesAndSeconds(audio_features[key]);
                     case "popularity":
                       return (
                         <PopularityMeter popularity={audio_features[key]} />
-                      )
+                      );
                     default:
-                      return audio_features[key]
+                      return audio_features[key];
                   }
-                }
+                };
 
                 return (
                   <tr>
                     <td>{ucfirst(key.replace("_", " ").replace(" ms", ""))}</td>
                     <td>{value()}</td>
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
         </div>
       </Slide>
     </Fade>
-  )
-})
+  );
+});
 
-export default StatsContainer
+export default StatsContainer;
 
 const json = {
   // default
@@ -131,5 +133,5 @@ const json = {
   uri: "spotify:track:7GBrg6uPsklvih3b59Mn0u",
   track_href: "https://api.spotify.com/v1/tracks/7GBrg6uPsklvih3b59Mn0u",
   analysis_url:
-    "https://api.spotify.com/v1/audio-analysis/7GBrg6uPsklvih3b59Mn0u",
-}
+    "https://api.spotify.com/v1/audio-analysis/7GBrg6uPsklvih3b59Mn0u"
+};

@@ -27,36 +27,49 @@ const PlaylistsItem = ({
     className="playlist__item"
     onClick={() =>
       setSelected(id === selectedId ? { id: null, uri: null } : { id, uri })
-    }>
+    }
+  >
     {name}
     <i>{` - ${isPublic ? "public" : "private"}`}</i>
   </li>
 );
-
-const PlaylistSongs = ({ playlistId, context_uri, currentlyPlayingId }) => {
+export const usePlaylistSongs = (playlistId, fetchAllTracks = false) => {
+  const [{ total }, setSongData] = useState({
+    href: "",
+    limit: 0,
+    offset: 0,
+    previous: null,
+    total: 0
+  });
   const [songs, setSongs] = useState([]);
   const [nextHref, setHref] = useState("");
   const [fetchAll, setFetchingAll] = useState(false);
 
   useEffect(() => {
-    playlistId ? fetchPlaylistsTracks(playlistId) : setSongs([]);
+    if (playlistId) {
+      fetchPlaylistsTracks(playlistId);
+    }
   }, [playlistId]);
 
   const fetchPlaylistsTracks = async id => {
     if (id === "savedTracks") {
       let { items, next, ...data } = await getMeSavedTracks();
       setSongs(items);
+      setSongData(data);
       setHref(next);
     } else if (id.includes("topTracks")) {
       let query = { time_range: id.split("-")[1] };
       let { items, next, ...data } = await getTopTracks(query);
       setSongs(items.map(item => ({ track: item })));
+      setSongData(data);
       setHref(next);
     } else {
       let { items, next, ...data } = await getPlaylistsTracks(id);
       setSongs(items);
+      setSongData(data);
       setHref(next);
     }
+    // if (fetchAllTracks) setFetchingAll(true);
   };
 
   const addData = async theNextHref => {
@@ -74,9 +87,28 @@ const PlaylistSongs = ({ playlistId, context_uri, currentlyPlayingId }) => {
 
   const uris = songs.map(({ track: { uri } }) => uri);
 
+  return {
+    total,
+    setFetchingAll,
+    uris,
+    songs,
+    nextHref
+  };
+};
+
+export const PlaylistSongs = ({
+  playlistId,
+  context_uri,
+  currentlyPlayingId
+}) => {
+  const { total, setFetchingAll, uris, songs, nextHref } = usePlaylistSongs(
+    playlistId
+  );
+
   return (
     <React.Suspense fallback={<p>...loading</p>}>
       <>
+        {songs.length && <AnalyisTracks playlistId={playlistId} />}
         {songs.map(({ track: { name, id, uri } }, i) => (
           <li
             onClick={() =>
@@ -88,14 +120,28 @@ const PlaylistSongs = ({ playlistId, context_uri, currentlyPlayingId }) => {
             id={id}
             className={`playlist__song ${
               currentlyPlayingId === id ? "green" : ""
-            }`}>
-            {" "}
+            }`}
+          >
             {name}
           </li>
         ))}
-        {nextHref && <a onClick={() => setFetchingAll(true)}> Show all </a>}
+        {nextHref && (
+          <a onClick={() => setFetchingAll(true)}> Show all {total} tracks</a>
+        )}
       </>
     </React.Suspense>
+  );
+};
+
+export const AnalyisTracks = ({ playlistId }) => {
+  return (
+    <>
+      <button
+        onClick={() => window.location.replace(`/analysis/${playlistId}`)}
+      >
+        Analysis tracks
+      </button>
+    </>
   );
 };
 
@@ -138,7 +184,8 @@ const Playlists = () => {
           <ul className="playlists" style={isHidden ? {} : { display: "none" }}>
             <p
               className="header pointer"
-              onClick={() => dispatch({ type: "visible/toggle-playlist" })}>
+              onClick={() => dispatch({ type: "visible/toggle-playlist" })}
+            >
               hide{" "}
             </p>
             <>
@@ -163,11 +210,13 @@ const Playlists = () => {
                         onChange={({ target: { value } }) => {
                           console.log(value);
                           setTopTrackTime(value);
-                        }}>
+                        }}
+                      >
                         {top_time_range.map(({ label, value }, i) => (
                           <option
                             selected={topTrackTimeValue === value}
-                            value={value}>
+                            value={value}
+                          >
                             {label}
                           </option>
                         ))}
