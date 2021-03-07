@@ -42,7 +42,14 @@ const App = () => {
 
 const Layout = ({ children }) => {
   const [showToken, toggleToken] = useToggle(false);
-  const [state] = React.useContext(GlobalContext);
+  const [state, dispatch] = React.useContext(GlobalContext);
+
+  const handleSetLogin = payload => {
+    dispatch({
+      type: "user/loginSpotify",
+      payload
+    });
+  };
 
   return (
     <div className="App">
@@ -59,6 +66,7 @@ const Layout = ({ children }) => {
       >
         <GithubLogo />
       </a>
+      <header></header>
       <section
         className="App-header"
         style={{
@@ -66,8 +74,8 @@ const Layout = ({ children }) => {
           backgroundPosition: "top"
         }}
       >
-        {" "}
-        {children}{" "}
+        <SpotifyLogin onLogIn={handleSetLogin} />
+        {state.isSpotifyLoggedIn ? <>{children}</> : <p>log in to active</p>}
       </section>
     </div>
   );
@@ -78,31 +86,17 @@ const MainPage = () => {
   const [state, dispatch] = React.useContext(GlobalContext);
   const [data, setState] = useState(null);
 
-  const handleSetLogin = payload => {
-    dispatch({
-      type: "user/loginSpotify",
-      payload
-    });
-  };
-
   return (
     <>
-      <SpotifyLogin onLogIn={handleSetLogin} />
-      <DiscogsLogin />
-
+      {/*   <DiscogsLogin />
+   
       <img src={logo} className="App-logo" alt="logo" onClick={toggleShow} />
 
-      <SpotifyLogo
+       <SpotifyLogo
         style={{ opacity: "1", fill: "#1DB954" }}
         className={"App-logo hooks"}
       />
-      {/* <img
-          src={hooks}
-          alt="logo"
-          className="App-logo hooks"
-          onClick={toggleShow}
-        /> */}
-
+     */}
       <br />
       <>
         {show &&

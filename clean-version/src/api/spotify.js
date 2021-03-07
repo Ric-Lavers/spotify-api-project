@@ -239,13 +239,23 @@ export const getAlbumInfo = async id => {
   }
 };
 
-export const getMePlaylists = async () => {
+export const getMePlaylists = async ({ limit = 50, offset = 0 } = {}) => {
   try {
-    let res = await fetch(`${baseUrl}/me/playlists`, headers);
+    let res = await fetch(
+      `${baseUrl}/me/playlists?limit=${limit}&offset=${offset}`,
+      headers
+    );
     isOk(res);
-    return res.json();
+    const data = await res.json();
+    if (data.next) {
+      const items = await fetchNextItems(data.next);
+      data.items = [...data.items, ...items];
+    }
+
+    return data;
   } catch (error) {
     console.debug(error.message);
+    return { items: [] };
   }
 };
 export const getPlaylistsTracks = async listId => {
@@ -263,7 +273,6 @@ const fetchNextItems = async next => {
   const getNext = async () => {
     const data = await getHref(next);
 
-    items.concat(data.items);
     items = [...items, ...data.items];
     if (data.next) {
       return await fetchNextItems(data.next);
@@ -273,6 +282,7 @@ const fetchNextItems = async next => {
   };
   return await getNext();
 };
+
 export const getAllPlaylistsTracks = async playlistId => {
   try {
     const data = await getPlaylistsTracks(playlistId);
@@ -287,33 +297,51 @@ export const getAllPlaylistsTracks = async playlistId => {
   } catch (error) {}
 };
 
-export const _getAllPlaylistsTracks = async listId => {
-  console.log("getAllPlaylistsTracks");
+export const createUserPlaylist = async (
+  user_id,
+  { name, description, isPublic = false, collaborative = false }
+) => {
   try {
-    let res = await fetch(`${baseUrl}/playlists/${listId}/tracks`, headers)
-      .then(isOk)
-      .then(res => {
-        console.log(res);
-        return res.json();
+    let res = await fetch(`${baseUrl}/users/${user_id}/playlists`, {
+      ...headers,
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        description,
+        public: isPublic,
+        collaborative
       })
-      .then(async data => {
-        let next = data.next;
-        console.log(1, data, next);
+    });
+    isOk(res);
+    const data = await res.json();
 
-        while (next) {
-          console.log(2, next);
-          const more = await fetch(data.next, headers);
-          const { items } = more.json();
-          data.items.concat(items);
-        }
-        console.log(3);
-        return data;
-      });
-
-    return res;
+    return data;
   } catch (error) {
-    console.debug(error.message);
-    return error;
+    console.log(error.message);
+  }
+};
+export const createUserPlaylistWithTracks = async (
+  user_id,
+  playlistData,
+  uris
+) => {
+  try {
+    const newPlaylist = await createUserPlaylist(user_id, playlistData);
+    const playlist_id = newPlaylist.id;
+
+    let res = await fetch(`${baseUrl}/playlists/${playlist_id}/tracks`, {
+      ...headers,
+      method: "POST",
+      body: JSON.stringify({
+        uris
+      })
+    });
+    isOk(res);
+    const playlist = await getAllPlaylistsTracks(playlist_id);
+
+    return playlist;
+  } catch (error) {
+    console.log(error.message);
   }
 };
 
@@ -364,6 +392,9 @@ export const controls = async (action, body = {}) => {
 };
 
 export const play = async (body = {}) => {
+  if (body.uris) {
+    body.uris = body.uris.filter(uri => !uri.match("spotify:local"));
+  }
   try {
     await fetch(`${baseUrl}/me/player/play`, {
       ...headers,
@@ -538,16 +569,20 @@ export const getOneAudioFeatures = async trackId => {
   return res.json();
 };
 export const getManyAudioFeatures = async trackIds => {
-  const arrayOrIds = [];
-  for (let i = 0; i < trackIds.length; i += 100) {
-    arrayOrIds.push(trackIds.slice(i, 100));
-  }
-  console.log(audio_features);
-  let res = await fetch(`${baseUrl}/audio-features/${trackIds}`, headers);
-  const { audio_features } = res.json();
+  let res = await fetch(`${baseUrl}/audio-features?ids=${trackIds}`, headers);
   isOk(res);
   is204(res);
-  return audio_features;
+  return res.json();
+};
+export const getHeapsAudioFeatures = async trackIds => {
+  const arrayOfIds = [];
+  for (let i = 0; i < trackIds.length; i += 100) {
+    arrayOfIds.push(trackIds.slice(i, i + 100));
+  }
+
+  let res = await Promise.all(arrayOfIds.map(ids => getManyAudioFeatures(ids)));
+
+  return res.reduce((a, { audio_features }) => [...a, ...audio_features], []);
 };
 
 export default {

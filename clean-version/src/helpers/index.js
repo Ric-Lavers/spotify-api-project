@@ -3,21 +3,23 @@ export * from "./handlePlay";
 let LOGIN_URL;
 if (process.env.REACT_APP_ENV === "PROD") {
   LOGIN_URL =
-    process.env.REACT_APP_LOGIN_URL_PROD || "https://serverless-1qy6p9wlj.vercel.app/api/login";
+    process.env.REACT_APP_LOGIN_URL_PROD ||
+    "https://serverless-1qy6p9wlj.vercel.app/api/login";
 } else if (process.env.REACT_APP_ENV === "STAG") {
   LOGIN_URL =
-    process.env.REACT_APP_LOGIN_URL_PROD || "https://serverless-1qy6p9wlj.vercel.app/api/login";
+    process.env.REACT_APP_LOGIN_URL_PROD ||
+    "https://serverless-1qy6p9wlj.vercel.app/api/login";
 } else {
   LOGIN_URL =
     process.env.REACT_APP_LOGIN_URL_DEV || "http://localhost:4000/login";
 }
 
 class SpotifyHelpers {
-  static combineArtists = artists => artists.map(({
-    name
-  }) => name).join(", ");
+  static combineArtists = artists => artists.map(({ name }) => name).join(", ");
 }
 
+export const combineArtists = artists =>
+  artists.map(({ name }) => name).join(", ");
 class Utils {
   static scrollIntoView = elementId =>
     document.getElementById(elementId).scrollIntoView({
@@ -49,8 +51,4 @@ class Utils {
   };
 }
 
-export {
-  SpotifyHelpers,
-  Utils,
-  LOGIN_URL
-};
+export { SpotifyHelpers, Utils, LOGIN_URL };

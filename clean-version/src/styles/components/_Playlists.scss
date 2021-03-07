@@ -3,7 +3,7 @@
   @include font-sm;
   position: sticky;
   top: 0;
-  border-radius: 0 $md $md 0 ;
+  border-radius: 0 $md $md 0;
   text-align: left;
   .playlist__item {
     cursor: pointer;
@@ -11,17 +11,17 @@
     padding-bottom: $sm;
     font-weight: bolder;
   }
-  .playlist__song {
-    cursor: pointer;
-    font-size: 0.8em;
-  }
-  .playlist__song:hover {
-    color: $spotify-green
-  }
   border: 1px solid rgba(white, 0.4);
   border-left-color: rgba(#fff, 0);
 }
 
+.playlist__song {
+  cursor: pointer;
+  font-size: 0.8em;
+}
+.playlist__song:hover {
+  color: $spotify-green;
+}
 .sticky {
   position: sticky;
   top: 0;

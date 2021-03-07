@@ -1,0 +1,77 @@
+.analysis-playlists {
+  .stat-check-list {
+    // display: grid;
+    // grid-template-columns: 1fr 1fr 1fr 1fr;
+    // grid-gap: 14px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    // flex-grow: 1;
+    font-size: 0.7em;
+    text-align: right;
+    margin: 0 21px;
+    justify-content: space-between;
+    max-width: 600px;
+  }
+  .stat-checkbox {
+    min-width: 120px;
+    padding: 0 7px;
+    margin: 0 7px;
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+  }
+  .test {
+    position: relative;
+    .left {
+      position: absolute;
+      left: 0;
+    }
+  }
+
+  .playlist-info {
+    display: flex;
+    padding: 0 21px;
+    h4 {
+      margin: 0;
+      flex: 2;
+    }
+    img {
+      flex: 1;
+      max-height: 100px;
+      max-width: 100px;
+    }
+  }
+  .carousel {
+    position: relative;
+    overflow: hidden;
+    // width: 300px;
+    // height: 150px;
+  }
+  .user-playlists {
+    display: inline-grid;
+    span {
+      font-size: smaller;
+    }
+  }
+  select {
+    text-overflow: ellipsis;
+  }
+  .add-playlist {
+    legend {
+      text-align: left;
+    }
+    // border: 1px solid black;
+    // padding: 21px;
+    display: table-caption;
+    font-size: 0.7em;
+    // display: flex;
+    // flex-direction: column;
+    input[type="text"] {
+      min-width: 300px;
+    }
+  }
+}
+input[type="checkbox"] {
+  cursor: pointer;
+}
