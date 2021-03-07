@@ -28,9 +28,9 @@ const App = () => {
       <GlobalUiState>
         <Layout>
           <Route exact path="/" render={() => <MainPage />} />
+          <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
           <Route
             path="/analysis/:playlistId"
-            // render={() => <section>analysis</section>}
             component={AnalysisPlaylistsPage}
           />
           <Route path="/discogs-callback" component={DiscogsCallbackPage} />
@@ -75,7 +75,20 @@ const Layout = ({ children }) => {
         }}
       >
         <SpotifyLogin onLogIn={handleSetLogin} />
-        {state.isSpotifyLoggedIn ? <>{children}</> : <p>log in to active</p>}
+        {state.isSpotifyLoggedIn ? (
+          <>{children}</>
+        ) : sessionStorage.getItem("spotifyToken") ? (
+          <></>
+        ) : (
+          <>
+            <p>this site does not have a db, so can't record your data.</p>
+            <p>
+              please login and allow all the spotify permissions...
+              <br />
+              yehhh all of them, but you know no data base.
+            </p>
+          </>
+        )}
       </section>
     </div>
   );

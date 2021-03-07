@@ -16,11 +16,11 @@ import {
   createUserPlaylistWithTracks
 } from "api/spotify";
 import { stats as _stats } from "../components/stats/Stats";
-import { useAudioControls } from "../components/AudioControls";
 import { GlobalContext } from "globalContext";
 import PopularityMeter from "images/custom-svgs/PopularityMeter";
+import { combineArtists } from "helpers";
 
-const tableKeys = [..._stats];
+const tableKeys = ["artists", "albumName", ..._stats];
 
 const useSongsWithAudioFeatures = playlistId => {
   const [songWithFeatures, setSongWithFeatures] = useState([]);
@@ -44,32 +44,49 @@ const useSongsWithAudioFeatures = playlistId => {
 
   const sortTracks = (key, direction = "ASC") => {
     setCurrentSort(`${key} - ${direction}`);
-    if (songWithFeatures[0].audioFeatures.hasOwnProperty(key)) {
-      const sorted = songWithFeatures.sort((a, b) =>
+    if (key === "artists") {
+      key = "artists[0].name";
+    }
+    if (key === "albumName") {
+      key = "album.name";
+    } else if (songWithFeatures[0].audioFeatures.hasOwnProperty(key)) {
+      key = `audioFeatures.${key}`;
+    }
+
+    const keyType = typeof get(songWithFeatures[0], key);
+    if (get(songWithFeatures[0], key) === undefined) return;
+
+    if (keyType === "string") {
+      const sorted =
         direction === "ASC"
-          ? a.audioFeatures[key] - b.audioFeatures[key]
-          : b.audioFeatures[key] - a.audioFeatures[key]
-      );
+          ? songWithFeatures.sort((a, b) =>
+              get(a, key).localeCompare(get(b, key))
+            )
+          : songWithFeatures
+              .sort((a, b) =>
+                get(a, key)
+                  .toUpperCase()
+                  .localeCompare(get(b, key).toUpperCase())
+              )
+              .reverse();
       setSongWithFeatures([...sorted]);
     }
-    if (songWithFeatures[0].hasOwnProperty(key)) {
-      if (typeof songWithFeatures[0][key] === "string") {
-        const sorted =
-          direction === "ASC"
-            ? songWithFeatures.sort()
-            : songWithFeatures.sort().reverse();
-        setSongWithFeatures([...sorted]);
-      }
+
+    if (keyType === "number") {
       const sorted = songWithFeatures.sort((a, b) =>
-        direction === "ASC" ? a[key] - b[key] : b[key] - a[key]
+        direction === "ASC"
+          ? get(a, key) - get(b, key)
+          : get(b, key) - get(a, key)
       );
+      console.log();
       setSongWithFeatures([...sorted]);
     }
   };
   const uris = songWithFeatures.map(({ uri }) => uri);
   const includedUris = songWithFeatures
     .filter(({ include }) => include)
-    .map(({ uri }) => uri);
+    .map(({ uri }) => uri)
+    .filter(uri => !uri.match("spotify:local"));
 
   const checkIncludeAll = bool => {
     setSongWithFeatures(prev =>
@@ -174,7 +191,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     const [v, d] = value.split("-");
     sortTracks(v, d);
   };
-  // console.log(tracks[0]);
+  console.log(tracks[0]);
   // console.log(playlists);
   const currentTrackId = get(currentSong, "item.id");
 
@@ -291,6 +308,7 @@ const PlaylistTable = memo(
                 id,
                 name,
                 album: { name: albumName },
+                artists,
                 audioFeatures,
                 popularity,
                 uri,
@@ -299,11 +317,12 @@ const PlaylistTable = memo(
               i
             ) => {
               const rows = {
+                artists,
                 albumName,
                 popularity,
                 ...audioFeatures
               };
-
+              const isLocalFile = uri.match("spotify:local");
               return (
                 <tr>
                   <td style={{ textAlign: "center" }}>
@@ -313,7 +332,8 @@ const PlaylistTable = memo(
                       }
                       type="checkbox"
                       name="include"
-                      checked={include}
+                      checked={!isLocalFile && include}
+                      disabled={isLocalFile}
                     />
                   </td>
                   <td
@@ -334,7 +354,8 @@ const PlaylistTable = memo(
                           <PopularityMeter popularity={rows[statKey]} />
                         </td>
                       );
-
+                    if (statKey === "artists")
+                      return <td>{combineArtists(rows[statKey])}</td>;
                     return <td>{rows[statKey]}</td>;
                   })}
                 </tr>
@@ -376,9 +397,11 @@ const SavePlaylist = ({
   };
   const [hadSuccess, setHadSuccess] = useState(false);
   const [hadError, setHadError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmitPlaylist = async e => {
     e.preventDefault();
+    setLoading(true);
     const playlist = await createPlaylist({
       name,
       description,
@@ -386,6 +409,7 @@ const SavePlaylist = ({
       collaborative
     });
 
+    setLoading(false);
     if (playlist) {
       setHadSuccess(true);
       setTimeout(() => {
@@ -413,7 +437,12 @@ const SavePlaylist = ({
         </label>
         <label>
           <span>Description</span>
-          <input type="text" name="description" value={description} />
+          <textarea
+            type="textarea"
+            name="description"
+            rows="1"
+            value={description}
+          />
         </label>
         <label>
           <span>Public</span>
@@ -424,6 +453,7 @@ const SavePlaylist = ({
           <input name="collaborative" type="checkbox" checked={collaborative} />
         </label>
         <input type="submit" value="create new playlist" />
+        {loading && "🤞"}
         {hadSuccess && "👍"}
         {hadError && "👎"}
       </fieldset>

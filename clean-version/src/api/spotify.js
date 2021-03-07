@@ -265,7 +265,7 @@ export const getPlaylistsTracks = async listId => {
     return res.json();
   } catch (error) {
     console.debug(error.message);
-    return error;
+    return { items: [] };
   }
 };
 const fetchNextItems = async next => {
@@ -294,7 +294,9 @@ export const getAllPlaylistsTracks = async playlistId => {
     }
 
     return data;
-  } catch (error) {}
+  } catch (error) {
+    return { items: [] };
+  }
 };
 
 export const createUserPlaylist = async (
