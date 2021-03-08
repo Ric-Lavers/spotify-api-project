@@ -129,7 +129,7 @@ class SpotifyLogin extends Component {
 
     return (
       <div id="spotify-login" style={styles.container}>
-        <div>
+        <div className="pointer" onClick={() => (window.location.href = "/")}>
           <SpotifyLogo style={{ ...styles.logo, ...logoColor }} />
           {tokenValid && display_picture && (
             <>

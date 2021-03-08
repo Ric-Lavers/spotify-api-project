@@ -111,7 +111,10 @@ const MainPage = () => {
       />
      */}
       <br />
-      <>
+      <a style={{ color: "white" }} href="/analysis">
+        Analysis your playlists{" "}
+      </a>
+      <a>
         {show &&
           state.isSpotifyLoggedIn && [
             <TopTable />,
@@ -137,7 +140,7 @@ const MainPage = () => {
               </CurrentlyPlaying>
             </div>
           ]}
-      </>
+      </a>
     </>
   );
 };
