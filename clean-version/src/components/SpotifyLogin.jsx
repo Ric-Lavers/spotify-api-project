@@ -62,9 +62,10 @@ class SpotifyLogin extends Component {
       let token = new URLSearchParams(window.location.search).get(
         "access_token"
       );
-
+      console.log(window.location.href);
+      console.log(window.location);
       sessionStorage.spotifyToken = token;
-      window.location.replace(window.origin);
+      window.location.replace(window.origin + window.location.pathname);
     }
   };
 
@@ -91,7 +92,7 @@ class SpotifyLogin extends Component {
         return true;
       } catch (error) {
         // timed out
-        window.location.href = LOGIN_URL;
+        window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`;
         this.setState({ tokenValid: false });
         onLogIn(false);
       }
@@ -137,7 +138,10 @@ class SpotifyLogin extends Component {
           )}
         </div>
         {!tokenValid && (
-          <a style={{ color: "white" }} href={LOGIN_URL}>
+          <a
+            style={{ color: "white" }}
+            href={`${LOGIN_URL}?path=${window.location.pathname}`}
+          >
             {sessionStorage.getItem("spotifyToken")
               ? `spotify auth timed out login again`
               : `login to spotify`}
