@@ -5,10 +5,10 @@
 }
 
 .logo-container {
-  height: 100%; width: 100%;
+  height: 100%;
+  width: 100%;
   animation: App-logo-spin infinite 20s linear;
   border: 2px solid white;
-
 }
 .App-logo {
   animation: logo-spin-reverse infinite 20s linear;
@@ -27,6 +27,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  justify-content: left;
   font-size: calc(10px + 2vmin);
   color: white;
   padding: $lg 0;

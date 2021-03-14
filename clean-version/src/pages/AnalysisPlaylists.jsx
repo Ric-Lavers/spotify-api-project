@@ -4,9 +4,15 @@ import makeCarousel from "react-reveal/makeCarousel";
 import truncate from "lodash.truncate";
 import get from "lodash.get";
 import { useParams } from "react-router-dom";
+
 import Range from "components/common/RangeSlider";
 import { useToggle, withCurrentSong } from "hooks";
-
+import {
+  PlaylistTable,
+  SavePlaylist,
+  CurrentPlaylist,
+  UserPlaylistsSelect
+} from "components/AnalysisPlaylists";
 import {
   getAllPlaylistsTracks,
   getMePlaylists,
@@ -59,7 +65,13 @@ const useSongsWithAudioFeatures = playlistId => {
   }, []);
 
   const mergeMoreTracks = tracksWithAudioFeatures => {
-    setSongWithFeatures(prev => [...prev, ...tracksWithAudioFeatures]);
+    const trackIds = new Set();
+    setSongWithFeatures(prev =>
+      [...prev, ...tracksWithAudioFeatures].filter(({ id }) => {
+        if (trackIds.has(id)) return false;
+        return !!trackIds.add(id);
+      })
+    );
     didMergeTrack.current = true;
   };
   useEffect(() => {
@@ -201,29 +213,27 @@ const useMePlaylists = () => {
   return [playlists, getPlaylists];
 };
 
-const UserPlaylistsSelect = ({
-  label,
-  playlists,
-  currentPlaylistId,
-  onChange,
-  loadingStatus = ""
-}) => {
-  return (
-    <label className="user-playlists">
-      <span>{label}</span>
-      <select
-        onChange={({ target: { value: playlistId } }) => onChange(playlistId)}
-        className="playlists-select"
-        value={currentPlaylistId}
-      >
-        <option></option>
-        {playlists.map(pl => (
-          <option value={pl.id}>{truncate(pl.name)}</option>
-        ))}
-      </select>
-      <span>{loadingStatus}</span>
-    </label>
+const useMergePlaylist = ({ mergeMoreTracks, currentPlaylistId }) => {
+  const [mergeLoadingStatus, setLoadingMerge] = useState("");
+  const [mergedPlaylistIds, setMergedPlaylistIds] = useState(
+    [currentPlaylistId].filter(Boolean)
   );
+  const handleMergeNewPlaylist = async playlistId => {
+    setLoadingMerge("🤞");
+    const moreTracks = await getSongsWithAudioFeatures([playlistId]);
+    mergeMoreTracks(moreTracks);
+    setMergedPlaylistIds(prev => [...prev, playlistId]);
+    setLoadingMerge(moreTracks.length ? "👍" : "👎");
+    setTimeout(() => {
+      setLoadingMerge("");
+    }, 3000);
+  };
+
+  return {
+    mergeLoadingStatus,
+    mergedPlaylistIds,
+    handleMergeNewPlaylist
+  };
 };
 
 const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
@@ -270,18 +280,14 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     playlistId && window.location.replace(`/analysis/${playlistId}`);
   };
 
-  const [mergeLoadingStatus, setLoadingMerge] = useState("");
-  const [mergedPlaylistIds, setMergedPlaylistIds] = useState([playlistId]);
-  const handleMergeNewPlaylist = async playlistId => {
-    setLoadingMerge("🤞");
-    const moreTracks = await getSongsWithAudioFeatures([playlistId]);
-    mergeMoreTracks(moreTracks);
-    setMergedPlaylistIds(prev => [...prev, playlistId]);
-    setLoadingMerge(moreTracks.length ? "👍" : "👎");
-    setTimeout(() => {
-      setLoadingMerge("");
-    }, 3000);
-  };
+  const {
+    mergeLoadingStatus,
+    mergedPlaylistIds,
+    handleMergeNewPlaylist
+  } = useMergePlaylist({
+    mergeMoreTracks,
+    currentPlaylistId: playlistId
+  });
 
   const handleCreatePlaylist = async ({
     name,
@@ -372,210 +378,5 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     </>
   );
 });
-
-const PlaylistTable = ({
-  tracks,
-  currentTrackId,
-  uris,
-  stats,
-  onAllCheck,
-  onCheckTrack
-}) =>
-  !tracks.length ? null : (
-    <>
-      <table>
-        <thead>
-          <tr>
-            <th colspan={stats.length + 2} className="table-length">
-              {tracks.length}
-            </th>
-          </tr>
-          <tr>
-            <th style={{ textAlign: "center" }}>
-              <input
-                onChange={({ target: { checked } }) => onAllCheck(checked)}
-                type="checkbox"
-                name="include"
-                defaultChecked={true}
-              />
-            </th>
-            <th>title</th>
-
-            {stats.map(statKey => (
-              <th>{statKey}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {tracks.map(
-            (
-              {
-                id,
-                name,
-                album: { name: albumName },
-                artists,
-                audioFeatures,
-                popularity,
-                uri,
-                include
-              },
-              i
-            ) => {
-              const rows = {
-                artists,
-                albumName,
-                popularity,
-                ...audioFeatures
-              };
-              const isLocalFile = uri.match("spotify:local");
-              return (
-                <tr>
-                  <td style={{ textAlign: "center" }}>
-                    <input
-                      onChange={({ target: { checked } }) =>
-                        onCheckTrack(id, checked)
-                      }
-                      type="checkbox"
-                      name="include"
-                      checked={!isLocalFile && include}
-                      disabled={isLocalFile}
-                    />
-                  </td>
-                  <td
-                    className={`playlist__song ${
-                      currentTrackId === id ? "green" : ""
-                    }`}
-                    onClick={() =>
-                      play({ uris: uris, offset: { position: i } })
-                    }
-                  >
-                    {name}
-                  </td>
-
-                  {stats.map(statKey => {
-                    if (statKey === "popularity")
-                      return (
-                        <td>
-                          <PopularityMeter popularity={rows[statKey]} />
-                        </td>
-                      );
-                    if (statKey === "artists")
-                      return <td>{combineArtists(rows[statKey])}</td>;
-                    return <td>{rows[statKey]}</td>;
-                  })}
-                </tr>
-              );
-            }
-          )}
-        </tbody>
-      </table>
-    </>
-  );
-
-const SavePlaylist = ({
-  user_id,
-  currentSort,
-  currentPlaylist,
-  createPlaylist,
-  description: _description = ""
-}) => {
-  const [{ name, description, isPublic, collaborative }, setValues] = useState({
-    name: currentPlaylist.name || "",
-    description: _description,
-    isPublic: false,
-    collaborative: false
-  });
-  useEffect(() => {
-    if (currentPlaylist.name)
-      setValues(prev => ({
-        ...prev,
-        name: `${currentPlaylist.name || name}${
-          currentSort ? ` (${currentSort})` : ""
-        }`
-      }));
-  }, [currentPlaylist.name, currentSort]);
-
-  const handleChange = ({ target: { name, value, checked } }) => {
-    setValues(prev => ({
-      ...prev,
-      [name]: value === "on" ? checked : value
-    }));
-  };
-  const [hadSuccess, setHadSuccess] = useState(false);
-  const [hadError, setHadError] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmitPlaylist = async e => {
-    e.preventDefault();
-    setLoading(true);
-    const playlist = await createPlaylist({
-      name,
-      description,
-      isPublic,
-      collaborative
-    });
-
-    setLoading(false);
-    if (playlist) {
-      setHadSuccess(true);
-      setTimeout(() => {
-        setHadSuccess(false);
-      }, 3000);
-    } else {
-      setHadError(true);
-      setTimeout(() => {
-        setHadError(false);
-      }, 3000);
-    }
-  };
-
-  return (
-    <form
-      onSubmit={handleSubmitPlaylist}
-      onChange={handleChange}
-      className="add-playlist"
-    >
-      <fieldset>
-        <legend>Create new playlist</legend>
-        <label>
-          <span>Name</span>
-          <input type="text" name="name" value={name} />
-        </label>
-        <label>
-          <span>Description</span>
-          <textarea
-            type="textarea"
-            name="description"
-            rows="1"
-            value={description}
-          />
-        </label>
-        <label>
-          <span>Public</span>
-          <input name="isPublic" type="checkbox" checked={isPublic} />
-        </label>
-        <label>
-          <span>Collaborative</span>
-          <input name="collaborative" type="checkbox" checked={collaborative} />
-        </label>
-        <input type="submit" value="create new playlist" />
-        {loading && "🤞"}
-        {hadSuccess && "👍"}
-        {hadError && "👎"}
-      </fieldset>
-    </form>
-  );
-};
-
-const CurrentPlaylist = ({ currentPlaylist }) => {
-  if (!currentPlaylist) return null;
-  return (
-    <div className="playlist-info">
-      <h4>{currentPlaylist.name}</h4>
-      {/* <p>{currentPlaylist.description}</p> */}
-      <img src={get(currentPlaylist, "images[0].url")} alt="" srcset="" />
-    </div>
-  );
-};
 
 export default withCurrentSong(AnalysisPlaylistsPage);

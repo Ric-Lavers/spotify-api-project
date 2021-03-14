@@ -34,6 +34,7 @@ const App = () => {
             component={AnalysisPlaylistsPage}
           />
           <Route path="/discogs-callback" component={DiscogsCallbackPage} />
+          <Route path="*" render={() => <div />} />
         </Layout>
       </GlobalUiState>
     </Router>
