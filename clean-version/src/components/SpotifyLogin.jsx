@@ -73,7 +73,6 @@ class SpotifyLogin extends Component {
     const { onLogIn } = this.props;
 
     if (spotifyToken) {
-      this.setState({ tokenPresent: true });
       try {
         // set User
         let { display_name, email, images, external_urls } = await checkToken(
@@ -82,6 +81,7 @@ class SpotifyLogin extends Component {
         let display_picture = images.length !== 0 ? images[0].url : null;
 
         this.setState({
+          tokenPresent: true,
           tokenValid: true,
           display_name,
           display_picture,
@@ -93,7 +93,7 @@ class SpotifyLogin extends Component {
       } catch (error) {
         // timed out
         window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`;
-        this.setState({ tokenValid: false });
+        this.setState({ tokenPresent: true, tokenValid: false });
         onLogIn(false);
       }
     } else {
@@ -143,7 +143,9 @@ class SpotifyLogin extends Component {
             href={`${LOGIN_URL}?path=${window.location.pathname}`}
           >
             {sessionStorage.getItem("spotifyToken")
-              ? `spotify auth timed out login again`
+              ? this.state.tokenPresent
+                ? "spotify auth timed out login again"
+                : ""
               : `login to spotify`}
           </a>
         )}
