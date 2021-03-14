@@ -1,11 +1,10 @@
 import React, { memo, useContext, useState, useEffect } from "react";
 import Slide from "react-reveal/Slide";
 import makeCarousel from "react-reveal/makeCarousel";
-
 import truncate from "lodash.truncate";
 import get from "lodash.get";
-
 import { useParams } from "react-router-dom";
+import Range from "components/common/RangeSlider";
 import { useToggle, withCurrentSong } from "hooks";
 
 import {
@@ -22,9 +21,22 @@ import { combineArtists } from "helpers";
 
 const tableKeys = ["artists", "albumName", ..._stats];
 
+const tableKeyToObjectKey = (tableKey, song) => {
+  if (tableKey === "artists") {
+    return "artists[0].name";
+  }
+  if (tableKey === "albumName") {
+    return "album.name";
+  } else if (song[0].audioFeatures.hasOwnProperty(tableKey)) {
+    return `audioFeatures.${tableKey}`;
+  }
+  return tableKey;
+};
+
 const useSongsWithAudioFeatures = playlistId => {
   const [songWithFeatures, setSongWithFeatures] = useState([]);
   const [currentSort, setCurrentSort] = useState("");
+  const [minMax, setMinMax] = useState([0, 0]);
 
   const getSongsWithAudioFeatures = async () => {
     const { items } = await getAllPlaylistsTracks(playlistId);
@@ -42,16 +54,10 @@ const useSongsWithAudioFeatures = playlistId => {
 
   useEffect(() => getSongsWithAudioFeatures(), []);
 
-  const sortTracks = (key, direction = "ASC") => {
-    setCurrentSort(`${key} - ${direction}`);
-    if (key === "artists") {
-      key = "artists[0].name";
-    }
-    if (key === "albumName") {
-      key = "album.name";
-    } else if (songWithFeatures[0].audioFeatures.hasOwnProperty(key)) {
-      key = `audioFeatures.${key}`;
-    }
+  const sortTracks = (tableKey, direction = "ASC") => {
+    setCurrentSort(`${tableKey} - ${direction}`);
+
+    const key = tableKeyToObjectKey(tableKey, songWithFeatures);
 
     const keyType = typeof get(songWithFeatures[0], key);
     if (get(songWithFeatures[0], key) === undefined) return;
@@ -69,19 +75,26 @@ const useSongsWithAudioFeatures = playlistId => {
                   .localeCompare(get(b, key).toUpperCase())
               )
               .reverse();
+      setMinMax([0, 0]);
       setSongWithFeatures([...sorted]);
     }
 
     if (keyType === "number") {
-      const sorted = songWithFeatures.sort((a, b) =>
-        direction === "ASC"
+      const values = [];
+      const sorted = songWithFeatures.sort((a, b) => {
+        values.push(get(b, key));
+        return direction === "ASC"
           ? get(a, key) - get(b, key)
-          : get(b, key) - get(a, key)
-      );
-      console.log();
+          : get(b, key) - get(a, key);
+      });
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+
+      setMinMax([min, max]);
       setSongWithFeatures([...sorted]);
     }
   };
+
   const uris = songWithFeatures.map(({ uri }) => uri);
   const includedUris = songWithFeatures
     .filter(({ include }) => include)
@@ -101,9 +114,31 @@ const useSongsWithAudioFeatures = playlistId => {
     });
   };
 
+  const checkByRange = ([min, max]) => {
+    const [tableKey] = currentSort.split(" -");
+    const key = tableKeyToObjectKey(tableKey, songWithFeatures);
+    console.log(key, min, max);
+    setSongWithFeatures(prev => {
+      prev.map(track => {
+        const field = get(track, key);
+        track.include = field <= max && field >= min;
+      });
+      return [...prev];
+    });
+  };
+
   return [
     songWithFeatures,
-    { sortTracks, uris, includedUris, currentSort, checkIncludeAll, checkById }
+    {
+      sortTracks,
+      uris,
+      includedUris,
+      currentSort,
+      checkIncludeAll,
+      checkById,
+      checkByRange,
+      minMax
+    }
   ];
 };
 
@@ -179,7 +214,16 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
 
   const [
     tracks,
-    { sortTracks, uris, includedUris, currentSort, checkIncludeAll, checkById }
+    {
+      sortTracks,
+      uris,
+      includedUris,
+      currentSort,
+      checkIncludeAll,
+      checkById,
+      checkByRange,
+      minMax: [min, max]
+    }
   ] = useSongsWithAudioFeatures(playlistId);
 
   const preferedStatKeys = JSON.parse(
@@ -191,7 +235,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     const [v, d] = value.split("-");
     sortTracks(v, d);
   };
-  console.log(tracks[0]);
+  // console.log(tracks[0]);
   // console.log(playlists);
   const currentTrackId = get(currentSong, "item.id");
 
@@ -245,11 +289,15 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
             currentPlaylist={currentPlaylist}
             currentSort={currentSort}
             createPlaylist={handleCreatePlaylist}
+            description={currentPlaylist.description}
           />
         )}
       </div>
       <div className="analysis-playlists">
         <BlackStatList hide={isHidden} />
+        {min + max !== 0 && (
+          <Range min={min} max={max} onRangeChange={checkByRange} />
+        )}
 
         <div>
           <button onClick={toggleHidden}>
@@ -371,11 +419,12 @@ const SavePlaylist = ({
   user_id,
   currentSort,
   currentPlaylist,
-  createPlaylist
+  createPlaylist,
+  description: _description = ""
 }) => {
   const [{ name, description, isPublic, collaborative }, setValues] = useState({
     name: currentPlaylist.name || "",
-    description: "",
+    description: _description,
     isPublic: false,
     collaborative: false
   });

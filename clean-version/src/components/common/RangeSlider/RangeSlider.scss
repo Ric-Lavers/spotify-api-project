@@ -1,0 +1,22 @@
+.range-slider {
+  padding: 14px 0;
+  .track {
+    height: 8px;
+    width: 100%;
+
+    background-color: $spotify-white;
+  }
+  .thumb {
+    height: 21px;
+    width: 21px;
+    border-radius: 50%;
+    background-color: $spotify-green;
+    &::after {
+      content: attr(data-value);
+      position: absolute;
+      top: 100%;
+      left: 0;
+      font-size: 14px;
+    }
+  }
+}
