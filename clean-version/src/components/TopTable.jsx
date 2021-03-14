@@ -6,8 +6,6 @@ import Fade from "react-reveal/Fade";
 import { GlobalContext } from "globalContext";
 import { TrackTable } from "./Player/TrackTable";
 import ArtistTable from "./Player/ArtistTable";
-import topTacksData from "__tests__/mocks/topTracks.json";
-import topArtistsData from "__tests__/mocks/topArtists.json";
 import { top_time_range } from "constants/index";
 import { getTopTracks, getTopArtists } from "api/spotify";
 import { reduceGenres } from "helpers/hanger";

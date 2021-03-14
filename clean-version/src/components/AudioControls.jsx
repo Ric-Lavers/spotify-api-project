@@ -66,7 +66,6 @@ export const useAudioControls = () => {
 
   const findPosition = currentSong => {
     let { duration_ms } = currentSong.item;
-    let { progress_ms } = currentSong;
 
     return Math.floor(duration_ms * (rangeValue / 100));
   };
