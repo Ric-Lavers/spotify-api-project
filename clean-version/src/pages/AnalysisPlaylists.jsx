@@ -18,6 +18,7 @@ import { stats as _stats } from "../components/stats/Stats";
 import { GlobalContext } from "globalContext";
 import PopularityMeter from "images/custom-svgs/PopularityMeter";
 import { combineArtists } from "helpers";
+import { setTokenSourceMapRange } from "typescript";
 
 const tableKeys = ["artists", "albumName", ..._stats];
 
@@ -33,29 +34,45 @@ const tableKeyToObjectKey = (tableKey, song) => {
   return tableKey;
 };
 
+const getSongsWithAudioFeatures = async playlistId => {
+  const { items } = await getAllPlaylistsTracks(playlistId);
+
+  const songIds = items.map(({ track }) => track.id);
+  const audioFeatures = await getHeapsAudioFeatures(songIds);
+
+  const songs = items.map(({ track }, i) => ({
+    ...track,
+    audioFeatures: audioFeatures[i],
+    include: true
+  }));
+  return songs;
+};
+
 const useSongsWithAudioFeatures = playlistId => {
   const [songWithFeatures, setSongWithFeatures] = useState([]);
   const [currentSort, setCurrentSort] = useState("");
+  const didMergeTrack = React.useRef(false);
   const [minMax, setMinMax] = useState([0, 0]);
 
-  const getSongsWithAudioFeatures = async () => {
-    const { items } = await getAllPlaylistsTracks(playlistId);
+  useEffect(async () => {
+    setSongWithFeatures(await getSongsWithAudioFeatures(playlistId));
+  }, []);
 
-    const songIds = items.map(({ track }) => track.id);
-    const audioFeatures = await getHeapsAudioFeatures(songIds);
-
-    const songs = items.map(({ track }, i) => ({
-      ...track,
-      audioFeatures: audioFeatures[i],
-      include: true
-    }));
-    setSongWithFeatures(songs);
+  const mergeMoreTracks = tracksWithAudioFeatures => {
+    setSongWithFeatures(prev => [...prev, ...tracksWithAudioFeatures]);
+    didMergeTrack.current = true;
   };
-
-  useEffect(() => getSongsWithAudioFeatures(), []);
+  useEffect(() => {
+    if (songWithFeatures.length) {
+      const [tableKey, direction] = currentSort.split(" - ");
+      sortTracks(tableKey, direction);
+      didMergeTrack.current = false;
+    }
+  }, [didMergeTrack.current]);
 
   const sortTracks = (tableKey, direction = "ASC") => {
-    setCurrentSort(`${tableKey} - ${direction}`);
+    const newSort = `${tableKey} - ${direction}`;
+    setCurrentSort(newSort);
 
     const key = tableKeyToObjectKey(tableKey, songWithFeatures);
 
@@ -117,7 +134,6 @@ const useSongsWithAudioFeatures = playlistId => {
   const checkByRange = ([min, max]) => {
     const [tableKey] = currentSort.split(" -");
     const key = tableKeyToObjectKey(tableKey, songWithFeatures);
-    console.log(key, min, max);
     setSongWithFeatures(prev => {
       prev.map(track => {
         const field = get(track, key);
@@ -130,6 +146,7 @@ const useSongsWithAudioFeatures = playlistId => {
   return [
     songWithFeatures,
     {
+      mergeMoreTracks,
       sortTracks,
       uris,
       includedUris,
@@ -184,12 +201,18 @@ const useMePlaylists = () => {
   return [playlists, getPlaylists];
 };
 
-const UserPlaylistsSelect = ({ playlists, currentPlaylistId, onChange }) => {
+const UserPlaylistsSelect = ({
+  label,
+  playlists,
+  currentPlaylistId,
+  onChange,
+  loadingStatus = ""
+}) => {
   return (
     <label className="user-playlists">
-      <span>select another playlist</span>
+      <span>{label}</span>
       <select
-        onChange={onChange}
+        onChange={({ target: { value: playlistId } }) => onChange(playlistId)}
         className="playlists-select"
         value={currentPlaylistId}
       >
@@ -198,6 +221,7 @@ const UserPlaylistsSelect = ({ playlists, currentPlaylistId, onChange }) => {
           <option value={pl.id}>{truncate(pl.name)}</option>
         ))}
       </select>
+      <span>{loadingStatus}</span>
     </label>
   );
 };
@@ -215,6 +239,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   const [
     tracks,
     {
+      mergeMoreTracks,
       sortTracks,
       uris,
       includedUris,
@@ -241,8 +266,21 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
 
   const [isHidden, toggleHidden] = useToggle(true);
 
-  const handleChangePlaylist = ({ target: { value: playlistId } }) => {
+  const handleChangePlaylist = playlistId => {
     playlistId && window.location.replace(`/analysis/${playlistId}`);
+  };
+
+  const [mergeLoadingStatus, setLoadingMerge] = useState("");
+  const [mergedPlaylistIds, setMergedPlaylistIds] = useState([playlistId]);
+  const handleMergeNewPlaylist = async playlistId => {
+    setLoadingMerge("🤞");
+    const moreTracks = await getSongsWithAudioFeatures([playlistId]);
+    mergeMoreTracks(moreTracks);
+    setMergedPlaylistIds(prev => [...prev, playlistId]);
+    setLoadingMerge(moreTracks.length ? "👍" : "👎");
+    setTimeout(() => {
+      setLoadingMerge("");
+    }, 3000);
   };
 
   const handleCreatePlaylist = async ({
@@ -270,27 +308,34 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     <>
       <div className="analysis-playlists">
         <UserPlaylistsSelect
+          label={"select a playlist"}
           onChange={handleChangePlaylist}
           playlists={playlists}
           currentPlaylistId={playlistId}
         />
-        {currentPlaylist && (
-          <div className="playlist-info">
-            <h4>{currentPlaylist.name}</h4>
-            {/* <p>{currentPlaylist.description}</p> */}
-            <img src={get(currentPlaylist, "images[0].url")} alt="" srcset="" />
-          </div>
-        )}
+        <CurrentPlaylist currentPlaylist={currentPlaylist} />
       </div>
       <div className="analysis-playlists">
         {currentPlaylist && (
-          <SavePlaylist
-            user_id={userId}
-            currentPlaylist={currentPlaylist}
-            currentSort={currentSort}
-            createPlaylist={handleCreatePlaylist}
-            description={currentPlaylist.description}
-          />
+          <>
+            <UserPlaylistsSelect
+              label={"Merge another playlist"}
+              onChange={handleMergeNewPlaylist}
+              playlists={playlists.filter(
+                ({ id }) => !mergedPlaylistIds.includes(id)
+              )}
+              currentPlaylistId={""}
+              loadingStatus={mergeLoadingStatus}
+            />
+
+            <SavePlaylist
+              user_id={userId}
+              currentPlaylist={currentPlaylist}
+              currentSort={currentSort}
+              createPlaylist={handleCreatePlaylist}
+              description={currentPlaylist.description}
+            />
+          </>
         )}
       </div>
       <div className="analysis-playlists">
@@ -328,11 +373,23 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   );
 });
 
-const PlaylistTable = memo(
-  ({ tracks, currentTrackId, uris, stats, onAllCheck, onCheckTrack }) =>
-    !tracks.length ? null : (
+const PlaylistTable = ({
+  tracks,
+  currentTrackId,
+  uris,
+  stats,
+  onAllCheck,
+  onCheckTrack
+}) =>
+  !tracks.length ? null : (
+    <>
       <table>
         <thead>
+          <tr>
+            <th colspan={stats.length + 2} className="table-length">
+              {tracks.length}
+            </th>
+          </tr>
           <tr>
             <th style={{ textAlign: "center" }}>
               <input
@@ -412,8 +469,8 @@ const PlaylistTable = memo(
           )}
         </tbody>
       </table>
-    )
-);
+    </>
+  );
 
 const SavePlaylist = ({
   user_id,
@@ -507,6 +564,17 @@ const SavePlaylist = ({
         {hadError && "👎"}
       </fieldset>
     </form>
+  );
+};
+
+const CurrentPlaylist = ({ currentPlaylist }) => {
+  if (!currentPlaylist) return null;
+  return (
+    <div className="playlist-info">
+      <h4>{currentPlaylist.name}</h4>
+      {/* <p>{currentPlaylist.description}</p> */}
+      <img src={get(currentPlaylist, "images[0].url")} alt="" srcset="" />
+    </div>
   );
 };
 

@@ -42,12 +42,7 @@
       max-width: 100px;
     }
   }
-  .carousel {
-    position: relative;
-    overflow: hidden;
-    // width: 300px;
-    // height: 150px;
-  }
+
   .user-playlists {
     display: inline-grid;
     span {
@@ -72,6 +67,10 @@
       min-width: 300px;
     }
   }
+}
+.table-length {
+  text-align: right;
+  font-size: 14px;
 }
 input[type="checkbox"] {
   cursor: pointer;
