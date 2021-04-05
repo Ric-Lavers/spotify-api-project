@@ -3,7 +3,6 @@
   .track {
     height: 8px;
     width: 100%;
-
     background-color: $spotify-white;
   }
   .thumb {
@@ -17,6 +16,7 @@
       top: 100%;
       left: 0;
       font-size: 14px;
+      opacity: 0.8;
     }
   }
 }

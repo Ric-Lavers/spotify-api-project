@@ -29,7 +29,7 @@ const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
                 style={{
                   background: getTrackBackground({
                     values: rangeValues,
-                    colors: ["#ccc", "#1DB954", "#ccc"],
+                    colors: ["#404040", "#1DB954", "#404040"],
                     min,
                     max
                   })
@@ -45,6 +45,10 @@ const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
                 {...props}
                 data-value={props["aria-valuenow"]}
                 className="thumb"
+                style={{
+                  ...props.style,
+                  backgroundColor: "#fff"
+                }}
               />
             );
           }}

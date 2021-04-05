@@ -41,7 +41,6 @@ const tableKeyToObjectKey = (tableKey, song) => {
 };
 
 const getSongsWithAudioFeatures = async playlistId => {
-  console.log("getSongsWithAudioFeatures: " + playlistId);
   const { items } = await getAllPlaylistsTracks(playlistId);
   const songIds = items.map(({ track }) => track.id);
   const audioFeatures = await getHeapsAudioFeatures(songIds);
@@ -274,12 +273,9 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     const [v, d] = value.split("-");
     sortTracks(v, d);
   };
-  // console.log(tracks[0]);
-  // console.log(playlists);
+
   const currentTrackId = get(currentSong, "item.id");
-
   const [isHidden, toggleHidden] = useToggle(true);
-
   const handleChangePlaylist = playlistId => {
     playlistId && window.location.replace(`/analysis/${playlistId}`);
   };

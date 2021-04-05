@@ -2,6 +2,7 @@ import React from "react";
 import { play } from "api/spotify";
 import { combineArtists } from "helpers";
 import PopularityMeter from "images/custom-svgs/PopularityMeter";
+import { formatFeatures } from "helpers";
 
 export const PlaylistTable = ({
   tracks,
@@ -82,17 +83,9 @@ export const PlaylistTable = ({
                     {name}
                   </td>
 
-                  {stats.map(statKey => {
-                    if (statKey === "popularity")
-                      return (
-                        <td>
-                          <PopularityMeter popularity={rows[statKey]} />
-                        </td>
-                      );
-                    if (statKey === "artists")
-                      return <td>{combineArtists(rows[statKey])}</td>;
-                    return <td>{rows[statKey]}</td>;
-                  })}
+                  {stats.map(statKey => (
+                    <td>{formatFeatures(statKey, rows)}</td>
+                  ))}
                 </tr>
               );
             }

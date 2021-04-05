@@ -1,4 +1,5 @@
 export * from "./handlePlay";
+export * from "./formatFeatures";
 
 let LOGIN_URL;
 if (process.env.REACT_APP_ENV === "PROD") {

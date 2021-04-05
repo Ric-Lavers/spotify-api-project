@@ -6,6 +6,7 @@ import { getOneAudioFeatures } from "../../api/spotify";
 import { Utils } from "../../helpers";
 import { GlobalContext } from "globalContext";
 import PopularityMeter from "images/custom-svgs/PopularityMeter";
+import { formatFeatures } from "helpers";
 
 const { ucfirst } = Utils;
 
@@ -73,29 +74,12 @@ const Stats = memo(({ id, audio_features }) => {
           <table>
             <tbody>
               {stats.map((key, i) => {
-                let value = () => {
-                  switch (key) {
-                    case "key":
-                      return keys[audio_features[key]];
-                    case "mode":
-                      return key ? "Major" : "Minor";
-                    case "tempo":
-                      return `${Math.round(audio_features[key])}bpm`;
-                    case "duration_ms":
-                      return millisToMinutesAndSeconds(audio_features[key]);
-                    case "popularity":
-                      return (
-                        <PopularityMeter popularity={audio_features[key]} />
-                      );
-                    default:
-                      return audio_features[key];
-                  }
-                };
+                let value = formatFeatures(key, audio_features);
 
                 return (
                   <tr>
                     <td>{ucfirst(key.replace("_", " ").replace(" ms", ""))}</td>
-                    <td>{value()}</td>
+                    <td>{value}</td>
                   </tr>
                 );
               })}
