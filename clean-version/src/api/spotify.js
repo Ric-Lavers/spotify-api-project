@@ -1,6 +1,8 @@
 //@flow
 import { LOGIN_URL } from "../helpers";
+import { top_time_range } from "../constants";
 
+const spotifyClientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const spotifyToken = sessionStorage.spotifyToken;
 const baseUrl = "https://api.spotify.com/v1";
 const headers = {
@@ -29,6 +31,28 @@ export const getHref = async href => {
     return res.json();
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const refereshSpotifyLogin = async (
+  refresh_token = sessionStorage.refresh_token
+) => {
+  try {
+    let body = new URLSearchParams();
+    body.append("grant_type", "refresh_token");
+    body.append("refresh_token", refresh_token);
+    body.append("client_id", spotifyClientId);
+
+    const data = await fetch("https://accounts.spotify.com/api/token", {
+      headers: new Headers({
+        "Content-Type": "application/x-www-form-urlencoded"
+      }),
+      method: "POST",
+      body
+    }).then(d => d.json());
+    console.log(data);
+  } catch (error) {
+    console.error(error.message);
   }
 };
 
@@ -259,8 +283,9 @@ export const getMePlaylists = async ({ limit = 50, offset = 0 } = {}) => {
   }
 };
 export const getPlaylistsTracks = async listId => {
+  let url = `${baseUrl}/playlists/${listId}/tracks`;
   try {
-    let res = await fetch(`${baseUrl}/playlists/${listId}/tracks`, headers);
+    let res = await fetch(url, headers);
     isOk(res);
     return res.json();
   } catch (error) {
@@ -285,12 +310,24 @@ const fetchNextItems = async next => {
 
 export const getAllPlaylistsTracks = async playlistId => {
   try {
-    const data = await getPlaylistsTracks(playlistId);
+    const isTopTrack = top_time_range
+      .map(({ value }) => value)
+      .includes(playlistId);
+
+    const data = await (isTopTrack
+      ? getTopTracks({ time_range: playlistId })
+      : getPlaylistsTracks(playlistId));
 
     if (data.next) {
       const items = await fetchNextItems(data.next);
       data.items = [...data.items, ...items];
       delete data.limit;
+    }
+    if (isTopTrack) {
+      return {
+        ...data,
+        items: data.items.map(track => ({ track }))
+      };
     }
 
     return data;
@@ -331,14 +368,22 @@ export const createUserPlaylistWithTracks = async (
     const newPlaylist = await createUserPlaylist(user_id, playlistData);
     const playlist_id = newPlaylist.id;
 
-    let res = await fetch(`${baseUrl}/playlists/${playlist_id}/tracks`, {
-      ...headers,
-      method: "POST",
-      body: JSON.stringify({
-        uris
-      })
-    });
-    isOk(res);
+    const arrayOfUris = [];
+    for (let i = 0; i < uris.length; i += 100) {
+      arrayOfUris.push(uris.slice(i, i + 100));
+    }
+
+    for (const uris of arrayOfUris) {
+      let res = await fetch(`${baseUrl}/playlists/${playlist_id}/tracks`, {
+        ...headers,
+        method: "POST",
+        body: JSON.stringify({
+          uris
+        })
+      });
+      isOk(res);
+    }
+
     const playlist = await getAllPlaylistsTracks(playlist_id);
 
     return playlist;

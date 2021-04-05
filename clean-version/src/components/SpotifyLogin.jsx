@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import SpotifyLogo from "../images/custom-svgs/SpotifyLogo";
-import { checkToken } from "../api/spotify";
+import { checkToken, refereshSpotifyLogin } from "../api/spotify";
 import variables from "../styles/variables";
 import { LOGIN_URL } from "../helpers";
 
@@ -33,11 +33,13 @@ export const styles = {
     position: "relative"
   },
   noLinkStyle: {
-    cursor: "pointer",
+    // cursor: "pointer",
     color: "inherit",
     textDecoration: "inherit"
   }
 };
+
+const refreshToken = refresh_token => {};
 
 class SpotifyLogin extends Component {
   state = {
@@ -59,12 +61,14 @@ class SpotifyLogin extends Component {
   setToken = () => {
     const address = window.location.href;
     if (address.includes("access_token=")) {
-      let token = new URLSearchParams(window.location.search).get(
+      let access_token = new URLSearchParams(window.location.search).get(
         "access_token"
       );
-      console.log(window.location.href);
-      console.log(window.location);
-      sessionStorage.spotifyToken = token;
+      let refresh_token = new URLSearchParams(window.location.search).get(
+        "refresh_token"
+      );
+      sessionStorage.spotifyToken = access_token;
+      sessionStorage.refresh_token = refresh_token;
       window.location.replace(window.origin + window.location.pathname);
     }
   };
@@ -91,8 +95,8 @@ class SpotifyLogin extends Component {
         onLogIn(true);
         return true;
       } catch (error) {
-        // timed out
-        window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`;
+        // timed out or bad token
+        // window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`;
         this.setState({ tokenPresent: true, tokenValid: false });
         onLogIn(false);
       }
@@ -140,6 +144,7 @@ class SpotifyLogin extends Component {
         {!tokenValid && (
           <a
             style={{ color: "white" }}
+            href="#"
             href={`${LOGIN_URL}?path=${window.location.pathname}`}
           >
             {sessionStorage.getItem("spotifyToken")
@@ -149,9 +154,10 @@ class SpotifyLogin extends Component {
               : `login to spotify`}
           </a>
         )}
-        <a href={spotifyLink} style={styles.noLinkStyle}>
+        <div style={styles.noLinkStyle}>
           {display_name ? display_name : email}
-        </a>
+        </div>
+        <button onClick={() => refereshSpotifyLogin()}>refresh token</button>
       </div>
     );
   }

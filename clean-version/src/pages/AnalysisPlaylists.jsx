@@ -24,7 +24,7 @@ import { stats as _stats } from "../components/stats/Stats";
 import { GlobalContext } from "globalContext";
 import PopularityMeter from "images/custom-svgs/PopularityMeter";
 import { combineArtists } from "helpers";
-import { setTokenSourceMapRange } from "typescript";
+import { top_time_range } from "constants/index";
 
 const tableKeys = ["artists", "albumName", ..._stats];
 
@@ -41,8 +41,8 @@ const tableKeyToObjectKey = (tableKey, song) => {
 };
 
 const getSongsWithAudioFeatures = async playlistId => {
+  console.log("getSongsWithAudioFeatures: " + playlistId);
   const { items } = await getAllPlaylistsTracks(playlistId);
-
   const songIds = items.map(({ track }) => track.id);
   const audioFeatures = await getHeapsAudioFeatures(songIds);
 
@@ -204,8 +204,12 @@ const useMePlaylists = () => {
 
   const getPlaylists = async () => {
     const { items } = await getMePlaylists();
-    // console.log(items);
-    setPlaylists(items);
+    const specialPlaylists = top_time_range.map(({ value, label }) => ({
+      id: value,
+      name: `Top tracks - ${label}`
+    }));
+
+    setPlaylists([...specialPlaylists, ...items]);
   };
 
   useEffect(getPlaylists, []);
@@ -220,7 +224,7 @@ const useMergePlaylist = ({ mergeMoreTracks, currentPlaylistId }) => {
   );
   const handleMergeNewPlaylist = async playlistId => {
     setLoadingMerge("🤞");
-    const moreTracks = await getSongsWithAudioFeatures([playlistId]);
+    const moreTracks = await getSongsWithAudioFeatures(playlistId);
     mergeMoreTracks(moreTracks);
     setMergedPlaylistIds(prev => [...prev, playlistId]);
     setLoadingMerge(moreTracks.length ? "👍" : "👎");
