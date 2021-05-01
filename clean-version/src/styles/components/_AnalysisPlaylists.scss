@@ -52,19 +52,18 @@
   select {
     text-overflow: ellipsis;
   }
+  // SavePlaylist
   .add-playlist {
-    legend {
-      text-align: left;
+    fieldset {
+      border-radius: $sm;
     }
-    // border: 1px solid black;
-    // padding: 21px;
-    display: table-caption;
+    text-align: left;
     font-size: 0.7em;
-    // display: flex;
-    // flex-direction: column;
+    display: flex;
+    flex-direction: column;
     textarea,
     input[type='text'] {
-      // min-width: 300px;
+      min-width: 300px;
     }
   }
 }
