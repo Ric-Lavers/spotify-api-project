@@ -1,6 +1,7 @@
 //@flow
 import { LOGIN_URL } from '../helpers'
 import { top_time_range, savedTracks } from '../constants'
+import { getKey } from 'helpers/camelot'
 
 const spotifyClientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID
 const spotifyToken = sessionStorage.spotifyToken
@@ -621,7 +622,21 @@ export const getManyAudioFeatures = async (trackIds) => {
   let res = await fetch(`${baseUrl}/audio-features?ids=${trackIds}`, headers)
   isOk(res)
   is204(res)
-  return res.json()
+  let data = await res.json()
+  data = {
+    ...data,
+    audio_features: data.audio_features.map((af) => ({
+      ...af,
+      camelot: `${
+        getKey({
+          mode: af['mode'],
+          pitchClass: af['key'],
+        }).camelotPosition
+      }${af['mode'] === 1 ? 'B' : 'A'}`,
+    })),
+  }
+
+  return data
 }
 export const getHeapsAudioFeatures = async (trackIds) => {
   const arrayOfIds = []

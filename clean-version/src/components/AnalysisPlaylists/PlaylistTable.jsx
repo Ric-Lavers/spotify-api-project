@@ -61,7 +61,13 @@ export const PlaylistTable = ({
             <th className="table-average">{averages.checked}</th>
             <th className="table-average">count {tracks.length}</th>
             {stats.map((stat) => {
-              return <th className="table-average">{averages[stat]}</th>
+              return (
+                <th className="table-average">
+                  {stat === 'popularity'
+                    ? `${averages[stat]}%`
+                    : formatFeatures(stat, averages)}
+                </th>
+              )
             })}
           </tr>
           <tr>

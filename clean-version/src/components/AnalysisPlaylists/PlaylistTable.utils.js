@@ -34,7 +34,7 @@ export const getAverages = (tracks, stats) => {
       const { checked } = isChecked(uri, include)
       a.checked.push(checked ? 1 : 0)
       tableKeys.forEach((statKey) =>
-        a[statKey].push(formatFeatures(statKey, rows))
+        a[statKey].push(formatFeatures(statKey, rows, true))
       )
 
       return a
@@ -47,7 +47,6 @@ export const getAverages = (tracks, stats) => {
       { checked: [] }
     )
   )
-
   for (let k in specs) {
     if (typeof specs[k][0] === 'number') {
       const sum = specs[k].reduce((a, b) => a + b, 0)
