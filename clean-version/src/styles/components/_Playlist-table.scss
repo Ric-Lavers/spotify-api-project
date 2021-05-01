@@ -8,7 +8,9 @@
       padding: 0 $sm;
       margin-right: 23px;
       white-space: nowrap;
-      cursor: pointer;
+      &:not(.table-average) {
+        cursor: pointer;
+      }
       .ASC::after {
         padding-left: $sm;
         content: url('../images/chevron-ACS.svg');
