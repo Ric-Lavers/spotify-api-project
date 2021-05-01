@@ -63,15 +63,12 @@
     // display: flex;
     // flex-direction: column;
     textarea,
-    input[type="text"] {
+    input[type='text'] {
       min-width: 300px;
     }
   }
 }
-.table-length {
-  text-align: right;
-  font-size: 14px;
-}
-input[type="checkbox"] {
+
+input[type='checkbox'] {
   cursor: pointer;
 }

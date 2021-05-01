@@ -27,7 +27,7 @@ import { combineArtists } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
 const favPlaylists = [...specialPlaylists, savedTracks]
 
-const tableKeys = ['artists', 'albumName', ..._stats]
+export const tableKeys = ['artists', 'albumName', ..._stats]
 
 const tableKeyToObjectKey = (tableKey, song) => {
   if (tableKey === 'artists') {

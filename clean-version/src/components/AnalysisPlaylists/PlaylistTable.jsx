@@ -3,6 +3,7 @@ import { play } from 'api/spotify'
 import { combineArtists } from 'helpers'
 import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { formatFeatures } from 'helpers'
+import { isChecked, getAverages } from './PlaylistTable.utils'
 
 export const PlaylistTable = ({
   loading,
@@ -28,6 +29,11 @@ export const PlaylistTable = ({
     setSortValue(currentSortValue)
   }, [currentSortValue])
 
+  const averages = React.useMemo(() => getAverages(tracks, stats), [
+    tracks,
+    stats,
+  ])
+
   if (loading) {
     return (
       <table>
@@ -52,9 +58,11 @@ export const PlaylistTable = ({
       <table className="playlist-table">
         <thead>
           <tr>
-            <th colspan={stats.length + 2} className="table-length">
-              {tracks.length}
-            </th>
+            <th className="table-average">{averages.checked}</th>
+            <th className="table-average">count {tracks.length}</th>
+            {stats.map((stat) => {
+              return <th className="table-average">{averages[stat]}</th>
+            })}
           </tr>
           <tr>
             <th style={{ textAlign: 'center' }}>
@@ -105,7 +113,7 @@ export const PlaylistTable = ({
               if (custom) {
                 rows['score'] = custom.score
               }
-              const isLocalFile = uri.match('spotify:local')
+              const { checked, isLocalFile } = isChecked(uri, include)
               return (
                 <tr>
                   <td style={{ textAlign: 'center' }}>
@@ -115,7 +123,7 @@ export const PlaylistTable = ({
                       }
                       type="checkbox"
                       name="include"
-                      checked={!isLocalFile && include}
+                      checked={checked}
                       disabled={isLocalFile}
                     />
                   </td>

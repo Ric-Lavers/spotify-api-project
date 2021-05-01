@@ -1,5 +1,9 @@
 .playlist-table {
   thead {
+    .table-average {
+      text-align: center;
+      font-size: $md;
+    }
     th {
       padding: 0 $sm;
       margin-right: 23px;
