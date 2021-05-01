@@ -1,20 +1,55 @@
-import React from "react";
-import { play } from "api/spotify";
-import { combineArtists } from "helpers";
-import PopularityMeter from "images/custom-svgs/PopularityMeter";
-import { formatFeatures } from "helpers";
+import React, { useState, useEffect } from 'react'
+import { play } from 'api/spotify'
+import { combineArtists } from 'helpers'
+import PopularityMeter from 'images/custom-svgs/PopularityMeter'
+import { formatFeatures } from 'helpers'
 
 export const PlaylistTable = ({
+  loading,
   tracks,
   currentTrackId,
   uris,
   stats,
   onAllCheck,
-  onCheckTrack
-}) =>
-  !tracks.length ? null : (
-    <>
+  onCheckTrack,
+  onSort = () => void {},
+  currentSortValue,
+}) => {
+  const [sortValue, setSortValue] = useState('')
+  const handleSort = (statKey) => {
+    let sV
+    if (!sortValue.includes(statKey)) sV = `${statKey}-ASC`
+    else if (sortValue.endsWith('ASC')) sV = `${statKey}-DESC`
+    else sV = ''
+    onSort({ target: { value: sV } })
+    setSortValue(sV)
+  }
+  useEffect(() => {
+    setSortValue(currentSortValue)
+  }, [currentSortValue])
+
+  if (loading) {
+    return (
       <table>
+        <thead>
+          <th>Loading...</th>
+        </thead>
+      </table>
+    )
+  }
+  if (!tracks.length) {
+    return (
+      <table>
+        <thead>
+          <th>No tracks</th>
+        </thead>
+      </table>
+    )
+  }
+
+  return !tracks.length ? null : (
+    <>
+      <table className="playlist-table">
         <thead>
           <tr>
             <th colspan={stats.length + 2} className="table-length">
@@ -22,7 +57,7 @@ export const PlaylistTable = ({
             </th>
           </tr>
           <tr>
-            <th style={{ textAlign: "center" }}>
+            <th style={{ textAlign: 'center' }}>
               <input
                 onChange={({ target: { checked } }) => onAllCheck(checked)}
                 type="checkbox"
@@ -32,8 +67,16 @@ export const PlaylistTable = ({
             </th>
             <th>title</th>
 
-            {stats.map(statKey => (
-              <th>{statKey}</th>
+            {stats.map((statKey) => (
+              <th onClick={() => handleSort(statKey)}>
+                <span
+                  className={
+                    sortValue.includes(statKey) && sortValue.split('-')[1]
+                  }
+                >
+                  {statKey}
+                </span>
+              </th>
             ))}
           </tr>
         </thead>
@@ -42,13 +85,14 @@ export const PlaylistTable = ({
             (
               {
                 id,
+                custom,
                 name,
                 album: { name: albumName },
                 artists,
                 audioFeatures,
                 popularity,
                 uri,
-                include
+                include,
               },
               i
             ) => {
@@ -56,12 +100,15 @@ export const PlaylistTable = ({
                 artists,
                 albumName,
                 popularity,
-                ...audioFeatures
-              };
-              const isLocalFile = uri.match("spotify:local");
+                ...audioFeatures,
+              }
+              if (custom) {
+                rows['score'] = custom.score
+              }
+              const isLocalFile = uri.match('spotify:local')
               return (
                 <tr>
-                  <td style={{ textAlign: "center" }}>
+                  <td style={{ textAlign: 'center' }}>
                     <input
                       onChange={({ target: { checked } }) =>
                         onCheckTrack(id, checked)
@@ -74,23 +121,24 @@ export const PlaylistTable = ({
                   </td>
                   <td
                     className={`playlist__song ${
-                      currentTrackId === id ? "green" : ""
+                      currentTrackId === id ? 'green' : ''
                     }`}
                     onClick={() =>
-                      play({ uris: uris, offset: { position: i } })
+                      uris && play({ uris: uris, offset: { position: i } })
                     }
                   >
-                    {name}
+                    {`${name} ${rows.score ? ` (${rows.score})` : ''}`}
                   </td>
 
-                  {stats.map(statKey => (
+                  {stats.map((statKey) => (
                     <td>{formatFeatures(statKey, rows)}</td>
                   ))}
                 </tr>
-              );
+              )
             }
           )}
         </tbody>
       </table>
     </>
-  );
+  )
+}

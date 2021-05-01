@@ -1,98 +1,105 @@
-import React, { memo, useContext, useState, useEffect } from "react";
-import Slide from "react-reveal/Slide";
-import makeCarousel from "react-reveal/makeCarousel";
-import truncate from "lodash.truncate";
-import get from "lodash.get";
-import { useParams } from "react-router-dom";
+import React, { memo, useContext, useState, useEffect } from 'react'
+import Slide from 'react-reveal/Slide'
+import makeCarousel from 'react-reveal/makeCarousel'
+import truncate from 'lodash.truncate'
+import get from 'lodash.get'
+import { useParams } from 'react-router-dom'
 
-import Range from "components/common/RangeSlider";
-import { useToggle, withCurrentSong } from "hooks";
+import Range from 'components/common/RangeSlider'
+import { useToggle, withCurrentSong } from 'hooks'
 import {
   PlaylistTable,
   SavePlaylist,
   CurrentPlaylist,
-  UserPlaylistsSelect
-} from "components/AnalysisPlaylists";
+  UserPlaylistsSelect,
+} from 'components/AnalysisPlaylists'
 import {
   getAllPlaylistsTracks,
   getMePlaylists,
   getHeapsAudioFeatures,
   play,
-  createUserPlaylistWithTracks
-} from "api/spotify";
-import { stats as _stats } from "../components/stats/Stats";
-import { GlobalContext } from "globalContext";
-import PopularityMeter from "images/custom-svgs/PopularityMeter";
-import { combineArtists } from "helpers";
-import { top_time_range } from "constants/index";
+  createUserPlaylistWithTracks,
+} from 'api/spotify'
+import { stats as _stats } from '../components/stats/Stats'
+import { GlobalContext } from 'globalContext'
+import PopularityMeter from 'images/custom-svgs/PopularityMeter'
+import { combineArtists } from 'helpers'
+import { specialPlaylists, savedTracks } from 'constants/index'
+const favPlaylists = [...specialPlaylists, savedTracks]
 
-const tableKeys = ["artists", "albumName", ..._stats];
+const tableKeys = ['artists', 'albumName', ..._stats]
 
 const tableKeyToObjectKey = (tableKey, song) => {
-  if (tableKey === "artists") {
-    return "artists[0].name";
+  if (tableKey === 'artists') {
+    return 'artists[0].name'
   }
-  if (tableKey === "albumName") {
-    return "album.name";
+  if (tableKey === 'albumName') {
+    return 'album.name'
   } else if (song[0].audioFeatures.hasOwnProperty(tableKey)) {
-    return `audioFeatures.${tableKey}`;
+    return `audioFeatures.${tableKey}`
   }
-  return tableKey;
-};
+  return tableKey
+}
 
-const getSongsWithAudioFeatures = async playlistId => {
-  const { items } = await getAllPlaylistsTracks(playlistId);
-  const songIds = items.map(({ track }) => track.id);
-  const audioFeatures = await getHeapsAudioFeatures(songIds);
+const getSongsWithAudioFeatures = async (playlistId) => {
+  const { items } = await getAllPlaylistsTracks(playlistId)
+  const songIds = items.map(({ track }) => track.id)
+  const audioFeatures = await getHeapsAudioFeatures(songIds)
 
   const songs = items.map(({ track }, i) => ({
     ...track,
     audioFeatures: audioFeatures[i],
-    include: true
-  }));
-  return songs;
-};
+    include: true,
+  }))
+  return songs
+}
 
-const useSongsWithAudioFeatures = playlistId => {
-  const [songWithFeatures, setSongWithFeatures] = useState([]);
-  const [currentSort, setCurrentSort] = useState("");
-  const didMergeTrack = React.useRef(false);
-  const [minMax, setMinMax] = useState([0, 0]);
+const useSongsWithAudioFeatures = (playlistId) => {
+  const [loading, setLoading] = useState(false)
+  const [songWithFeatures, setSongWithFeatures] = useState([])
+  const [currentSort, setCurrentSort] = useState('')
+  const didMergeTrack = React.useRef(false)
+  const [minMax, setMinMax] = useState([0, 0])
 
+  const getTrackByPlaylist = async () => {
+    setLoading(true)
+    setSongWithFeatures(await getSongsWithAudioFeatures(playlistId))
+    setLoading(false)
+  }
   useEffect(async () => {
-    setSongWithFeatures(await getSongsWithAudioFeatures(playlistId));
-  }, []);
+    getTrackByPlaylist()
+  }, [])
 
-  const mergeMoreTracks = tracksWithAudioFeatures => {
-    const trackIds = new Set();
-    setSongWithFeatures(prev =>
+  const mergeMoreTracks = (tracksWithAudioFeatures) => {
+    const trackIds = new Set()
+    setSongWithFeatures((prev) =>
       [...prev, ...tracksWithAudioFeatures].filter(({ id }) => {
-        if (trackIds.has(id)) return false;
-        return !!trackIds.add(id);
+        if (trackIds.has(id)) return false
+        return !!trackIds.add(id)
       })
-    );
-    didMergeTrack.current = true;
-  };
+    )
+    didMergeTrack.current = true
+  }
   useEffect(() => {
     if (songWithFeatures.length) {
-      const [tableKey, direction] = currentSort.split(" - ");
-      sortTracks(tableKey, direction);
-      didMergeTrack.current = false;
+      const [tableKey, direction] = currentSort.split(' - ')
+      sortTracks(tableKey, direction)
+      didMergeTrack.current = false
     }
-  }, [didMergeTrack.current]);
+  }, [didMergeTrack.current])
 
-  const sortTracks = (tableKey, direction = "ASC") => {
-    const newSort = `${tableKey} - ${direction}`;
-    setCurrentSort(newSort);
+  const sortTracks = (tableKey, direction = 'ASC') => {
+    const newSort = `${tableKey} - ${direction}`
+    setCurrentSort(newSort)
 
-    const key = tableKeyToObjectKey(tableKey, songWithFeatures);
+    const key = tableKeyToObjectKey(tableKey, songWithFeatures)
 
-    const keyType = typeof get(songWithFeatures[0], key);
-    if (get(songWithFeatures[0], key) === undefined) return;
+    const keyType = typeof get(songWithFeatures[0], key)
+    if (get(songWithFeatures[0], key) === undefined) return
 
-    if (keyType === "string") {
+    if (keyType === 'string') {
       const sorted =
-        direction === "ASC"
+        direction === 'ASC'
           ? songWithFeatures.sort((a, b) =>
               get(a, key).localeCompare(get(b, key))
             )
@@ -102,57 +109,57 @@ const useSongsWithAudioFeatures = playlistId => {
                   .toUpperCase()
                   .localeCompare(get(b, key).toUpperCase())
               )
-              .reverse();
-      setMinMax([0, 0]);
-      setSongWithFeatures([...sorted]);
+              .reverse()
+      setMinMax([0, 0])
+      setSongWithFeatures([...sorted])
     }
 
-    if (keyType === "number") {
-      const values = [];
+    if (keyType === 'number') {
+      const values = []
       const sorted = songWithFeatures.sort((a, b) => {
-        values.push(get(b, key));
-        return direction === "ASC"
+        values.push(get(b, key))
+        return direction === 'ASC'
           ? get(a, key) - get(b, key)
-          : get(b, key) - get(a, key);
-      });
-      const min = Math.min(...values);
-      const max = Math.max(...values);
+          : get(b, key) - get(a, key)
+      })
+      const min = Math.min(...values)
+      const max = Math.max(...values)
 
-      setMinMax([min, max]);
-      setSongWithFeatures([...sorted]);
+      setMinMax([min, max])
+      setSongWithFeatures([...sorted])
     }
-  };
+  }
 
-  const uris = songWithFeatures.map(({ uri }) => uri);
+  const uris = songWithFeatures.map(({ uri }) => uri)
   const includedUris = songWithFeatures
     .filter(({ include }) => include)
     .map(({ uri }) => uri)
-    .filter(uri => !uri.match("spotify:local"));
+    .filter((uri) => !uri.match('spotify:local'))
 
-  const checkIncludeAll = bool => {
-    setSongWithFeatures(prev =>
-      prev.map(track => ({ ...track, include: bool }))
-    );
-  };
+  const checkIncludeAll = (bool) => {
+    setSongWithFeatures((prev) =>
+      prev.map((track) => ({ ...track, include: bool }))
+    )
+  }
   const checkById = (id, bool) => {
-    setSongWithFeatures(prev => {
-      prev.find(({ id: trackId }) => trackId === id).include = bool;
+    setSongWithFeatures((prev) => {
+      prev.find(({ id: trackId }) => trackId === id).include = bool
 
-      return [...prev];
-    });
-  };
+      return [...prev]
+    })
+  }
 
   const checkByRange = ([min, max]) => {
-    const [tableKey] = currentSort.split(" -");
-    const key = tableKeyToObjectKey(tableKey, songWithFeatures);
-    setSongWithFeatures(prev => {
-      prev.map(track => {
-        const field = get(track, key);
-        track.include = field <= max && field >= min;
-      });
-      return [...prev];
-    });
-  };
+    const [tableKey] = currentSort.split(' -')
+    const key = tableKeyToObjectKey(tableKey, songWithFeatures)
+    setSongWithFeatures((prev) => {
+      prev.map((track) => {
+        const field = get(track, key)
+        track.include = field <= max && field >= min
+      })
+      return [...prev]
+    })
+  }
 
   return [
     songWithFeatures,
@@ -165,27 +172,28 @@ const useSongsWithAudioFeatures = playlistId => {
       checkIncludeAll,
       checkById,
       checkByRange,
-      minMax
-    }
-  ];
-};
+      minMax,
+      loading,
+    },
+  ]
+}
 
 const useStatKeys = (whiteStatsList = []) => {
-  const [whiteList, setWhiteList] = useState(new Set(whiteStatsList));
+  const [whiteList, setWhiteList] = useState(new Set(whiteStatsList))
 
   const BlackStatList = ({ hide }) => {
     const handleCheck = ({ target: { checked, id } }) => {
-      checked ? whiteList.add(id) : whiteList.delete(id);
-      setWhiteList(new Set(whiteList));
-      localStorage.setItem("preferedStatKeys", JSON.stringify([...whiteList]));
-    };
+      checked ? whiteList.add(id) : whiteList.delete(id)
+      setWhiteList(new Set(whiteList))
+      localStorage.setItem('preferedStatKeys', JSON.stringify([...whiteList]))
+    }
     return (
       <form
-        style={hide ? { display: "none" } : {}}
+        style={hide ? { display: 'none' } : {}}
         onChange={handleCheck}
         className="stat-check-list"
       >
-        {tableKeys.map(stat => (
+        {tableKeys.map((stat) => (
           <div className="stat-checkbox">
             <label htmlFor={stat}>{stat}</label>
             <input id={stat} type="checkbox" checked={whiteList.has(stat)} />
@@ -193,65 +201,62 @@ const useStatKeys = (whiteStatsList = []) => {
         ))}
         <div className="stat-checkbox" />
       </form>
-    );
-  };
-  return [[...whiteList], BlackStatList];
-};
+    )
+  }
+  return [[...whiteList], BlackStatList]
+}
 
 const useMePlaylists = () => {
-  const [playlists, setPlaylists] = useState([]);
+  const [playlists, setPlaylists] = useState([])
 
   const getPlaylists = async () => {
-    const { items } = await getMePlaylists();
-    const specialPlaylists = top_time_range.map(({ value, label }) => ({
-      id: value,
-      name: `Top tracks - ${label}`
-    }));
+    const { items } = await getMePlaylists()
 
-    setPlaylists([...specialPlaylists, ...items]);
-  };
+    setPlaylists([...favPlaylists, ...items])
+  }
 
-  useEffect(getPlaylists, []);
+  useEffect(getPlaylists, [])
 
-  return [playlists, getPlaylists];
-};
+  return [playlists, getPlaylists]
+}
 
 const useMergePlaylist = ({ mergeMoreTracks, currentPlaylistId }) => {
-  const [mergeLoadingStatus, setLoadingMerge] = useState("");
+  const [mergeLoadingStatus, setLoadingMerge] = useState('')
   const [mergedPlaylistIds, setMergedPlaylistIds] = useState(
     [currentPlaylistId].filter(Boolean)
-  );
-  const handleMergeNewPlaylist = async playlistId => {
-    setLoadingMerge("🤞");
-    const moreTracks = await getSongsWithAudioFeatures(playlistId);
-    mergeMoreTracks(moreTracks);
-    setMergedPlaylistIds(prev => [...prev, playlistId]);
-    setLoadingMerge(moreTracks.length ? "👍" : "👎");
+  )
+  const handleMergeNewPlaylist = async (playlistId) => {
+    setLoadingMerge('🤞')
+    const moreTracks = await getSongsWithAudioFeatures(playlistId)
+    mergeMoreTracks(moreTracks)
+    setMergedPlaylistIds((prev) => [...prev, playlistId])
+    setLoadingMerge(moreTracks.length ? '👍' : '👎')
     setTimeout(() => {
-      setLoadingMerge("");
-    }, 3000);
-  };
+      setLoadingMerge('')
+    }, 3000)
+  }
 
   return {
     mergeLoadingStatus,
     mergedPlaylistIds,
-    handleMergeNewPlaylist
-  };
-};
+    handleMergeNewPlaylist,
+  }
+}
 
 const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   const [
     {
-      userData: { id: userId }
-    }
-  ] = useContext(GlobalContext);
-  const { playlistId } = useParams();
-  const [playlists, getPlaylists] = useMePlaylists();
-  const currentPlaylist = playlists.find(({ id }) => id === playlistId);
+      userData: { id: userId },
+    },
+  ] = useContext(GlobalContext)
+  const { playlistId } = useParams()
+  const [playlists, getPlaylists] = useMePlaylists()
+  const currentPlaylist = playlists.find(({ id }) => id === playlistId)
 
   const [
     tracks,
     {
+      loading,
       mergeMoreTracks,
       sortTracks,
       uris,
@@ -260,61 +265,67 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
       checkIncludeAll,
       checkById,
       checkByRange,
-      minMax: [min, max]
-    }
-  ] = useSongsWithAudioFeatures(playlistId);
+      minMax: [min, max],
+    },
+  ] = useSongsWithAudioFeatures(playlistId)
 
   const preferedStatKeys = JSON.parse(
-    localStorage.getItem("preferedStatKeys")
-  ) || ["popularity", "danceability", "tempo"];
-  const [stats, BlackStatList] = useStatKeys(preferedStatKeys);
-  const handleSort = ({ target: { value } }) => {
-    if (!value) return;
-    const [v, d] = value.split("-");
-    sortTracks(v, d);
-  };
+    localStorage.getItem('preferedStatKeys')
+  ) || ['popularity', 'danceability', 'tempo']
+  const [stats, BlackStatList] = useStatKeys(preferedStatKeys)
 
-  const currentTrackId = get(currentSong, "item.id");
-  const [isHidden, toggleHidden] = useToggle(true);
-  const handleChangePlaylist = playlistId => {
-    playlistId && window.location.replace(`/analysis/${playlistId}`);
-  };
+  const [currentSortValue, setCurrentSortValue] = useState('')
+  const handleSort = ({ target: { value } }) => {
+    if (!value) {
+      console.warn('currently not tracking original plauylist order')
+      return
+    }
+    setCurrentSortValue(value)
+    const [v, d] = value.split('-')
+    sortTracks(v, d)
+  }
+
+  const currentTrackId = get(currentSong, 'item.id')
+  const [isHidden, toggleHidden] = useToggle(true)
+  const handleChangePlaylist = (playlistId) => {
+    playlistId && window.location.replace(`/analysis/${playlistId}`)
+  }
 
   const {
     mergeLoadingStatus,
     mergedPlaylistIds,
-    handleMergeNewPlaylist
+    handleMergeNewPlaylist,
   } = useMergePlaylist({
     mergeMoreTracks,
-    currentPlaylistId: playlistId
-  });
+    currentPlaylistId: playlistId,
+  })
 
   const handleCreatePlaylist = async ({
     name,
     description,
     isPublic,
-    collaborative
+    collaborative,
   }) => {
-    if (!includedUris.length) return;
+    if (!includedUris.length) return
     const playlist = await createUserPlaylistWithTracks(
       userId,
       {
         name,
         description,
         isPublic,
-        collaborative
+        collaborative,
       },
       includedUris
-    );
-    await getPlaylists();
-    return playlist;
-  };
+    )
+    await getPlaylists()
+    return playlist
+  }
 
   return (
     <>
       <div className="analysis-playlists">
         <UserPlaylistsSelect
-          label={"select a playlist"}
+          label={'select a playlist'}
           onChange={handleChangePlaylist}
           playlists={playlists}
           currentPlaylistId={playlistId}
@@ -325,12 +336,12 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
         {currentPlaylist && (
           <>
             <UserPlaylistsSelect
-              label={"Merge another playlist"}
+              label={'Merge another playlist'}
               onChange={handleMergeNewPlaylist}
               playlists={playlists.filter(
                 ({ id }) => !mergedPlaylistIds.includes(id)
               )}
-              currentPlaylistId={""}
+              currentPlaylistId={''}
               loadingStatus={mergeLoadingStatus}
             />
 
@@ -355,9 +366,9 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
             table settings (audio features)
           </button>
 
-          <select onChange={handleSort}>
-            <option>unsorted</option>
-            {tableKeys.map(key => (
+          <select value={currentSortValue} onChange={handleSort}>
+            <option value="">unsorted</option>
+            {tableKeys.map((key) => (
               <>
                 <option value={`${key}-ASC`}>{key} - ASC</option>
                 <option value={`${key}-DESC`}>{key} - DESC</option>
@@ -368,7 +379,10 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
       </div>
 
       <PlaylistTable
+        loading={loading}
         tracks={tracks}
+        onSort={handleSort}
+        currentSortValue={currentSortValue}
         currentTrackId={currentTrackId}
         uris={uris}
         stats={stats}
@@ -376,7 +390,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
         onCheckTrack={checkById}
       />
     </>
-  );
-});
+  )
+})
 
-export default withCurrentSong(AnalysisPlaylistsPage);
+export default withCurrentSong(AnalysisPlaylistsPage)

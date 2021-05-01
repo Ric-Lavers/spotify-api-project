@@ -1,31 +1,41 @@
-import React from "react";
-import truncate from "lodash.truncate";
+import React, { useState, useEffect, memo } from 'react'
+import truncate from 'lodash.truncate'
 
 export const UserPlaylistsSelect = ({
   label,
   playlists,
   currentPlaylistId,
   onChange,
-  loadingStatus = ""
+  loadingStatus = '',
 }) => {
+  const [selectedPlaylist, setSelected] = useState(currentPlaylistId)
+  useEffect(() => {
+    setSelected(currentPlaylistId)
+  }, [currentPlaylistId])
+
+  const handleChange = ({ target: { value: playlistId } }) => {
+    !currentPlaylistId && setSelected(playlistId)
+    onChange(playlistId)
+  }
+
   return (
     <label className="user-playlists">
       <span>{label}</span>
       <div>
         <select
-          onChange={({ target: { value: playlistId } }) => onChange(playlistId)}
+          onChange={handleChange}
           className="playlists-select"
-          value={currentPlaylistId}
+          value={selectedPlaylist}
         >
           <option></option>
-          {playlists.map(pl => (
+          {playlists.map((pl) => (
             <option value={pl.id}>{truncate(pl.name)}</option>
           ))}
         </select>
         <span>{loadingStatus}</span>
       </div>
     </label>
-  );
-};
+  )
+}
 
-export default UserPlaylistsSelect;
+export default memo(UserPlaylistsSelect)

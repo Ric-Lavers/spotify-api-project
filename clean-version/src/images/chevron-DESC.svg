@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+	height="16px"
+	stroke='#1db954'
+	stroke-linejoin='round'
+	stroke-linecap='round' 
+>
+
+	 <title>DESC</title>
+  <line y1="4" y2="15" x2="8" x1="0" />
+  <line y1="15" y2="4" x2="16"  x1="8" />
+</svg>

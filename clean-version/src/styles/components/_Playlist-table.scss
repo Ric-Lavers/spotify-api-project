@@ -1,0 +1,18 @@
+.playlist-table {
+  thead {
+    th {
+      padding: 0 $sm;
+      margin-right: 23px;
+      white-space: nowrap;
+      cursor: pointer;
+      .ASC::after {
+        padding-left: $sm;
+        content: url('../images/chevron-ACS.svg');
+      }
+      .DESC::after {
+        padding-left: $sm;
+        content: url('../images/chevron-DESC.svg');
+      }
+    }
+  }
+}

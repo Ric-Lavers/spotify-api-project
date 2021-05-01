@@ -1,17 +1,18 @@
-@import url("https://use.typekit.net/rje0nrm.css");
-@import "variables";
-@import "breakpoints";
-@import "common";
-@import "App";
+@import url('https://use.typekit.net/rje0nrm.css');
+@import 'variables';
+@import 'breakpoints';
+@import 'common';
+@import 'App';
 
-@import "./components/Player";
-@import "./components/Devices";
-@import "./components/Playlists";
-@import "./components/Results";
-@import "./components/Top-table";
-@import "./components/toolTip";
-@import "./components/AnalysisPlaylists";
-@import "../components/common/RangeSlider/RangeSlider";
+@import './components/Player';
+@import './components/Devices';
+@import './components/Playlists';
+@import './components/Results';
+@import './components/Top-table';
+@import './components/toolTip';
+@import './components/AnalysisPlaylists';
+@import '../components/common/RangeSlider/RangeSlider';
+@import './components/Playlist-table';
 
 .dev {
   border: 1px solid lime;

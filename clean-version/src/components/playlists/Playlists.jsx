@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
-import Slide from "react-reveal/Slide";
-import Fade from "react-reveal/Fade";
+import React, { useState, useEffect, useContext } from 'react'
+import Slide from 'react-reveal/Slide'
+import Fade from 'react-reveal/Fade'
 
-import { GlobalContext } from "globalContext";
+import { GlobalContext } from 'globalContext'
 import {
   getMePlaylists,
   getPlaylistsTracks,
@@ -10,9 +10,9 @@ import {
   getMeSavedTracks,
   getTopTracks,
   getMeSavedAlbums,
-  getHref
-} from "../../api/spotify";
-import ActionButton from "components/common/ActionButton";
+  getHref,
+} from '../../api/spotify'
+import ActionButton from 'components/common/ActionButton'
 
 const PlaylistsItem = ({
   setSelected,
@@ -20,7 +20,7 @@ const PlaylistsItem = ({
   id,
   uri,
   selectedId,
-  isPublic
+  isPublic,
 }) => (
   <li
     id={id}
@@ -30,80 +30,81 @@ const PlaylistsItem = ({
     }
   >
     {name}
-    <i>{` - ${isPublic ? "public" : "private"}`}</i>
+    <i>{` - ${isPublic ? 'public' : 'private'}`}</i>
   </li>
-);
+)
+
 export const usePlaylistSongs = (playlistId, fetchAllTracks = false) => {
   const [{ total }, setSongData] = useState({
-    href: "",
+    href: '',
     limit: 0,
     offset: 0,
     previous: null,
-    total: 0
-  });
-  const [songs, setSongs] = useState([]);
-  const [nextHref, setHref] = useState("");
-  const [fetchAll, setFetchingAll] = useState(false);
+    total: 0,
+  })
+  const [songs, setSongs] = useState([])
+  const [nextHref, setHref] = useState('')
+  const [fetchAll, setFetchingAll] = useState(false)
 
   useEffect(() => {
     if (playlistId) {
-      fetchPlaylistsTracks(playlistId);
+      fetchPlaylistsTracks(playlistId)
     }
-  }, [playlistId]);
+  }, [playlistId])
 
-  const fetchPlaylistsTracks = async id => {
-    if (id === "savedTracks") {
-      let { items, next, ...data } = await getMeSavedTracks();
-      setSongs(items);
-      setSongData(data);
-      setHref(next);
-    } else if (id.includes("topTracks")) {
-      let query = { time_range: id.split("-")[1] };
-      let { items, next, ...data } = await getTopTracks(query);
-      setSongs(items.map(item => ({ track: item })));
-      setSongData(data);
-      setHref(next);
+  const fetchPlaylistsTracks = async (id) => {
+    if (id === 'savedTracks') {
+      let { items, next, ...data } = await getMeSavedTracks()
+      setSongs(items)
+      setSongData(data)
+      setHref(next)
+    } else if (id.includes('topTracks')) {
+      let query = { time_range: id.split('-')[1] }
+      let { items, next, ...data } = await getTopTracks(query)
+      setSongs(items.map((item) => ({ track: item })))
+      setSongData(data)
+      setHref(next)
     } else {
-      let { items, next, ...data } = await getPlaylistsTracks(id);
-      setSongs(items);
-      setSongData(data);
-      setHref(next);
+      let { items, next, ...data } = await getPlaylistsTracks(id)
+      setSongs(items)
+      setSongData(data)
+      setHref(next)
     }
     // if (fetchAllTracks) setFetchingAll(true);
-  };
+  }
 
-  const addData = async theNextHref => {
+  const addData = async (theNextHref) => {
     if (theNextHref) {
-      const { items, next } = await getHref(theNextHref);
-      setSongs([...songs, ...items]);
-      setHref(next);
+      const { items, next } = await getHref(theNextHref)
+      setSongs([...songs, ...items])
+      setHref(next)
     } else {
-      setHref(null);
+      setHref(null)
     }
-  };
+  }
   useEffect(() => {
-    fetchAll && addData(nextHref);
-  }, [nextHref, fetchAll]);
+    fetchAll && addData(nextHref)
+  }, [nextHref, fetchAll])
 
-  const uris = songs.map(({ track: { uri } }) => uri);
+  const uris = songs.map(({ track: { uri } }) => uri)
 
   return {
     total,
     setFetchingAll,
     uris,
     songs,
-    nextHref
-  };
-};
+    nextHref,
+  }
+}
 
 export const PlaylistSongs = ({
   playlistId,
   context_uri,
-  currentlyPlayingId
+  currentlyPlayingId,
 }) => {
   const { total, setFetchingAll, uris, songs, nextHref } = usePlaylistSongs(
     playlistId
-  );
+  )
 
   return (
     <React.Suspense fallback={<p>...loading</p>}>
@@ -119,7 +120,7 @@ export const PlaylistSongs = ({
             key={id}
             id={id}
             className={`playlist__song ${
-              currentlyPlayingId === id ? "green" : ""
+              currentlyPlayingId === id ? 'green' : ''
             }`}
           >
             {name}
@@ -130,8 +131,8 @@ export const PlaylistSongs = ({
         )}
       </>
     </React.Suspense>
-  );
-};
+  )
+}
 
 export const AnalyisTracks = ({ playlistId }) => {
   return (
@@ -142,54 +143,52 @@ export const AnalyisTracks = ({ playlistId }) => {
         Analysis tracks
       </button>
     </>
-  );
-};
+  )
+}
 
 const top_time_range = [
-  { value: "long_term", label: "years" },
-  { value: "medium_term", label: "6 months" },
-  { value: "short_term", label: "4 weeks" }
-];
+  { value: 'long_term', label: 'years' },
+  { value: 'medium_term', label: '6 months' },
+  { value: 'short_term', label: '4 weeks' },
+]
 
 const Playlists = () => {
-  const [playlists, setPlaylists] = useState([]);
-  const [selected, setSelected] = useState({ id: null, uri: null });
+  const [playlists, setPlaylists] = useState([])
+  const [selected, setSelected] = useState({ id: null, uri: null })
   const [
     {
       visible: { playlist: isHidden },
-      currentPlaying: { details: currentPlaying }
+      currentPlaying: { details: currentPlaying },
     },
-    dispatch
-  ] = useContext(GlobalContext);
+    dispatch,
+  ] = useContext(GlobalContext)
 
-  const [topTrackTimeValue, setTopTrackTime] = useState(
-    top_time_range[1].value
-  );
+  const [topTrackTimeValue, setTopTrackTime] = useState(top_time_range[1].value)
 
   useEffect(() => {
-    fetchMePlaylists();
-  }, []);
+    fetchMePlaylists()
+  }, [])
 
   const fetchMePlaylists = async () => {
     try {
-      const { items } = await getMePlaylists();
-      setPlaylists(items);
+      const { items } = await getMePlaylists()
+      setPlaylists(items)
     } catch (e) {}
-  };
+  }
 
   return (
     <div className="sticky">
       <Fade big when={isHidden}>
         <Slide duration={1000} right when={isHidden}>
-          <ul className="playlists" style={isHidden ? {} : { display: "none" }}>
+          <ul className="playlists" style={isHidden ? {} : { display: 'none' }}>
             <p
               className="header pointer"
-              onClick={() => dispatch({ type: "visible/toggle-playlist" })}
+              onClick={() => dispatch({ type: 'visible/toggle-playlist' })}
             >
-              hide{" "}
+              hide{' '}
             </p>
             <>
-              {(selected.id === null || selected.id === "savedTracks") && (
+              {(selected.id === null || selected.id === 'savedTracks') && (
                 <PlaylistsItem
                   setSelected={setSelected}
                   selectedId={selected.id}
@@ -198,7 +197,7 @@ const Playlists = () => {
                   isPublic={false}
                 />
               )}
-              {(selected.id === null || selected.id.includes("topTracks")) && (
+              {(selected.id === null || selected.id.includes('topTracks')) && (
                 <PlaylistsItem
                   enableSelect
                   setSelected={setSelected}
@@ -208,8 +207,8 @@ const Playlists = () => {
                       Your top tracks
                       <select
                         onChange={({ target: { value } }) => {
-                          console.log(value);
-                          setTopTrackTime(value);
+                          console.log(value)
+                          setTopTrackTime(value)
                         }}
                       >
                         {top_time_range.map(({ label, value }, i) => (
@@ -253,7 +252,7 @@ const Playlists = () => {
         </Slide>
       </Fade>
     </div>
-  );
-};
+  )
+}
 
-export default Playlists;
+export default Playlists
