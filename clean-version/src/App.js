@@ -18,6 +18,7 @@ import Stats from './components/stats/Stats'
 import TopTable from './components/TopTable'
 import SpotifyLogo from './images/custom-svgs/SpotifyLogo'
 import AnalysisPlaylistsPage from './pages/AnalysisPlaylists'
+import PartyPlaylistPage from './pages/PartyPlaylist'
 
 import { useToggle } from './hooks'
 import { ReactComponent as GithubLogo } from './images/github-logo.svg'
@@ -28,9 +29,12 @@ const App = () => {
       <GlobalUiState>
         <Layout>
           <Route exact path="/" render={() => <MainPage />} />
-          <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
           <Route
-            path="/analysis/:playlistId"
+            path={['/party-playlist/:playlistId', '/party-playlist']}
+            component={PartyPlaylistPage}
+          />
+          <Route
+            path={['/analysis/:playlistId', '/analysis']}
             component={AnalysisPlaylistsPage}
           />
           <Route path="/discogs-callback" component={DiscogsCallbackPage} />

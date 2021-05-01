@@ -5,7 +5,6 @@ const FRONTEND_URI = require("./index").FRONTEND_URI;
 module.exports = function (req, res) {
   const path = req.query.state || "";
   //Recieves the code
-
   let code = req.query.code || null;
   let authOptions = {
     url: "https://accounts.spotify.com/api/token",
@@ -31,6 +30,9 @@ module.exports = function (req, res) {
       console.log(error);
     }
     var access_token = body && body.access_token;
-    res.redirect(FRONTEND_URI + path + "?access_token=" + access_token);
+
+    res.redirect(
+      `${FRONTEND_URI}${path}?access_token=${access_token}&refresh_token=${body.refresh_token}`
+    );
   });
 };

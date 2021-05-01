@@ -15,6 +15,7 @@ module.exports = function (req, res) {
         scope: allPermisions,
         redirect_uri: REDIRECT_URI,
         state: req.query.path,
+        show_dialog: req.query.show_dialog || false,
       })
   );
 };
