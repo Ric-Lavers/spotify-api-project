@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import { GlobalUiState, GlobalContext } from "./globalContext";
-import Search, { SearchResultsContext } from "./components/Player/Search";
-import CurrentlyPlaying from "./context";
+import React, { useState } from 'react'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { GlobalUiState, GlobalContext } from './globalContext'
+import Search, { SearchResultsContext } from './components/Player/Search'
+import CurrentlyPlaying from './context'
 
-import logo from "./logo.svg";
-import hooks from "./images/hooks.svg";
-import "./styles/_index.scss";
-import DiscogsCallbackPage from "./pages/DiscogsCallbackPage";
-import SpotifyLogin from "./components/SpotifyLogin";
-import DiscogsLogin from "./components/DiscogsLogin";
-import Player from "./components/Player/Player";
-import SearchResults from "./components/Player/SearchResults";
-import Playlists from "./components/playlists/Playlists";
-import Devices from "./components/settings/Devices";
-import Stats from "./components/stats/Stats";
-import TopTable from "./components/TopTable";
-import SpotifyLogo from "./images/custom-svgs/SpotifyLogo";
-import AnalysisPlaylistsPage from "./pages/AnalysisPlaylists";
+import logo from './logo.svg'
+import hooks from './images/hooks.svg'
+import './styles/_index.scss'
+import DiscogsCallbackPage from './pages/DiscogsCallbackPage'
+import SpotifyLogin from './components/SpotifyLogin'
+import DiscogsLogin from './components/DiscogsLogin'
+import Player from './components/Player/Player'
+import SearchResults from './components/Player/SearchResults'
+import Playlists from './components/playlists/Playlists'
+import Devices from './components/settings/Devices'
+import Stats from './components/stats/Stats'
+import TopTable from './components/TopTable'
+import SpotifyLogo from './images/custom-svgs/SpotifyLogo'
+import AnalysisPlaylistsPage from './pages/AnalysisPlaylists'
 
-import { useToggle } from "./hooks";
-import { ReactComponent as GithubLogo } from "./images/github-logo.svg";
+import { useToggle } from './hooks'
+import { ReactComponent as GithubLogo } from './images/github-logo.svg'
 
 const App = () => {
   return (
@@ -38,47 +38,50 @@ const App = () => {
         </Layout>
       </GlobalUiState>
     </Router>
-  );
-};
+  )
+}
 
 const Layout = ({ children }) => {
-  const [showToken, toggleToken] = useToggle(false);
-  const [state, dispatch] = React.useContext(GlobalContext);
+  const [showToken, toggleToken] = useToggle(false)
+  const [state, dispatch] = React.useContext(GlobalContext)
 
-  const handleSetLogin = payload => {
+  const handleSetLogin = (payload) => {
     dispatch({
-      type: "user/loginSpotify",
-      payload
-    });
-  };
+      type: 'user/loginSpotify',
+      payload,
+    })
+  }
 
   return (
     <div className="App">
-      {showToken ? (
-        <small>{sessionStorage.spotifyToken}</small>
-      ) : (
-        <small style={{ cursor: "pointer" }} onClick={toggleToken}>
-          <b>jWt</b>
-        </small>
+      {process.env.NODE_ENV === 'development' && (
+        <header>
+          {showToken ? (
+            <small>{sessionStorage.spotifyToken}</small>
+          ) : (
+            <small style={{ cursor: 'pointer' }} onClick={toggleToken}>
+              <b>jWt</b>
+            </small>
+          )}
+          <a
+            target="_blank"
+            href="https://github.com/Ric-Lavers/spotify-api-project"
+          >
+            <GithubLogo />
+          </a>
+        </header>
       )}
-      <a
-        target="_blank"
-        href="https://github.com/Ric-Lavers/spotify-api-project"
-      >
-        <GithubLogo />
-      </a>
-      <header></header>
       <section
         className="App-header"
         style={{
           backgroundImage: `url(${state.currentPlaying.image.src})`,
-          backgroundPosition: "top"
+          backgroundPosition: 'top',
         }}
       >
         <SpotifyLogin onLogIn={handleSetLogin} />
         {state.isSpotifyLoggedIn ? (
           <>{children}</>
-        ) : sessionStorage.getItem("spotifyToken") ? (
+        ) : sessionStorage.getItem('spotifyToken') ? (
           <></>
         ) : (
           <>
@@ -92,13 +95,13 @@ const Layout = ({ children }) => {
         )}
       </section>
     </div>
-  );
-};
+  )
+}
 
 const MainPage = () => {
-  const [show, toggleShow] = useToggle(true);
-  const [state, dispatch] = React.useContext(GlobalContext);
-  const [data, setState] = useState(null);
+  const [show, toggleShow] = useToggle(true)
+  const [state, dispatch] = React.useContext(GlobalContext)
+  const [data, setState] = useState(null)
 
   return (
     <>
@@ -112,8 +115,8 @@ const MainPage = () => {
       />
      */}
       <br />
-      <a style={{ color: "white" }} href="/analysis">
-        Analysis your playlists{" "}
+      <a style={{ color: 'white' }} href="/analysis">
+        Analysis your playlists{' '}
       </a>
       <a>
         {show &&
@@ -139,12 +142,12 @@ const MainPage = () => {
                   <Stats />
                 </div>
               </CurrentlyPlaying>
-            </div>
+            </div>,
           ]}
       </a>
     </>
-  );
-};
+  )
+}
 
 /* * pre grid layout w/ Playlists & Search result provider in Players
     (<>
@@ -161,4 +164,4 @@ const MainPage = () => {
     </div>
     </>) */
 
-export default App;
+export default App
