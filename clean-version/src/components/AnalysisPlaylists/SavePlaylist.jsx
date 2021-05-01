@@ -63,31 +63,41 @@ export const SavePlaylist = ({
       onSubmit={handleSubmitPlaylist}
       onChange={handleChange}
       className="add-playlist"
+      autocomplete="off"
     >
       <fieldset>
         <legend>Create new playlist</legend>
-        <label>
-          <span>Name</span>
-          <Input type="text" name="name" value={name} />
-        </label>
-        <label>
-          <span>Description</span>
-          <textarea
-            type="textarea"
-            name="description"
-            rows="1"
-            value={description}
-          />
-        </label>
-        <label>
-          <span>Public</span>
-          <input name="isPublic" type="checkbox" checked={isPublic} />
-        </label>
-        <label>
-          <span>Collaborative</span>
-          <input name="collaborative" type="checkbox" checked={collaborative} />
-        </label>
-        <input type="submit" value="create new playlist" />
+        <Input
+          label="Name"
+          type="text"
+          name="name"
+          value={name}
+          placeholder="Add a name"
+        />
+        <Input
+          label="Description"
+          type="textarea"
+          name="description"
+          rows="1"
+          value={description}
+          placeholder="Add an optional description"
+        />
+        <div>
+          <label>
+            <span>Public</span>
+            <input name="isPublic" type="checkbox" checked={isPublic} />
+          </label>
+          <label>
+            <span>Collaborative</span>
+            <input
+              name="collaborative"
+              type="checkbox"
+              checked={collaborative}
+            />
+          </label>
+        </div>
+
+        <input className="s-submit" type="submit" value="SAVE" />
         {loading && '🤞'}
         {hadSuccess && '👍'}
         {hadError && '👎'}
