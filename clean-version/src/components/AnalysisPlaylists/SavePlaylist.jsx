@@ -1,61 +1,62 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
+import Input from '../common/Input/Input'
 
 export const SavePlaylist = ({
   user_id,
   currentSort,
   currentPlaylist,
   createPlaylist,
-  description: _description = ""
+  description: _description = '',
 }) => {
   const [{ name, description, isPublic, collaborative }, setValues] = useState({
-    name: currentPlaylist.name || "",
+    name: currentPlaylist.name || '',
     description: _description,
     isPublic: false,
-    collaborative: false
-  });
+    collaborative: false,
+  })
   useEffect(() => {
     if (currentPlaylist.name)
-      setValues(prev => ({
+      setValues((prev) => ({
         ...prev,
         name: `${currentPlaylist.name || name}${
-          currentSort ? ` (${currentSort})` : ""
-        }`
-      }));
-  }, [currentPlaylist.name, currentSort]);
+          currentSort ? ` (${currentSort})` : ''
+        }`,
+      }))
+  }, [currentPlaylist.name, currentSort])
 
   const handleChange = ({ target: { name, value, checked } }) => {
-    setValues(prev => ({
+    setValues((prev) => ({
       ...prev,
-      [name]: value === "on" ? checked : value
-    }));
-  };
-  const [hadSuccess, setHadSuccess] = useState(false);
-  const [hadError, setHadError] = useState(false);
-  const [loading, setLoading] = useState(false);
+      [name]: value === 'on' ? checked : value,
+    }))
+  }
+  const [hadSuccess, setHadSuccess] = useState(false)
+  const [hadError, setHadError] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmitPlaylist = async e => {
-    e.preventDefault();
-    setLoading(true);
+  const handleSubmitPlaylist = async (e) => {
+    e.preventDefault()
+    setLoading(true)
     const playlist = await createPlaylist({
       name,
       description,
       isPublic,
-      collaborative
-    });
+      collaborative,
+    })
 
-    setLoading(false);
+    setLoading(false)
     if (playlist) {
-      setHadSuccess(true);
+      setHadSuccess(true)
       setTimeout(() => {
-        setHadSuccess(false);
-      }, 3000);
+        setHadSuccess(false)
+      }, 3000)
     } else {
-      setHadError(true);
+      setHadError(true)
       setTimeout(() => {
-        setHadError(false);
-      }, 3000);
+        setHadError(false)
+      }, 3000)
     }
-  };
+  }
 
   return (
     <form
@@ -67,7 +68,7 @@ export const SavePlaylist = ({
         <legend>Create new playlist</legend>
         <label>
           <span>Name</span>
-          <input type="text" name="name" value={name} />
+          <Input type="text" name="name" value={name} />
         </label>
         <label>
           <span>Description</span>
@@ -87,10 +88,10 @@ export const SavePlaylist = ({
           <input name="collaborative" type="checkbox" checked={collaborative} />
         </label>
         <input type="submit" value="create new playlist" />
-        {loading && "🤞"}
-        {hadSuccess && "👍"}
-        {hadError && "👎"}
+        {loading && '🤞'}
+        {hadSuccess && '👍'}
+        {hadError && '👎'}
       </fieldset>
     </form>
-  );
-};
+  )
+}

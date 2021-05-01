@@ -26,7 +26,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: "proxima-nova", "Roboto", sans-serif;
+  font-family: 'proxima-nova', 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
@@ -34,7 +34,8 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
 tr td {
@@ -68,11 +69,11 @@ input[type='checkbox'] {
 }
 
 .pointer {
-  @include pointer
+  @include pointer;
 }
 
 .action {
-  @include pointer
+  @include pointer;
 }
 
 /* touched animation */
@@ -90,34 +91,34 @@ input[type='checkbox'] {
 
 .success {
   color: $spotify-green;
-  border: 1px solid $spotify-green
+  border: 1px solid $spotify-green;
 }
 
 @keyframes touched-success {
   0% {
-    color: #fff
+    color: #fff;
   }
 
   50% {
-    color: $spotify-green
+    color: $spotify-green;
   }
 
   100% {
-    color: #fff
+    color: #fff;
   }
 }
 
 @keyframes touched-error {
   0% {
-    color: #fff
+    color: #fff;
   }
 
   50% {
-    color: $error
+    color: $error;
   }
 
   100% {
-    color: #fff
+    color: #fff;
   }
 }
 
@@ -146,7 +147,6 @@ input[type='checkbox'] {
   .sfCheck_cross {
     opacity: 0;
   }
-
 }
 
 .sfCheck:hover {
@@ -161,4 +161,16 @@ input[type='checkbox'] {
   .sfCheck_plus {
     opacity: 1;
   }
+}
+
+.s-input {
+  background: hsla(0, 0%, 100%, 0.1);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  height: 40px;
+  padding: 0 12px;
+  width: 100%;
 }
