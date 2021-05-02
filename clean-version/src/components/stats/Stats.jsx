@@ -11,6 +11,7 @@ import { formatFeatures } from 'helpers'
 const { ucfirst } = Utils
 
 export const stats = [
+  'order',
   'mode',
   'popularity',
   'tempo',

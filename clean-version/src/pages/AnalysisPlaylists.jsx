@@ -26,7 +26,12 @@ import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { specialPlaylists, savedTracks } from 'constants/index'
 const favPlaylists = [...specialPlaylists, savedTracks]
 
-export const tableKeys = ['artists', 'albumName', ..._stats]
+export const tableKeys = [
+  'order',
+  'artists',
+  'albumName',
+  ..._stats.filter((s) => s !== 'order'),
+]
 
 const tableKeyToObjectKey = (tableKey, song) => {
   if (tableKey === 'artists') {
@@ -366,7 +371,6 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
           </button>
 
           <select value={currentSortValue} onChange={handleSort}>
-            <option value="">unsorted</option>
             {tableKeys.map((key) => (
               <>
                 <option value={`${key}-ASC`}>{key} - ASC</option>

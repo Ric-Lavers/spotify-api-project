@@ -1,10 +1,10 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import { identity } from "../api/discogs";
+import { identity } from '../api/discogs'
 
-import { styles } from "./SpotifyLogin";
+import { styles } from './SpotifyLogin'
 
-const apiAuth = ["consumerKey", "consumerSecret", "token", "tokenSecret"];
+const apiAuth = ['consumerKey', 'consumerSecret', 'token', 'tokenSecret']
 
 class DiscogsLogin extends Component {
   state = {
@@ -13,58 +13,57 @@ class DiscogsLogin extends Component {
 
     display_name: null,
     display_picture: null,
-    spotifyLink: "",
-    data: ""
-  };
+    spotifyLink: '',
+    data: '',
+  }
 
   componentDidMount() {
     // const { discogsToken } = sessionStorage;
     // this.checkToken(discogsToken)
-    this.setToken();
+    this.setToken()
   }
 
-  isTokenPresent = yes =>
-    this.setState({ tokenPresent: yes || !!sessionStorage.discogsToken });
+  isTokenPresent = (yes) =>
+    this.setState({ tokenPresent: yes || !!sessionStorage.discogsToken })
 
-  setToken = tokenName => {
-    let urlParams = new URLSearchParams(window.location.search);
+  setToken = (tokenName) => {
+    let urlParams = new URLSearchParams(window.location.search)
 
-    if (urlParams.get("consumerKey") === "zWqDQEdZNBUyXWjTcySJ") {
-      apiAuth.forEach(key => {
+    if (urlParams.get('consumerKey') === 'zWqDQEdZNBUyXWjTcySJ') {
+      apiAuth.forEach((key) => {
         sessionStorage.setItem(
           `discogs${key.charAt(0).toUpperCase()}${key.slice(1)}`,
           urlParams.get(key)
-        );
-      });
+        )
+      })
 
-      this.isTokenPresent(true);
+      this.isTokenPresent(true)
       // window.location.replace( window.origin )
     } else {
-      this.isTokenPresent();
+      this.isTokenPresent()
     }
-  };
+  }
 
-  getIdentity = async e => {
-    e.preventDefault();
+  getIdentity = async (e) => {
+    e.preventDefault()
 
-    const data = await identity();
-    console.log(data);
-    data && this.setState({ data });
-  };
+    const data = await identity()
+    data && this.setState({ data })
+  }
 
   render() {
     const {
-      tokenPresent
+      tokenPresent,
       //   tokenValid,
       //   display_picture,
       //   display_name,
       //   email,
       //   spotifyLink,
-    } = this.state;
-    const { isLoading } = this.props;
+    } = this.state
+    const { isLoading } = this.props
 
     if (isLoading) {
-      return <p>...loading</p>;
+      return <p>...loading</p>
     }
 
     return (
@@ -72,12 +71,12 @@ class DiscogsLogin extends Component {
         <button onClick={this.getIdentity}>identity</button>
         <p>
           {tokenPresent
-            ? "discogsToken in session storage"
-            : "discogsToken in session storage"}
+            ? 'discogsToken in session storage'
+            : 'discogsToken in session storage'}
         </p>
       </div>
-    );
+    )
   }
 }
 
-export default DiscogsLogin;
+export default DiscogsLogin

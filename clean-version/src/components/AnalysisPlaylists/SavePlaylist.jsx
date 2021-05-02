@@ -15,13 +15,18 @@ export const SavePlaylist = ({
     collaborative: false,
   })
   useEffect(() => {
-    if (currentPlaylist.name)
+    if (currentPlaylist.name) {
+      const sortName =
+        currentSort && !currentSort.startsWith('order')
+          ? ` (${currentSort})`
+          : ''
+      const playlistName = `${currentPlaylist.name || name}${sortName}`
+
       setValues((prev) => ({
         ...prev,
-        name: `${currentPlaylist.name || name}${
-          currentSort ? ` (${currentSort})` : ''
-        }`,
+        name: playlistName,
       }))
+    }
   }, [currentPlaylist.name, currentSort])
 
   const handleChange = ({ target: { name, value, checked } }) => {

@@ -8,29 +8,33 @@ export const isChecked = (uri, include) => {
     isLocalFile,
   }
 }
+
+export const getRows = ({
+  album: { name: albumName },
+  artists,
+  audioFeatures,
+  popularity,
+  order,
+  custom,
+}) => {
+  const rows = {
+    artists,
+    albumName,
+    popularity,
+    order,
+    ...audioFeatures,
+  }
+  if (custom) {
+    rows['score'] = custom.score
+  }
+  return rows
+}
+
 export const getAverages = (tracks, stats) => {
   const specs = tracks.reduce(
-    (
-      a,
-      {
-        id,
-        custom,
-        name,
-        album: { name: albumName },
-        artists,
-        audioFeatures,
-        popularity,
-        uri,
-        include,
-      },
-      i
-    ) => {
-      const rows = {
-        artists,
-        albumName,
-        popularity,
-        ...audioFeatures,
-      }
+    (a, track, i) => {
+      const { uri, include, order, ...averageTrackFields } = track
+      const rows = getRows(averageTrackFields)
       const { checked } = isChecked(uri, include)
       a.checked.push(checked ? 1 : 0)
       tableKeys.forEach((statKey) =>

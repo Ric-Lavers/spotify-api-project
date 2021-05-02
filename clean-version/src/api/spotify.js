@@ -51,7 +51,6 @@ export const refereshSpotifyLogin = async (
       method: 'POST',
       body,
     }).then((d) => d.json())
-    console.log(data)
   } catch (error) {
     console.error(error.message)
   }
@@ -332,7 +331,9 @@ export const getAllPlaylistsTracks = async (playlistId) => {
         items: data.items.map((track) => ({ track })),
       }
     }
-
+    data.items.forEach(({ track }, i) => {
+      track.order = i + 1
+    })
     return data
   } catch (error) {
     return { items: [] }

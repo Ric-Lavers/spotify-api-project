@@ -3,7 +3,7 @@ import { play } from 'api/spotify'
 import { combineArtists } from 'helpers'
 import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { formatFeatures } from 'helpers'
-import { isChecked, getAverages } from './PlaylistTable.utils'
+import { isChecked, getAverages, getRows } from './PlaylistTable.utils'
 
 export const PlaylistTable = ({
   loading,
@@ -21,7 +21,7 @@ export const PlaylistTable = ({
     let sV
     if (!sortValue.includes(statKey)) sV = `${statKey}-ASC`
     else if (sortValue.endsWith('ASC')) sV = `${statKey}-DESC`
-    else sV = ''
+    else sV = 'order-ASC'
     onSort({ target: { value: sV } })
     setSortValue(sV)
   }
@@ -91,62 +91,44 @@ export const PlaylistTable = ({
           </tr>
         </thead>
         <tbody>
-          {tracks.map(
-            (
-              {
-                id,
-                custom,
-                name,
-                album: { name: albumName },
-                artists,
-                audioFeatures,
-                popularity,
-                uri,
-                include,
-              },
-              i
-            ) => {
-              const rows = {
-                artists,
-                albumName,
-                popularity,
-                ...audioFeatures,
-              }
-              if (custom) {
-                rows['score'] = custom.score
-              }
-              const { checked, isLocalFile } = isChecked(uri, include)
-              return (
-                <tr>
-                  <td style={{ textAlign: 'center' }}>
-                    <input
-                      onChange={({ target: { checked } }) =>
-                        onCheckTrack(id, checked)
-                      }
-                      type="checkbox"
-                      name="include"
-                      checked={checked}
-                      disabled={isLocalFile}
-                    />
-                  </td>
-                  <td
-                    className={`playlist__song ${
-                      currentTrackId === id ? 'green' : ''
-                    }`}
-                    onClick={() =>
-                      uris && play({ uris: uris, offset: { position: i } })
-                    }
-                  >
-                    {`${name} ${rows.score ? ` (${rows.score})` : ''}`}
-                  </td>
-
-                  {stats.map((statKey) => (
-                    <td>{formatFeatures(statKey, rows)}</td>
-                  ))}
-                </tr>
-              )
+          {tracks.map((track, i) => {
+            const { id, custom, name, uri, include } = track
+            const rows = getRows(track)
+            if (custom) {
+              rows['score'] = custom.score
             }
-          )}
+            const { checked, isLocalFile } = isChecked(uri, include)
+            // console.log(track, rows)
+            return (
+              <tr>
+                <td style={{ textAlign: 'center' }}>
+                  <input
+                    onChange={({ target: { checked } }) =>
+                      onCheckTrack(id, checked)
+                    }
+                    type="checkbox"
+                    name="include"
+                    checked={checked}
+                    disabled={isLocalFile}
+                  />
+                </td>
+                <td
+                  className={`playlist__song ${
+                    currentTrackId === id ? 'green' : ''
+                  }`}
+                  onClick={() =>
+                    uris && play({ uris: uris, offset: { position: i } })
+                  }
+                >
+                  {`${name} ${rows.score ? ` (${rows.score})` : ''}`}
+                </td>
+
+                {stats.map((statKey) => (
+                  <td>{formatFeatures(statKey, rows)}</td>
+                ))}
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </>
