@@ -23,7 +23,6 @@ import {
 import { stats as _stats } from '../components/stats/Stats'
 import { GlobalContext } from 'globalContext'
 import PopularityMeter from 'images/custom-svgs/PopularityMeter'
-import { combineArtists } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
 const favPlaylists = [...specialPlaylists, savedTracks]
 

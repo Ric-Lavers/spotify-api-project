@@ -34,20 +34,16 @@ export const PlaylistTable = ({
     stats,
   ])
 
-  if (loading) {
+  let tracksUnavailableMsg = loading
+    ? 'Loading...'
+    : !tracks.length
+    ? 'No tracks'
+    : ''
+  if (tracksUnavailableMsg) {
     return (
       <table>
         <thead>
-          <th>Loading...</th>
-        </thead>
-      </table>
-    )
-  }
-  if (!tracks.length) {
-    return (
-      <table>
-        <thead>
-          <th>No tracks</th>
+          <th>{tracksUnavailableMsg}</th>
         </thead>
       </table>
     )
