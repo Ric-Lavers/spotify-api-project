@@ -19,4 +19,4 @@ export const variables = {
   }
 }
 
-export default variables;
+export default variables

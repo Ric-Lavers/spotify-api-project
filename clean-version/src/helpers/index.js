@@ -1,18 +1,18 @@
-export * from "./handlePlay";
-export * from "./formatFeatures";
+export * from "./handlePlay"
+export * from "./formatFeatures"
 
-let LOGIN_URL;
+let LOGIN_URL
 if (process.env.REACT_APP_ENV === "PROD") {
   LOGIN_URL =
     process.env.REACT_APP_LOGIN_URL_PROD ||
-    "https://serverless-1qy6p9wlj.vercel.app/api/login";
+    "https://serverless-1qy6p9wlj.vercel.app/api/login"
 } else if (process.env.REACT_APP_ENV === "STAG") {
   LOGIN_URL =
     process.env.REACT_APP_LOGIN_URL_PROD ||
-    "https://serverless-1qy6p9wlj.vercel.app/api/login";
+    "https://serverless-1qy6p9wlj.vercel.app/api/login"
 } else {
   LOGIN_URL =
-    process.env.REACT_APP_LOGIN_URL_DEV || "http://localhost:4000/login";
+    process.env.REACT_APP_LOGIN_URL_DEV || "http://localhost:4000/login"
 }
 
 class SpotifyHelpers {
@@ -20,7 +20,7 @@ class SpotifyHelpers {
 }
 
 export const combineArtists = artists =>
-  artists.map(({ name }) => name).join(", ");
+  artists.map(({ name }) => name).join(", ")
 class Utils {
   static scrollIntoView = elementId =>
     document.getElementById(elementId).scrollIntoView({
@@ -35,21 +35,21 @@ class Utils {
       behavior: "smooth"
     });
   static ucfirst(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+    return string.charAt(0).toUpperCase() + string.slice(1)
   }
 
   static searchToObj = () => {
-    const search = window.location.search;
-    let obj = {};
+    const search = window.location.search
+    let obj = {}
     search
       .substr(1, search.length)
       .split("&")
       .forEach(i => {
-        let [key, value] = i.split("=");
-        obj[key] = value;
-      });
-    return obj;
+        let [key, value] = i.split("=")
+        obj[key] = value
+      })
+    return obj
   };
 }
 
-export { SpotifyHelpers, Utils, LOGIN_URL };
+export { SpotifyHelpers, Utils, LOGIN_URL }

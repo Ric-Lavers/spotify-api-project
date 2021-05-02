@@ -30,24 +30,24 @@ export const reduceGenres = (items) => {
       genres.forEach(genre => {
         const index = a.findIndex(({
           name
-        }) => name === genre);
+        }) => name === genre)
 
         if (index === -1) {
           a.push({
             name: genre,
             count: 1
-          });
+          })
         } else {
-          a[index].count++;
+          a[index].count++
         }
-      });
-      return a;
+      })
+      return a
     }, [])
-    .sort((a, b) => b.count - a.count);
+    .sort((a, b) => b.count - a.count)
 }
 
 export const getTopGenres = (genres) => {
-  const topThree = [];
+  const topThree = []
   genres.forEach((g, i) => {
     if (i < 3 || (get(topThree, '[2].count') === g.count)) {
       topThree.push(g)

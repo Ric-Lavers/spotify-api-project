@@ -1,15 +1,15 @@
-import React, { useState, useCallback, useEffect, Component } from "react";
+import React, { useState, useCallback, useEffect, Component } from "react"
 
 import {
   useWindowWidth,
   withWindowWidth,
   WindowWidthWrapper,
   useColorOnInput
-} from "./demoHooks";
+} from "./demoHooks"
 
-import { useToggle, useHandleChange, useFlash } from "./commonHooks";
+import { useToggle, useHandleChange, useFlash } from "./commonHooks"
 
-export * from "./pollCurrentSong";
+export * from "./pollCurrentSong"
 export {
   useToggle,
   useHandleChange,
@@ -19,4 +19,4 @@ export {
   // withWindowWidth,
   // WindowWidthWrapper,
   // useColorOnInput,
-};
+}

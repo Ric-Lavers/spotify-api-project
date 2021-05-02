@@ -29,11 +29,18 @@
     "start:dev": "REACT_APP_ENV=DEV react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "lint": "eslint src",
     "test": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "semi": [
+        2,
+        "never"
+      ]
+    }
   },
   "browserslist": [
     ">0.2%",
