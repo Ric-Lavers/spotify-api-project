@@ -1,7 +1,4 @@
 import React, { memo, useContext, useState, useEffect } from 'react'
-import Slide from 'react-reveal/Slide'
-import makeCarousel from 'react-reveal/makeCarousel'
-import truncate from 'lodash.truncate'
 import get from 'lodash.get'
 import { useParams } from 'react-router-dom'
 
@@ -17,12 +14,10 @@ import {
   getAllPlaylistsTracks,
   getMePlaylists,
   getHeapsAudioFeatures,
-  play,
   createUserPlaylistWithTracks,
 } from 'api/spotify'
-import { stats as _stats } from '../components/stats/Stats'
+import { stats as _stats } from '../components/stats'
 import { GlobalContext } from 'globalContext'
-import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { specialPlaylists, savedTracks } from 'constants/index'
 const favPlaylists = [...specialPlaylists, savedTracks]
 
@@ -224,16 +219,22 @@ const useMePlaylists = () => {
   return [playlists, getPlaylists]
 }
 
-const useMergePlaylist = ({ mergeMoreTracks, currentPlaylistId }) => {
+const useMergePlaylist = (
+  { mergeMoreTracks, currentPlaylistId },
+  playlists
+) => {
   const [mergeLoadingStatus, setLoadingMerge] = useState('')
   const [mergedPlaylistIds, setMergedPlaylistIds] = useState(
     [currentPlaylistId].filter(Boolean)
   )
+  const [mergedPlaylistNames, setMergedPlaylistNames] = useState([])
   const handleMergeNewPlaylist = async (playlistId) => {
     setLoadingMerge('🤞')
     const moreTracks = await getSongsWithAudioFeatures(playlistId)
     mergeMoreTracks(moreTracks)
     setMergedPlaylistIds((prev) => [...prev, playlistId])
+    const mergedPl = playlists.find((pl) => pl.id === playlistId)
+    setMergedPlaylistNames((prev) => [...prev, mergedPl.name])
     setLoadingMerge(moreTracks.length ? '👍' : '👎')
     setTimeout(() => {
       setLoadingMerge('')
@@ -243,6 +244,7 @@ const useMergePlaylist = ({ mergeMoreTracks, currentPlaylistId }) => {
   return {
     mergeLoadingStatus,
     mergedPlaylistIds,
+    mergedPlaylistNames,
     handleMergeNewPlaylist,
   }
 }
@@ -298,11 +300,15 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   const {
     mergeLoadingStatus,
     mergedPlaylistIds,
+    mergedPlaylistNames,
     handleMergeNewPlaylist,
-  } = useMergePlaylist({
-    mergeMoreTracks,
-    currentPlaylistId: playlistId,
-  })
+  } = useMergePlaylist(
+    {
+      mergeMoreTracks,
+      currentPlaylistId: playlistId,
+    },
+    playlists
+  )
 
   const handleCreatePlaylist = async ({
     name,
@@ -334,6 +340,8 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
           playlists={playlists}
           currentPlaylistId={playlistId}
         />
+      </div>
+      <div className="analysis-playlists">
         <CurrentPlaylist currentPlaylist={currentPlaylist} />
       </div>
       <div className="analysis-playlists">
@@ -355,6 +363,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
               currentSort={currentSort}
               createPlaylist={handleCreatePlaylist}
               description={currentPlaylist.description}
+              mergedPlaylistNames={mergedPlaylistNames}
             />
           </>
         )}

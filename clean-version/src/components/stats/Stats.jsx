@@ -94,30 +94,3 @@ const Stats = memo(({ id, audio_features }) => {
 })
 
 export default StatsContainer
-
-const json = {
-  // default
-  mode: 1,
-  tempo: 95.032,
-  key: 9,
-  time_signature: 4,
-  duration_ms: 261566,
-
-  //optional
-  danceability: 0.689,
-  energy: 0.861,
-  loudness: -9.494,
-  speechiness: 0.188,
-  acousticness: 0.169,
-  instrumentalness: 0.0000418,
-  liveness: 0.403,
-  valence: 0.439,
-
-  //hide
-  type: 'audio_features',
-  id: '7GBrg6uPsklvih3b59Mn0u',
-  uri: 'spotify:track:7GBrg6uPsklvih3b59Mn0u',
-  track_href: 'https://api.spotify.com/v1/tracks/7GBrg6uPsklvih3b59Mn0u',
-  analysis_url:
-    'https://api.spotify.com/v1/audio-analysis/7GBrg6uPsklvih3b59Mn0u',
-}

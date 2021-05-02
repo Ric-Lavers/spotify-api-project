@@ -44,11 +44,15 @@
   }
 
   .user-playlists {
-    display: inline-grid;
-    span {
-      font-size: smaller;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: $sm;
+    .loading-status {
+      font-size: $lg;
     }
   }
+
   select {
     text-overflow: ellipsis;
   }
