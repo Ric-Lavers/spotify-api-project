@@ -180,7 +180,7 @@ const useSongsWithAudioFeatures = (playlistId) => {
 const useStatKeys = (whiteStatsList = []) => {
   const [whiteList, setWhiteList] = useState(new Set(whiteStatsList))
 
-  const BlackStatList = ({ hide }) => {
+  const TableSettings = ({ hide, children }) => {
     const handleCheck = ({ target: { checked, id } }) => {
       checked ? whiteList.add(id) : whiteList.delete(id)
       setWhiteList(new Set(whiteList))
@@ -198,11 +198,11 @@ const useStatKeys = (whiteStatsList = []) => {
             <input id={stat} type="checkbox" checked={whiteList.has(stat)} />
           </div>
         ))}
-        <div className="stat-checkbox" />
+        {children}
       </form>
     )
   }
-  return [[...whiteList], BlackStatList]
+  return [[...whiteList], TableSettings]
 }
 
 const useMePlaylists = () => {
@@ -278,7 +278,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   const preferedStatKeys = JSON.parse(
     localStorage.getItem('preferedStatKeys')
   ) || ['popularity', 'danceability', 'tempo']
-  const [stats, BlackStatList] = useStatKeys(preferedStatKeys)
+  const [stats, TableSettings] = useStatKeys(preferedStatKeys)
 
   const [currentSortValue, setCurrentSortValue] = useState('')
   const handleSort = ({ target: { value } }) => {
@@ -335,7 +335,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     <>
       <div className="analysis-playlists">
         <UserPlaylistsSelect
-          label={'select a playlist'}
+          label={'Select a playlist'}
           onChange={handleChangePlaylist}
           playlists={playlists}
           currentPlaylistId={playlistId}
@@ -347,6 +347,14 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
       <div className="analysis-playlists">
         {currentPlaylist && (
           <>
+            <SavePlaylist
+              user_id={userId}
+              currentPlaylist={currentPlaylist}
+              currentSort={currentSort}
+              createPlaylist={handleCreatePlaylist}
+              description={currentPlaylist.description}
+              mergedPlaylistNames={mergedPlaylistNames}
+            />
             <UserPlaylistsSelect
               label={'Merge another playlist'}
               onChange={handleMergeNewPlaylist}
@@ -356,29 +364,11 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
               currentPlaylistId={''}
               loadingStatus={mergeLoadingStatus}
             />
-
-            <SavePlaylist
-              user_id={userId}
-              currentPlaylist={currentPlaylist}
-              currentSort={currentSort}
-              createPlaylist={handleCreatePlaylist}
-              description={currentPlaylist.description}
-              mergedPlaylistNames={mergedPlaylistNames}
-            />
           </>
         )}
       </div>
       <div className="analysis-playlists">
-        <BlackStatList hide={isHidden} />
-        {min + max !== 0 && (
-          <Range min={min} max={max} onRangeChange={checkByRange} />
-        )}
-
-        <div>
-          <button onClick={toggleHidden}>
-            table settings (audio features)
-          </button>
-
+        <TableSettings hide={isHidden}>
           <select value={currentSortValue} onChange={handleSort}>
             {tableKeys.map((key) => (
               <>
@@ -387,6 +377,15 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
               </>
             ))}
           </select>
+        </TableSettings>
+        {min + max !== 0 && (
+          <Range min={min} max={max} onRangeChange={checkByRange} />
+        )}
+
+        <div>
+          <button className="s-submit grey" onClick={toggleHidden}>
+            Settings (audio features)
+          </button>
         </div>
       </div>
 

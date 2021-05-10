@@ -1,8 +1,23 @@
 .user-playlists {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: $sm;
+  font-size: 21px;
+  font-weight: 700;
+  border-radius: 500px;
+
+  .loading-status {
+    font-size: $lg;
+  }
+  border: 1px solid white;
+  cursor: pointer;
+
   min-width: 350px;
   @media (max-width: $bp-sm-min) {
     position: inherit;
-    border: 1px solid lime;
   }
 }
 .s-kebab {
@@ -32,9 +47,7 @@
     visibility: hidden;
   }
 
-  .open,
-  .kebab-btn:hover ~ .s-menu,
-  .s-menu:hover {
+  .open {
     visibility: visible;
   }
 }
@@ -53,8 +66,10 @@
     min-width: 260px;
     overflow-y: auto;
     padding: 4px;
+
     li {
       @include s-element;
+
       button {
         @include s-element;
         cursor: pointer;
@@ -66,8 +81,6 @@
         gap: 8px;
         align-items: center;
         color: hsla(0, 0%, 100%, 0.9);
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
         height: 40px;
         justify-content: space-between;

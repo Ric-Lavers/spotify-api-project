@@ -110,7 +110,7 @@ export const SavePlaylist = ({
           </label>
         </div>
 
-        <input className="s-submit" type="submit" value="SAVE" />
+        <input className="s-submit right" type="submit" value="SAVE" />
         {loading && '🤞'}
         {hadSuccess && '👍'}
         {hadError && '👎'}
