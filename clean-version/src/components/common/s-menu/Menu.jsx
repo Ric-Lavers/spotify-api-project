@@ -36,7 +36,7 @@ const Menu = ({ list, onClick, currentPlaylistId, open }) => {
       >
         <ul tabindex="0" role="menu">
           {list.map(({ label, value }) => (
-            <li role="presentation">
+            <li key={value} role="presentation">
               <MenuButton
                 onClick={onClick}
                 label={label}

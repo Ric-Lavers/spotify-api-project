@@ -15,7 +15,9 @@ export const UserPlaylistsSelect = ({
   }, [currentPlaylistId])
 
   const [open, setOpen] = useState(false)
-  const toggleOpen = () => setOpen((prev) => !prev)
+  const toggleOpen = () => {
+    setOpen((prev) => !prev)
+  }
   useEffect(() => {
     const clickOutside = () => {
       setOpen(false)
