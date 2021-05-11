@@ -3,8 +3,8 @@ import get from 'lodash.get'
 
 import { useAudioControls } from 'components/AudioControls'
 
-export const pollCurrentSong = () => {
-  const { currentSong } = useAudioControls()
+export const pollCurrentSong = (initialSong = null) => {
+  const { currentSong } = useAudioControls(initialSong)
   const currentTrackId = get(currentSong, 'item.id')
   const [song, setSong] = useState(currentSong)
   useEffect(() => {

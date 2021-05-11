@@ -1,21 +1,21 @@
-import React, { useContext, useState, useEffect } from "react";
-import { CurrentPlayingContext } from "../../context";
-import { GlobalContext } from "../../globalContext";
-import { SpotifyHelpers } from "../../helpers";
+import React, { useContext, useState, useEffect } from 'react'
+import { CurrentPlayingContext } from '../../context'
+import { GlobalContext } from '../../globalContext'
+import { SpotifyHelpers } from '../../helpers'
 import {
   getAlbumById,
   saveTracks,
   removeTracks,
   getSavedState,
-  controls
-} from "../../api/spotify.js";
+  controls,
+} from '../../api/spotify.js'
 
-import SfChecked from "../common/SfCheck";
+import SfChecked from '../common/SfCheck'
 
 const DetailsData = () => {
-  const song = useContext(CurrentPlayingContext);
+  const song = useContext(CurrentPlayingContext)
   if (!song || !song.item) {
-    return null;
+    return null
   }
   // console.log(song);
 
@@ -26,35 +26,35 @@ const DetailsData = () => {
       album,
       uri,
       id: trackId,
-      album: { id }
-    }
-  } = song;
+      album: { id },
+    },
+  } = song
 
   useEffect(() => {
-    if (trackId === "5jKLIBeOfBeGLc6GGr482n") {
-      console.log("strawberry");
-      controls("next");
+    if (trackId === '4Tu8ZM8d 3p7wMDeQMyNg6f') {
+      console.log('strawberry')
+      controls('next')
     }
-  }, [trackId]);
-  const [extraAlbumData, setData] = useState({});
+  }, [trackId])
+  const [extraAlbumData, setData] = useState({})
 
   async function handleGetAlbumById(id) {
     //gets the unique fields not avaiable in song.data.item.album
     try {
-      const { genres, label, popularity, tracks } = await getAlbumById(id);
-      const [saved] = await getSavedState(trackId, "track");
+      const { genres, label, popularity, tracks } = await getAlbumById(id)
+      const [saved] = await getSavedState(trackId, 'track')
 
-      setData({ genres, label, popularity, tracks, saved });
+      setData({ genres, label, popularity, tracks, saved })
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message)
     }
   }
 
-  const setSaved = saved => setData({ ...extraAlbumData, saved });
+  const setSaved = (saved) => setData({ ...extraAlbumData, saved })
 
   useEffect(() => {
-    id && handleGetAlbumById(id);
-  }, [id]);
+    id && handleGetAlbumById(id)
+  }, [id])
 
   return (
     <Details
@@ -66,41 +66,41 @@ const DetailsData = () => {
       id={trackId}
       setSaved={setSaved}
     />
-  );
-};
+  )
+}
 
 const Details = React.memo(
   ({ uri, name, artists, album, id, setSaved }) => {
-    const [state, dispatch] = useContext(GlobalContext);
+    const [state, dispatch] = useContext(GlobalContext)
     if (
       album.images.length &&
       state.currentPlaying.image.src !== album.images[0].url
     ) {
       dispatch({
-        type: "currentPlaying/image",
+        type: 'currentPlaying/image',
         payload: {
           src: album.images[0].url,
-          alt: "currently playing"
-        }
-      });
+          alt: 'currently playing',
+        },
+      })
       dispatch({
-        type: "currentPlaying/details",
-        payload: { uri, name, artists, album, id }
-      });
+        type: 'currentPlaying/details',
+        payload: { uri, name, artists, album, id },
+      })
     }
 
     return (
       <>
         <h3>
           <span onClick={() => alert(uri)}>
-            {" "}
-            {name} - {album.name}{" "}
+            {' '}
+            {name} - {album.name}{' '}
           </span>
           <SfChecked
             checked={album.saved}
             onClick={() => {
-              let success = album.saved ? removeTracks(id) : saveTracks(id);
-              success.then(b => b && setSaved(!album.saved));
+              let success = album.saved ? removeTracks(id) : saveTracks(id)
+              success.then((b) => b && setSaved(!album.saved))
             }}
           />
         </h3>
@@ -112,33 +112,33 @@ const Details = React.memo(
           className="pointer"
           onClick={() =>
             dispatch({
-              type: "search/set",
+              type: 'search/set',
               payload: {
-                type: "artist",
-                searchText: album.label.replace(" Recordings", ""),
-                searchLabel: true
-              }
+                type: 'artist',
+                searchText: album.label.replace(' Recordings', ''),
+                searchLabel: true,
+              },
             })
           }
         >
           {album.label}
         </h4>
       </>
-    );
+    )
   },
   (prevProps, nextProps) => {
     if (prevProps.album.label !== nextProps.album.label) {
-      return false;
+      return false
     }
     if (prevProps.album.saved !== nextProps.album.saved) {
-      return false;
+      return false
     }
     if (prevProps.name === nextProps.name) {
-      return true;
+      return true
     }
 
-    return false;
+    return false
   }
-);
+)
 
-export default DetailsData;
+export default DetailsData
