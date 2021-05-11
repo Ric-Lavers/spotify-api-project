@@ -17,7 +17,6 @@ const DetailsData = () => {
   if (!song || !song.item) {
     return null
   }
-  // console.log(song);
 
   const {
     item: {

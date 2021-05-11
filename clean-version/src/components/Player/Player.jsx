@@ -64,17 +64,6 @@ const PlayerAPI = () => {
         />
       </div>
 
-      {/* 
-      <p className={`header pointer ${touched}`}>
-        <span
-          onClick={() => {
-            flashClass();
-            dispatch({ type: "visible/toggle-playlist" });
-          }}>
-          {state.visible.playlist ? "hide " : "show "}PLAYLISTS
-        </span>
-      </p>
- */}
       <div className="audio-controls">
         <Details />
         <ControlButtons />

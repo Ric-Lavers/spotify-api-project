@@ -673,6 +673,13 @@ export const getHeapsTracks = async (trackIds) => {
   })
 }
 
+export const getArtists = async (artistIds) => {
+  let res = await fetch(`${baseUrl}/artists?ids=${artistIds}`, headers)
+  isOk(res)
+  is204(res)
+  return res.json()
+}
+
 export default {
   getMe,
   checkToken,
@@ -698,4 +705,5 @@ export default {
   getTopTracks,
   getAudioFeatures,
   getHeapsTracks,
+  getArtists,
 }
