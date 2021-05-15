@@ -27,6 +27,7 @@ const initalState = {
     details: {},
   },
   skipList: {
+    active: localStorage.getItem(`skipList.active`) === 'true',
     tracks: new Set(
       JSON.parse(localStorage.getItem('skipList.tracks') || '[]')
     ),
@@ -117,6 +118,15 @@ function reducer(state, action) {
         currentPlaying: {
           ...state.currentPlaying,
           details: action.payload,
+        },
+      }
+    case 'skipList/active':
+      localStorage.setItem(`skipList.active`, action.active)
+      return {
+        ...state,
+        skipList: {
+          ...state.skipList,
+          active: action.active,
         },
       }
     case 'skipList/delete':

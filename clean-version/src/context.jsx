@@ -2,7 +2,6 @@ import React, { createContext } from 'react'
 import { currentPlaying } from './api/spotify'
 import CurrentPlayingInital from './mocks/currentlyPlaying_empty.json'
 import { pollCurrentSong } from './hooks/pollCurrentSong'
-// import { useSkipTrack } from './hooks/useSkipTrack'
 
 export const CurrentPlayingContext = createContext(CurrentPlayingInital)
 

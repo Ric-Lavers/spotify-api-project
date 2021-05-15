@@ -1,9 +1,36 @@
-import React, { useState, memo } from 'react'
+import React, { useState, memo, useEffect } from 'react'
 import { useSkipTrack } from '../../hooks/useSkipTrack'
 import Plus from './Plus'
 import Minus from './Minus'
 
+const SpCheckbox = ({ active, onToggle }) => {
+  const [_active, setActive] = useState(active)
+
+  const handleToggleActive = () => {
+    setActive((p) => !p)
+    onToggle && onToggle(!_active)
+  }
+
+  return (
+    <>
+      <label className="sp-checkbox">
+        <input
+          type="checkbox"
+          name="ToggleTailored ads"
+          className="hidden"
+          checked={active}
+          onClick={handleToggleActive}
+        ></input>
+        <span className="check-wrapper">
+          <span className="circle"></span>
+        </span>
+      </label>
+    </>
+  )
+}
+
 const Tabs = ({
+  children: ActiveToggle,
   tabList = [
     { label: 'Skip list', id: 'skipList', content: <>skip list content</> },
     {
@@ -13,7 +40,22 @@ const Tabs = ({
     },
   ],
 }) => {
-  const [openTab, setOpenTab] = useState(tabList[0].id)
+  const withLocal = () => {
+    const [openTab, setOpenTab] = useState(
+      localStorage.getItem('OPEN_TAB') || tabList[0].id
+    )
+
+    useEffect(
+      function OPEN_TABtoLocal() {
+        localStorage.setItem('OPEN_TAB', openTab)
+      },
+      [openTab]
+    )
+
+    return [openTab, setOpenTab]
+  }
+
+  const [openTab, setOpenTab] = withLocal()
 
   return (
     <div className="tabs">
@@ -29,6 +71,7 @@ const Tabs = ({
         ))}
       </nav>
       <div className="tabs-content">
+        <>{ActiveToggle}</>
         {tabList.find(({ id }) => id === openTab).content}
       </div>
     </div>
@@ -50,25 +93,28 @@ const SkipRows = ({
       <h5 onClick={() => setOpen((p) => !p)} className={open ? 'DESC' : 'ASC'}>
         {title}
       </h5>
+
       <ul style={{ ...(open && { display: 'none' }) }}>
-        {list.map(({ id, name }) => (
-          <li key={id} className="row">
-            <span>{name} </span>
-            <span>
-              {isAdd && (
-                <Plus
-                  onClick={() => onClick(skipType, [id, name].join(' - '))}
-                  inactive={skipList[skipType].has([id, name].join(' - '))}
-                />
-              )}
-              {isRemove && (
-                <Minus
-                  onClick={() => onClick(skipType, [id, name].join(' - '))}
-                />
-              )}
-            </span>
-          </li>
-        ))}
+        {list.map(({ id, name }) => {
+          const currentId = [id, name].join(' - ')
+          const isActive = skipList[skipType].has(currentId)
+          return (
+            <li key={id} className="row">
+              <span>{name} </span>
+              <span>
+                {isAdd && (
+                  <Plus
+                    onClick={() => onClick(skipType, currentId)}
+                    inactive={isActive}
+                  />
+                )}
+                {isRemove && (
+                  <Minus onClick={() => onClick(skipType, currentId)} />
+                )}
+              </span>
+            </li>
+          )
+        })}
       </ul>
     </div>
   )
@@ -83,8 +129,15 @@ const SkipList = memo(
     skipList,
     addToSkipList,
     removeFromSkipList,
+    toggleSkipList,
   }) => {
-    const AddCurrent = () => {
+    const AddCurrent = (/* {
+      artists,
+    genres,
+      track,
+    addToSkipList,
+    skipList,
+    } */) => {
       return (
         <div>
           <SkipRows
@@ -151,41 +204,6 @@ const SkipList = memo(
             onClick={removeFromSkipList}
             skipList={skipList}
           />
-          {/*   <details>
-            <summary>tracks</summary>
-            {[...skipList.tracks].map((track) => {
-              const [id, name] = track.split(' - ')
-              return <p>{name}</p>
-            })}
-          </details>
-          <details open>
-            <summary>artists</summary>
-
-            <ul>
-              <li className="row">
-                <span>{track.name}</span>
-                <span>
-                  <Minus
-                    onClick={() =>
-                      addToSkipList(
-                        'tracks',
-                        [track.id, track.name].join(' - ')
-                      )
-                    }
-                    inactive={skipList.tracks.has(
-                      [track.id, track.name].join(' - ')
-                    )}
-                  />
-                </span>
-              </li>
-            </ul>
-          </details>
-          <details>
-            <summary>genres</summary>
-            {[...skipList.genres].map((genre) => {
-              return <p>{genre}</p>
-            })}
-          </details> */}
         </>
       )
     }
@@ -201,7 +219,9 @@ const SkipList = memo(
 
     return (
       <div className="skip-list">
-        <Tabs tabList={tabList} />
+        <Tabs tabList={tabList}>
+          <SpCheckbox active={skipList.active} onToggle={toggleSkipList} />
+        </Tabs>
       </div>
     )
   }
@@ -216,6 +236,7 @@ const withData = () => {
     skipList,
     addToSkipList,
     removeFromSkipList,
+    toggleSkipList,
   } = useSkipTrack()
 
   return (
@@ -224,6 +245,7 @@ const withData = () => {
       skipList={skipList}
       addToSkipList={addToSkipList}
       removeFromSkipList={removeFromSkipList}
+      toggleSkipList={toggleSkipList}
       genres={genres}
       artists={artists}
       track={track}

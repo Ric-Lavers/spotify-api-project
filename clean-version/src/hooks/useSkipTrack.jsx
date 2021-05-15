@@ -20,6 +20,12 @@ export const useSkipTrack = () => {
       id,
     })
   }
+  const toggleSkipList = (active) => {
+    dispatch({
+      type: 'skipList/active',
+      active,
+    })
+  }
 
   const { item } = currentTrack
 
@@ -50,9 +56,10 @@ export const useSkipTrack = () => {
     )
     const genreSkips = currentGenres.map((g) => toSkipId(g, g))
     if (
-      skipList.tracks.has(trackSkipId) ||
-      artistsSkipIds.some((id) => skipList.artists.has(id)) ||
-      genreSkips.some((id) => skipList.genres.has(id))
+      skipList.active &&
+      (skipList.tracks.has(trackSkipId) ||
+        artistsSkipIds.some((id) => skipList.artists.has(id)) ||
+        genreSkips.some((id) => skipList.genres.has(id)))
     ) {
       await controls('next')
     }
@@ -75,6 +82,7 @@ export const useSkipTrack = () => {
     },
     addToSkipList,
     removeFromSkipList,
+    toggleSkipList,
     skipList,
   }
 }
