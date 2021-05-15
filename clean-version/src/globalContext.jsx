@@ -13,6 +13,7 @@ const initalState = {
     topTable: false,
     devices: false,
     stats: false,
+    skipList: false,
   },
   searchQuery: {
     type: '',
@@ -43,6 +44,7 @@ const initalState = {
 export const GlobalContext = createContext(initalState)
 
 function reducer(state, action) {
+  console.log(action)
   switch (action.type) {
     case 'user/loginSpotify':
       return {
@@ -96,6 +98,15 @@ function reducer(state, action) {
           stats: !state.visible.stats,
         },
       }
+
+    case 'visible/toggle-skipList':
+      return {
+        ...state,
+        visible: {
+          ...state.visible,
+          skipList: !state.visible.skipList,
+        },
+      }
     case 'search/set':
       return {
         ...state,
@@ -146,7 +157,6 @@ function reducer(state, action) {
           ...state.skipList,
         },
       }
-
     default:
       return state
   }

@@ -54,17 +54,7 @@ class DragBox extends React.Component {
     const { hasCapture, circleLeft, circleTop } = this.state
 
     const boxStyle = {
-      // border: '1px solid #d9d9d9',
-      // margin: '10px 0 20px',
-      // minHeight: 400,
-      // width: '100%',
-      // position: 'relative',
-
       position: 'absolute',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
     }
 
     const grabElement = {

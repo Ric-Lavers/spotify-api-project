@@ -5,7 +5,13 @@ import { GlobalContext } from '../globalContext'
 
 export const useSkipTrack = () => {
   const currentTrack = useContext(CurrentPlayingContext)
-  const [{ skipList }, dispatch] = useContext(GlobalContext)
+  const [
+    {
+      skipList,
+      visible: { skipList: isVisible },
+    },
+    dispatch,
+  ] = useContext(GlobalContext)
   const addToSkipList = (skipType, id) => {
     dispatch({
       type: 'skipList/add',
@@ -84,5 +90,6 @@ export const useSkipTrack = () => {
     removeFromSkipList,
     toggleSkipList,
     skipList,
+    isVisible,
   }
 }
