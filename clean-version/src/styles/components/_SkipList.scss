@@ -1,11 +1,19 @@
 .skip-list {
+  box-sizing: content-box;
   position: absolute;
   background-color: $spotify-bg;
   left: $sm;
   width: 300px;
   z-index: 3;
-  border: 1px solid $spotify-white;
+  border: inset 1px solid $spotify-white;
+
   border-radius: $md;
+
+  .tabs-menu {
+  }
+  .quick-actions {
+    padding: 2px $md * 1.5;
+  }
 }
 
 .tabs {
@@ -23,6 +31,7 @@
       text-decoration: none;
       cursor: pointer;
       background-color: transparent;
+      text-align: left;
 
       @include btn-font;
       &.active {

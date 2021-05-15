@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import { controls, currentPlaying, seek } from '../api/spotify'
 import { combineArtists } from '../helpers'
+import { pulseIds } from 'hooks/pollCurrentSong'
 
 export const useAudioControls = (initialSong = null) => {
   let [audioIs, setAudio] = useState('')
@@ -81,6 +82,7 @@ export const useAudioControls = (initialSong = null) => {
     setFetching(true)
     try {
       let playingNow = await currentPlaying()
+      pulseIds()
       setSong(playingNow)
       setRange(findRange(playingNow))
     } catch (error) {}

@@ -249,12 +249,12 @@ button {
 
 .sp-checkbox {
   box-sizing: border-box;
-  align-items: center;
-  display: flex;
   padding-bottom: 4px;
   padding-top: 4px;
   position: relative;
   min-height: 32px;
+  display: flex;
+  align-items: center;
 
   .check-wrapper {
     border-radius: 11px;
@@ -307,4 +307,24 @@ button {
   padding: 0px;
   position: absolute;
   width: 1px;
+}
+
+.pulse {
+  border: 1px solid $spotify-white;
+  // top: 61px;
+  // left: $sm;
+
+  animation-name: pulse;
+  animation-duration: 0.8s;
+  animation-iteration-count: 2;
+  animation-direction: alternate;
+  animation-timing-function: cubic-bezier();
+}
+@keyframes pulse {
+  to {
+    border-color: $spotify-green;
+    // border: 2px solid $spotify-green;
+    // top: 60px;
+    // left: $sm - 1;
+  }
 }

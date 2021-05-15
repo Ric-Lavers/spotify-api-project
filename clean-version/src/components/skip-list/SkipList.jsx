@@ -2,7 +2,9 @@ import React, { useState, memo, useEffect } from 'react'
 import { useSkipTrack } from '../../hooks/useSkipTrack'
 import Plus from './Plus'
 import Minus from './Minus'
+import DragBox from '../DragBox'
 
+//TODO move out
 const SpCheckbox = ({ active, onToggle }) => {
   const [_active, setActive] = useState(active)
 
@@ -12,25 +14,23 @@ const SpCheckbox = ({ active, onToggle }) => {
   }
 
   return (
-    <>
-      <label className="sp-checkbox">
-        <input
-          type="checkbox"
-          name="ToggleTailored ads"
-          className="hidden"
-          checked={active}
-          onClick={handleToggleActive}
-        ></input>
-        <span className="check-wrapper">
-          <span className="circle"></span>
-        </span>
-      </label>
-    </>
+    <div className="sp-checkbox">
+      <input
+        type="checkbox"
+        name="ToggleTailored ads"
+        className="hidden"
+        checked={active}
+      />
+      <span onClick={handleToggleActive} className="check-wrapper">
+        <span className="circle"></span>
+      </span>
+    </div>
   )
 }
 
+//TODO ?refactor then move
 const Tabs = ({
-  children: ActiveToggle,
+  children: ToggleInactive,
   tabList = [
     { label: 'Skip list', id: 'skipList', content: <>skip list content</> },
     {
@@ -56,6 +56,15 @@ const Tabs = ({
   }
 
   const [openTab, setOpenTab] = withLocal()
+  let hideToggle = false
+  const CurrentTab = (() => {
+    try {
+      return tabList.find(({ id }) => id === openTab).content
+    } catch (_) {
+      hideToggle = true
+      return <></>
+    }
+  })()
 
   return (
     <div className="tabs">
@@ -70,14 +79,28 @@ const Tabs = ({
           </button>
         ))}
       </nav>
-      <div className="tabs-content">
-        <>{ActiveToggle}</>
-        {tabList.find(({ id }) => id === openTab).content}
+      <div className="quick-actions">
+        {!hideToggle && <>{ToggleInactive}</>}
       </div>
+      <div className="tabs-content">{CurrentTab}</div>
     </div>
   )
 }
 
+/**
+ * <SkipList>
+ *
+ * <Tabs>
+ *    <navMenu  skipList, add current playing, minimize (x)>
+ *      <Toggle/>
+ *    </navMenu>
+ *    <SkipRows tracks/>      <SkipRows track/>
+ *    <SkipRows artists/>  <SkipRows artists/>
+ *    <SkipRows genres/>    <SkipRows genres/>
+ *  </Tabs>
+ *
+ * </SkipList>
+ */
 const SkipRows = ({
   title,
   list,
@@ -215,10 +238,11 @@ const SkipList = memo(
         id: 'addCurrent',
         content: <AddCurrent />,
       },
+      { label: 'X', id: 'minimize' },
     ]
 
     return (
-      <div className="skip-list">
+      <div className="skip-list ">
         <Tabs tabList={tabList}>
           <SpCheckbox active={skipList.active} onToggle={toggleSkipList} />
         </Tabs>
@@ -240,16 +264,20 @@ const withData = () => {
   } = useSkipTrack()
 
   return (
-    <SkipList
-      currentTrack={currentTrack}
-      skipList={skipList}
-      addToSkipList={addToSkipList}
-      removeFromSkipList={removeFromSkipList}
-      toggleSkipList={toggleSkipList}
-      genres={genres}
-      artists={artists}
-      track={track}
-    />
+    <>
+      <DragBox>
+        <SkipList
+          currentTrack={currentTrack}
+          skipList={skipList}
+          addToSkipList={addToSkipList}
+          removeFromSkipList={removeFromSkipList}
+          toggleSkipList={toggleSkipList}
+          genres={genres}
+          artists={artists}
+          track={track}
+        />
+      </DragBox>
+    </>
   )
 }
 
