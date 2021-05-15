@@ -224,3 +224,25 @@ input[type='checkbox'] {
   padding: 0;
   vertical-align: baseline;
 }
+button {
+  border-style: none;
+}
+@mixin btn-font {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 16px;
+  text-transform: none;
+  color: $spotify-white;
+}
+
+.plus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-radius: 1px;
+  color: #000;
+  height: 16px;
+  width: 16px;
+}

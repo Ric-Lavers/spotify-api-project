@@ -1,0 +1,72 @@
+.skip-list {
+  position: absolute;
+  background-color: $spotify-bg;
+  left: $sm;
+  width: 300px;
+  z-index: 3;
+}
+
+.tabs {
+  border: 1px solid lime;
+  // display: flex;
+  // flex: 1 1 80px;
+  .tabs-menu {
+    display: flex;
+    flex: 1 1 80px;
+    padding: $md;
+    gap: 8px;
+    button {
+      padding: 8px 16px;
+      border-radius: 4px;
+      color: $spotify-white;
+      text-decoration: none;
+      cursor: pointer;
+      background-color: transparent;
+
+      @include btn-font;
+      &.active {
+        background-color: #333333;
+      }
+    }
+  }
+}
+.tabs-content {
+  .row {
+    text-align: left;
+    padding: 2px $md;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+
+    ul,
+    h5 {
+      margin: 0;
+      font-size: 16px;
+      min-width: 50px;
+      align-self: baseline;
+    }
+    ul {
+      width: 50%;
+      flex-grow: 1;
+      li {
+        font-size: 14px;
+        list-style-type: none;
+      }
+    }
+    .disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .plus {
+      cursor: pointer;
+      border-radius: 50%;
+      height: 24px;
+      width: 24px;
+      &:hover {
+        transform: scale(1.18);
+      }
+    }
+  }
+}

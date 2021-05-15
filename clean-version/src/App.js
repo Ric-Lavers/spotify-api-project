@@ -9,14 +9,14 @@ import hooks from './images/hooks.svg'
 import './styles/_index.scss'
 import DiscogsCallbackPage from './pages/DiscogsCallbackPage'
 import SpotifyLogin from './components/SpotifyLogin'
-import DiscogsLogin from './components/DiscogsLogin'
+// import DiscogsLogin from './components/DiscogsLogin'
 import Player from './components/Player/Player'
 import SearchResults from './components/Player/SearchResults'
 import Playlists from './components/playlists/Playlists'
 import Devices from './components/settings/Devices'
 import Stats from './components/stats/Stats'
 import TopTable from './components/TopTable'
-import SpotifyLogo from './images/custom-svgs/SpotifyLogo'
+import SkipList from './components/skip-list/SkipList'
 import AnalysisPlaylistsPage from './pages/AnalysisPlaylists'
 
 import { useToggle } from './hooks'
@@ -104,7 +104,8 @@ const MainPage = () => {
   const [data, setState] = useState(null)
 
   return (
-    <>
+    <CurrentlyPlaying>
+      <SkipList />
       {/*   <DiscogsLogin />
    
       <img src={logo} className="App-logo" alt="logo" onClick={toggleShow} />
@@ -126,26 +127,24 @@ const MainPage = () => {
               <div className="device-area">
                 <Devices />
               </div>
-              <CurrentlyPlaying>
-                <SearchResultsContext.Provider value={[data, setState]}>
-                  <div className="player-area">
-                    <Player visible={show} />
-                  </div>
-                  <div className="results-area">
-                    <SearchResults />
-                  </div>
-                </SearchResultsContext.Provider>
-                <div className="playlists-area">
-                  <Playlists />
+              <SearchResultsContext.Provider value={[data, setState]}>
+                <div className="player-area">
+                  <Player visible={show} />
                 </div>
-                <div className="stats-area">
-                  <Stats />
+                <div className="results-area">
+                  <SearchResults />
                 </div>
-              </CurrentlyPlaying>
+              </SearchResultsContext.Provider>
+              <div className="playlists-area">
+                <Playlists />
+              </div>
+              <div className="stats-area">
+                <Stats />
+              </div>
             </div>,
           ]}
       </a>
-    </>
+    </CurrentlyPlaying>
   )
 }
 
