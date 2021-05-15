@@ -1,48 +1,7 @@
-import React, { useState, useContext, memo } from 'react'
+import React, { useState, memo } from 'react'
 import { useSkipTrack } from '../../hooks/useSkipTrack'
-import { CurrentPlayingContext } from '../../context'
-import { GlobalContext } from '../../globalContext'
-
-const Plus = ({ onClick, inactive = false }) => (
-  <div
-    onClick={() => !inactive && onClick()}
-    className={`plus ${inactive ? 'disabled' : ''}`}
-  >
-    <svg
-      role="img"
-      height="12"
-      width="12"
-      viewBox="0 0 16 16"
-      style={{ fill: 'currentcolor' }}
-    >
-      <path d="M14 7H9V2H7v5H2v2h5v5h2V9h5z"></path>
-      <path fill="none" d="M0 0h16v16H0z"></path>
-    </svg>
-  </div>
-)
-const Minus = ({ onClick, inactive = false }) => (
-  <div
-    onClick={() => !inactive && onClick()}
-    className={`plus ${inactive ? 'disabled' : ''}`}
-  >
-    <svg
-      role="img"
-      height="12"
-      width="12"
-      viewBox="0 0 16 16"
-      style={{ fill: 'currentcolor' }}
-    >
-      <line
-        x1="2"
-        x2="14"
-        y1="8"
-        y2="8"
-        stroke-width="2px"
-        stroke="black"
-      ></line>
-    </svg>
-  </div>
-)
+import Plus from './Plus'
+import Minus from './Minus'
 
 const Tabs = ({
   tabList = [
@@ -116,9 +75,15 @@ const SkipRows = ({
 }
 
 const SkipList = memo(
-  ({ currentTrack, skipList, addToSkipList, removeFromSkipList }) => {
-    const { genres, artists, track } = useSkipTrack(currentTrack)
-
+  ({
+    genres,
+    artists,
+    track,
+    currentTrack,
+    skipList,
+    addToSkipList,
+    removeFromSkipList,
+  }) => {
     const AddCurrent = () => {
       return (
         <div>
@@ -243,22 +208,15 @@ const SkipList = memo(
 )
 
 const withData = () => {
-  const currentTrack = useContext(CurrentPlayingContext)
-  const [{ skipList }, dispatch] = useContext(GlobalContext)
-  const addToSkipList = (skipType, id) => {
-    dispatch({
-      type: 'skipList/add',
-      skipType,
-      id,
-    })
-  }
-  const removeFromSkipList = (skipType, id) => {
-    dispatch({
-      type: 'skipList/delete',
-      skipType,
-      id,
-    })
-  }
+  const {
+    genres,
+    artists,
+    track,
+    currentTrack,
+    skipList,
+    addToSkipList,
+    removeFromSkipList,
+  } = useSkipTrack()
 
   return (
     <SkipList
@@ -266,6 +224,9 @@ const withData = () => {
       skipList={skipList}
       addToSkipList={addToSkipList}
       removeFromSkipList={removeFromSkipList}
+      genres={genres}
+      artists={artists}
+      track={track}
     />
   )
 }

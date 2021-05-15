@@ -4,10 +4,11 @@
   left: $sm;
   width: 300px;
   z-index: 3;
+  border: 1px solid $spotify-white;
+  border-radius: $md;
 }
 
 .tabs {
-  border: 1px solid lime;
   // display: flex;
   // flex: 1 1 80px;
   .tabs-menu {
@@ -31,7 +32,6 @@
   }
 }
 .tabs-content {
-  details,
   .row {
     text-align: left;
     padding: 2px $md;
@@ -50,18 +50,21 @@
     }
     h5 {
       cursor: pointer;
+      width: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   }
 
-  p {
-    font-size: 14px;
-  }
   ul {
     width: 50%;
     flex-grow: 1;
+    padding-left: 0;
     li {
       font-size: 14px;
       list-style-type: none;
+      padding-left: 0;
     }
   }
   .disabled {

@@ -1,8 +1,26 @@
-import { useEffect, useState, useMemo } from 'react'
-import { getAlbumById, getArtists } from 'api/spotify'
-import { combineArtists } from '../helpers'
+import { useEffect, useState, useContext } from 'react'
+import { getAlbumById, getArtists, controls } from 'api/spotify'
+import { CurrentPlayingContext } from '../context'
+import { GlobalContext } from '../globalContext'
 
-export const useSkipTrack = (currentTrack) => {
+export const useSkipTrack = () => {
+  const currentTrack = useContext(CurrentPlayingContext)
+  const [{ skipList }, dispatch] = useContext(GlobalContext)
+  const addToSkipList = (skipType, id) => {
+    dispatch({
+      type: 'skipList/add',
+      skipType,
+      id,
+    })
+  }
+  const removeFromSkipList = (skipType, id) => {
+    dispatch({
+      type: 'skipList/delete',
+      skipType,
+      id,
+    })
+  }
+
   const { item } = currentTrack
 
   const [currentGenres, setCurrentGenres] = useState([])
@@ -18,21 +36,45 @@ export const useSkipTrack = (currentTrack) => {
       ? album.genres
       : artists.flatMap((artist) => artist.genres || [])
     setCurrentGenres(genres)
+    return genres
   }
 
-  // const artists = useMemo(() => combineArtists(item.artists), [item.artists])
+  /**
+   * skips the track when its included in the block list
+   */
+  const skipTrack = async (skipList, item, currentGenres) => {
+    const toSkipId = (a, b) => [a, b].join(' - ')
+    const trackSkipId = toSkipId(item.id, item.name)
+    const artistsSkipIds = item.artists.map((artist) =>
+      toSkipId(artist.id, artist.name)
+    )
+    const genreSkips = currentGenres.map((g) => toSkipId(g, g))
+    if (
+      skipList.tracks.has(trackSkipId) ||
+      artistsSkipIds.some((id) => skipList.artists.has(id)) ||
+      genreSkips.some((id) => skipList.genres.has(id))
+    ) {
+      await controls('next')
+    }
+  }
 
   useEffect(() => {
     if (!item.id) return
-    getGenres()
+    getGenres().then((genres) => {
+      skipTrack(skipList, item, genres)
+    })
   }, [item.id])
 
   return {
+    currentTrack,
     genres: currentGenres,
     artists: item.artists,
     track: {
       name: item.name,
       id: item.id,
     },
+    addToSkipList,
+    removeFromSkipList,
+    skipList,
   }
 }
