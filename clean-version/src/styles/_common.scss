@@ -224,3 +224,87 @@ input[type='checkbox'] {
   padding: 0;
   vertical-align: baseline;
 }
+button {
+  border-style: none;
+}
+@mixin btn-font {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 16px;
+  text-transform: none;
+  color: $spotify-white;
+}
+
+.plus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-radius: 1px;
+  color: #000;
+  height: 16px;
+  width: 16px;
+}
+
+.sp-checkbox {
+  box-sizing: border-box;
+  align-items: center;
+  display: flex;
+  padding-bottom: 4px;
+  padding-top: 4px;
+  position: relative;
+  min-height: 32px;
+
+  .check-wrapper {
+    border-radius: 11px;
+    height: 24px;
+    min-width: 42px;
+    position: relative;
+    background-color: #868686;
+    cursor: pointer;
+    &:after {
+      display: block;
+      position: absolute;
+      pointer-events: none;
+      transition: border-color 200ms ease-in 0s;
+      box-sizing: border-box;
+      width: calc(100% + 12px);
+      height: calc(100% + 12px);
+      top: -6px;
+      left: -6px;
+      background: transparent;
+      border-radius: 14px;
+      border: 3px solid transparent;
+      content: '';
+    }
+    .circle {
+      background: $spotify-white;
+      border-radius: 24px;
+      height: 20px;
+      width: 20px;
+      position: absolute;
+      top: 2px;
+      right: auto;
+      left: 2px;
+      transition: all 0.1s ease 0s;
+    }
+  }
+  input:checked ~ .check-wrapper {
+    background-color: $spotify-green;
+    .circle {
+      left: auto;
+      right: 2px;
+    }
+  }
+}
+.hidden {
+  border: 0px;
+  clip: rect(0px, 0px, 0px, 0px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0px;
+  position: absolute;
+  width: 1px;
+}

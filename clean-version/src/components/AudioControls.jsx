@@ -3,16 +3,15 @@ import React, { useState, useEffect } from 'react'
 import { controls, currentPlaying, seek } from '../api/spotify'
 import { combineArtists } from '../helpers'
 
-export const useAudioControls = () => {
+export const useAudioControls = (initialSong = null) => {
   let [audioIs, setAudio] = useState('')
-  let [currentSong, setSong] = useState(null)
+  let [currentSong, setSong] = useState(initialSong)
   let [isFetching, setFetching] = useState(false)
   let [rangeValue, setRange] = useState(50)
   let [playOrPause, setPorP] = useState('pause')
 
   useEffect(async () => {
     setInterval(setCurrentPlaying, 5000)
-
     return clearInterval(setCurrentPlaying)
   }, [])
 
@@ -99,6 +98,10 @@ export const useAudioControls = () => {
   }
 }
 
+/**
+ * ?i dont think is actually used anywhere
+ * the hook kinda is though
+ */
 const AudioControls = () => {
   const {
     playOrPause,
@@ -133,7 +136,7 @@ const AudioControls = () => {
           onClick={(e) => handleClick(e, 'next')}
           href=""
         >
-          next
+          NEXT
         </a>
       </div>
 

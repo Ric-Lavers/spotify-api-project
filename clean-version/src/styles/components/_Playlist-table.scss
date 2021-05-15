@@ -12,10 +12,12 @@
         cursor: pointer;
       }
       .ASC::after {
+        height: 16px;
         padding-left: $sm;
         content: url('../images/chevron-ACS.svg');
       }
       .DESC::after {
+        height: 16px;
         padding-left: $sm;
         content: url('../images/chevron-DESC.svg');
       }
