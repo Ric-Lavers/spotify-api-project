@@ -261,9 +261,10 @@ const withData = () => {
     addToSkipList,
     removeFromSkipList,
     toggleSkipList,
+    isVisible,
   } = useSkipTrack()
 
-  return (
+  return isVisible ? (
     <>
       <DragBox>
         <SkipList
@@ -278,7 +279,7 @@ const withData = () => {
         />
       </DragBox>
     </>
-  )
+  ) : null
 }
 
 export default memo(withData)
