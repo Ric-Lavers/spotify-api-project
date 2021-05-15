@@ -119,29 +119,26 @@ function reducer(state, action) {
           details: action.payload,
         },
       }
-
+    case 'skipList/delete':
     case 'skipList/add':
-      let { skipType, id } = action
+      let { skipType, id, type } = action
+      const isAdd = type.split('/')[1] === 'add'
+      isAdd
+        ? state.skipList[skipType].add(id)
+        : state.skipList[skipType].delete(id)
+      localStorage.setItem(
+        `skipList.${skipType}`,
+        JSON.stringify([...state.skipList[skipType]])
+      )
       return {
         ...state,
         skipList: {
           ...state.skipList,
-          [skipType]: state.skipList[skipType].add(id),
-        },
-      }
-
-    case 'skipList/remove':
-      ;({ skipType, id } = action)
-      return {
-        ...state,
-        skipList: {
-          ...state.skipList,
-          [skipType]: state.skipList[skipType].delete(id),
         },
       }
 
     default:
-      break
+      return state
   }
 }
 

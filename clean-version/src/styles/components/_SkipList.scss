@@ -31,6 +31,7 @@
   }
 }
 .tabs-content {
+  details,
   .row {
     text-align: left;
     padding: 2px $md;
@@ -39,6 +40,7 @@
     align-items: center;
     gap: 4px;
 
+    summary,
     ul,
     h5 {
       margin: 0;
@@ -46,27 +48,50 @@
       min-width: 50px;
       align-self: baseline;
     }
-    ul {
-      width: 50%;
-      flex-grow: 1;
-      li {
-        font-size: 14px;
-        list-style-type: none;
-      }
-    }
-    .disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-    .plus {
+    h5 {
       cursor: pointer;
-      border-radius: 50%;
-      height: 24px;
-      width: 24px;
-      &:hover {
-        transform: scale(1.18);
-      }
+    }
+  }
+
+  p {
+    font-size: 14px;
+  }
+  ul {
+    width: 50%;
+    flex-grow: 1;
+    li {
+      font-size: 14px;
+      list-style-type: none;
+    }
+  }
+  .disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .plus {
+    cursor: pointer;
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    &:hover {
+      transform: scale(1.18);
+    }
+  }
+  .is-collapsable {
+    .DESC::after,
+    .ASC::after {
+      margin-left: $sm;
+      background-image: url('../images/chevron-ACS.svg');
+      background-size: 12px 12px;
+      background-repeat: no-repeat;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      content: '';
+    }
+    .DESC::after {
+      background-image: url('../images/chevron-DESC.svg');
     }
   }
 }

@@ -20,6 +20,29 @@ const Plus = ({ onClick, inactive = false }) => (
     </svg>
   </div>
 )
+const Minus = ({ onClick, inactive = false }) => (
+  <div
+    onClick={() => !inactive && onClick()}
+    className={`plus ${inactive ? 'disabled' : ''}`}
+  >
+    <svg
+      role="img"
+      height="12"
+      width="12"
+      viewBox="0 0 16 16"
+      style={{ fill: 'currentcolor' }}
+    >
+      <line
+        x1="2"
+        x2="14"
+        y1="8"
+        y2="8"
+        stroke-width="2px"
+        stroke="black"
+      ></line>
+    </svg>
+  </div>
+)
 
 const Tabs = ({
   tabList = [
@@ -31,7 +54,7 @@ const Tabs = ({
     },
   ],
 }) => {
-  const [openTab, setOpenTab] = useState(tabList[1].id)
+  const [openTab, setOpenTab] = useState(tabList[0].id)
 
   return (
     <div className="tabs">
@@ -53,106 +76,185 @@ const Tabs = ({
   )
 }
 
-const SkipList = ({
-  currentTrack,
+const SkipRows = ({
+  title,
+  list,
+  skipType,
+  onClick,
+  isAdd,
+  isRemove,
   skipList,
-  addToSkipList,
-  removeToSkipList,
 }) => {
-  const { genres, artists, track } = useSkipTrack(currentTrack)
-
-  const AddCurrent = () => {
-    return (
-      <div>
-        <div className="row">
-          <h5>track</h5>
-          <ul>
-            <li className="row">
-              <span>{track.name}</span>
-              <span>
-                <Plus
-                  onClick={() => addToSkipList('tracks', track.id)}
-                  inactive={skipList.tracks.has(track.id)}
-                />
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div className="row">
-          <h5>artists</h5>
-          <ul>
-            {artists.map(({ id, name }) => (
-              <li key={id} className="row">
-                <span>{name} </span>
-                <span>
-                  <Plus
-                    onClick={() => addToSkipList('artists', id)}
-                    inactive={skipList.artists.has(id)}
-                  />
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="row">
-          <h5>genres</h5>
-          <ul>
-            {genres.map((genre) => {
-              return (
-                <li key={genre} className="row">
-                  <span>{genre} </span>
-                  <span>
-                    <Plus
-                      onClick={() => addToSkipList('genres', genre)}
-                      inactive={skipList.genres.has(genre)}
-                    />
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </div>
-    )
-  }
-
-  const tabList = [
-    { label: 'Skip list', id: 'skipList', content: <>skip list content</> },
-    {
-      label: 'Add current',
-      id: 'addCurrent',
-      content: <AddCurrent />,
-    },
-  ]
-
+  const [open, setOpen] = useState(false)
   return (
-    <div className="skip-list">
-      <Tabs tabList={tabList} />
+    <div className={isRemove ? 'row is-collapsable' : 'row'}>
+      <h5 onClick={() => setOpen((p) => !p)} className={open ? 'DESC' : 'ASC'}>
+        {title}
+      </h5>
+      <ul style={{ ...(open && { display: 'none' }) }}>
+        {list.map(({ id, name }) => (
+          <li key={id} className="row">
+            <span>{name} </span>
+            <span>
+              {isAdd && (
+                <Plus
+                  onClick={() => onClick(skipType, [id, name].join(' - '))}
+                  inactive={skipList[skipType].has([id, name].join(' - '))}
+                />
+              )}
+              {isRemove && (
+                <Minus
+                  onClick={() => onClick(skipType, [id, name].join(' - '))}
+                />
+              )}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
+
+const SkipList = memo(
+  ({ currentTrack, skipList, addToSkipList, removeFromSkipList }) => {
+    const { genres, artists, track } = useSkipTrack(currentTrack)
+
+    const AddCurrent = () => {
+      return (
+        <div>
+          <SkipRows
+            isAdd
+            title="track"
+            skipType="tracks"
+            list={[track]}
+            onClick={addToSkipList}
+            skipList={skipList}
+          />
+          <SkipRows
+            isAdd
+            title="artists"
+            skipType="artists"
+            list={artists}
+            onClick={addToSkipList}
+            skipList={skipList}
+          />
+          <SkipRows
+            isAdd
+            title="genres"
+            skipType="genres"
+            list={genres.map((g) => ({ id: g, name: g }))}
+            onClick={addToSkipList}
+            skipList={skipList}
+          />
+        </div>
+      )
+    }
+
+    const SkippingList = () => {
+      return (
+        <>
+          <SkipRows
+            isRemove
+            title="tracks"
+            skipType="tracks"
+            list={[...skipList.tracks].map((t) => {
+              const [id, name] = t.split(' - ')
+              return { id, name }
+            })}
+            onClick={removeFromSkipList}
+            skipList={skipList}
+          />
+          <SkipRows
+            isRemove
+            title="artists"
+            skipType="artists"
+            list={[...skipList.artists].map((t) => {
+              const [id, name] = t.split(' - ')
+              return { id, name }
+            })}
+            onClick={removeFromSkipList}
+            skipList={skipList}
+          />
+          <SkipRows
+            isRemove
+            title="genres"
+            skipType="genres"
+            list={[...skipList.genres].map((t) => {
+              const [id, name] = t.split(' - ')
+              return { id, name }
+            })}
+            onClick={removeFromSkipList}
+            skipList={skipList}
+          />
+          {/*   <details>
+            <summary>tracks</summary>
+            {[...skipList.tracks].map((track) => {
+              const [id, name] = track.split(' - ')
+              return <p>{name}</p>
+            })}
+          </details>
+          <details open>
+            <summary>artists</summary>
+
+            <ul>
+              <li className="row">
+                <span>{track.name}</span>
+                <span>
+                  <Minus
+                    onClick={() =>
+                      addToSkipList(
+                        'tracks',
+                        [track.id, track.name].join(' - ')
+                      )
+                    }
+                    inactive={skipList.tracks.has(
+                      [track.id, track.name].join(' - ')
+                    )}
+                  />
+                </span>
+              </li>
+            </ul>
+          </details>
+          <details>
+            <summary>genres</summary>
+            {[...skipList.genres].map((genre) => {
+              return <p>{genre}</p>
+            })}
+          </details> */}
+        </>
+      )
+    }
+
+    const tabList = [
+      { label: 'Skip list', id: 'skipList', content: <SkippingList /> },
+      {
+        label: 'Add current',
+        id: 'addCurrent',
+        content: <AddCurrent />,
+      },
+    ]
+
+    return (
+      <div className="skip-list">
+        <Tabs tabList={tabList} />
+      </div>
+    )
+  }
+)
 
 const withData = () => {
   const currentTrack = useContext(CurrentPlayingContext)
   const [{ skipList }, dispatch] = useContext(GlobalContext)
   const addToSkipList = (skipType, id) => {
-    localStorage.setItem(
-      `skipList.${skipType}`,
-      JSON.stringify([...skipList[skipType], id])
-    )
     dispatch({
       type: 'skipList/add',
       skipType,
       id,
     })
   }
-  const removeToSkipList = (skipType, id) => {
-    localStorage.setItem(
-      `skipList.${skipType}`,
-      JSON.stringify([...skipList[skipType]].filter((x) => x !== id))
-    )
+  const removeFromSkipList = (skipType, id) => {
     dispatch({
-      type: 'skipList/remove',
+      type: 'skipList/delete',
       skipType,
       id,
     })
@@ -163,7 +265,7 @@ const withData = () => {
       currentTrack={currentTrack}
       skipList={skipList}
       addToSkipList={addToSkipList}
-      removeToSkipList={removeToSkipList}
+      removeFromSkipList={removeFromSkipList}
     />
   )
 }

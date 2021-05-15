@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
+import get from 'lodash.get'
 import { GlobalUiState, GlobalContext } from './globalContext'
 import Search, { SearchResultsContext } from './components/Player/Search'
 import CurrentlyPlaying from './context'
@@ -74,7 +75,7 @@ const Layout = ({ children }) => {
       <section
         className="App-header"
         style={{
-          backgroundImage: `url(${state.currentPlaying.image.src})`,
+          backgroundImage: `url(${get(state, 'currentPlaying.image.src')})`,
           backgroundPosition: 'top',
         }}
       >
