@@ -3,7 +3,11 @@ import get from 'lodash.get'
 
 import { useAudioControls } from 'components/AudioControls'
 
-export const pulseIds = (elementList = [document.querySelector('.App')]) => {
+export const pulseIds = (
+  elementList = [
+    /* document.querySelector('.App') */
+  ]
+) => {
   elementList.forEach((els) => {
     setTimeout(() => {
       els.classList.add('pulse')
