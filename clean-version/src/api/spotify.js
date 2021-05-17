@@ -308,7 +308,10 @@ const fetchNextItems = async (next, items = []) => {
   return await getNext()
 }
 
-export const getAllPlaylistsTracks = async (playlistId) => {
+export const getAllPlaylistsTracks = async (
+  playlistId,
+  removeIsLocal = true
+) => {
   try {
     const isTopTrack = top_time_range
       .map(({ value }) => value)
@@ -324,6 +327,9 @@ export const getAllPlaylistsTracks = async (playlistId) => {
       const items = await fetchNextItems(data.next)
       data.items = [...data.items, ...items]
       delete data.limit
+    }
+    if (removeIsLocal) {
+      data.items = data.items.filter(({ is_local }) => !is_local)
     }
     if (isTopTrack) {
       return {
