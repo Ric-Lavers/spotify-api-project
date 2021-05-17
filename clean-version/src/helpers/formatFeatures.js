@@ -1,5 +1,4 @@
 import React from 'react'
-import { getKey } from 'helpers/camelot'
 //https://developer.spotify.com/documentation/web-api/reference/#object-audiofeaturesobject
 
 import PopularityMeter from 'images/custom-svgs/PopularityMeter'
@@ -23,7 +22,7 @@ const keys = [
 const blockRaw = ['mode', 'artists', 'key', 'order']
 export function formatFeatures(key, audio_features, raw = false) {
   // i'm using this for averages now too which is has removed string types
-  if ((raw && !blockRaw.includes(key)) || !audio_features[key]) {
+  if ((raw && !blockRaw.includes(key)) || audio_features[key] == undefined) {
     return audio_features[key]
   }
   switch (key) {

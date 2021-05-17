@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { play } from 'api/spotify'
-import { combineArtists } from 'helpers'
-import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { formatFeatures } from 'helpers'
 import { isChecked, getAverages, getRows } from './PlaylistTable.utils'
 
@@ -98,7 +96,6 @@ export const PlaylistTable = ({
               rows['score'] = custom.score
             }
             const { checked, isLocalFile } = isChecked(uri, include)
-            // console.log(track, rows)
             return (
               <tr>
                 <td style={{ textAlign: 'center' }}>
