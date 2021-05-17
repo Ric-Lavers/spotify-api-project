@@ -359,9 +359,7 @@ export const createUserPlaylist = async (
     const data = await res.json()
 
     return data
-  } catch (error) {
-    console.log(error.message)
-  }
+  } catch (error) {}
 }
 export const createUserPlaylistWithTracks = async (
   user_id,
@@ -391,9 +389,7 @@ export const createUserPlaylistWithTracks = async (
     const playlist = await getAllPlaylistsTracks(playlist_id)
 
     return playlist
-  } catch (error) {
-    console.log(error.message)
-  }
+  } catch (error) {}
 }
 
 export const getRecentlyPlayed = async () => {

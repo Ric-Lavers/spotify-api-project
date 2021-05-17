@@ -21,7 +21,6 @@ function walkTheTree(obj, ...args) {
 }
 
 export const reduceGenres = (items) => {
-  console.log(items.map(({ genres }) => genres))
   return items
     .reduce((a, { genres }) => {
       genres.forEach((genre) => {

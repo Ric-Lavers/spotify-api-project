@@ -29,12 +29,6 @@ const DetailsData = () => {
     },
   } = song
 
-  useEffect(() => {
-    if (trackId === '4Tu8ZM8d 3p7wMDeQMyNg6f') {
-      console.log('strawberry')
-      controls('next')
-    }
-  }, [trackId])
   const [extraAlbumData, setData] = useState({})
 
   async function handleGetAlbumById(id) {

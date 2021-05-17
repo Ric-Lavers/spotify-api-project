@@ -44,7 +44,6 @@ const initalState = {
 export const GlobalContext = createContext(initalState)
 
 function reducer(state, action) {
-  console.log(action)
   switch (action.type) {
     case 'user/loginSpotify':
       return {
