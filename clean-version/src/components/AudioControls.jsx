@@ -97,6 +97,7 @@ export const useAudioControls = (initialSong = null) => {
     handleSeek,
     rangeValue,
     currentSong,
+    setCurrentPlaying,
   }
 }
 

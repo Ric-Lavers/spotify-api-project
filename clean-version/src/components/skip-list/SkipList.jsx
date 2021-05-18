@@ -69,11 +69,14 @@ const Tabs = ({
   return (
     <div className="tabs">
       <nav className="tabs-menu">
-        {tabList.map(({ label, id }) => (
+        {tabList.map(({ label, id, onClick = () => void {} }) => (
           <button
             key={`${id}-tab`}
             className={id === openTab ? 'active' : ''}
-            onClick={() => setOpenTab(id)}
+            onClick={() => {
+              setOpenTab(id)
+              onClick(id, { openTab })
+            }}
           >
             <span>{label}</span>
           </button>
@@ -153,6 +156,7 @@ const SkipList = memo(
     addToSkipList,
     removeFromSkipList,
     toggleSkipList,
+    toggleVisiblitySkipList,
   }) => {
     const AddCurrent = (/* {
       artists,
@@ -238,7 +242,15 @@ const SkipList = memo(
         id: 'addCurrent',
         content: <AddCurrent />,
       },
-      { label: 'X', id: 'minimize' },
+      {
+        label: 'X',
+        id: 'minimize',
+        onClick: (id, { openTab }) => {
+          if (openTab === id) {
+            toggleVisiblitySkipList()
+          }
+        },
+      },
     ]
 
     return (
@@ -261,6 +273,7 @@ const withData = () => {
     addToSkipList,
     removeFromSkipList,
     toggleSkipList,
+    toggleVisiblitySkipList,
     isVisible,
   } = useSkipTrack()
 
@@ -273,6 +286,7 @@ const withData = () => {
           addToSkipList={addToSkipList}
           removeFromSkipList={removeFromSkipList}
           toggleSkipList={toggleSkipList}
+          toggleVisiblitySkipList={toggleVisiblitySkipList}
           genres={genres}
           artists={artists}
           track={track}

@@ -5,8 +5,8 @@ const CIRCLE_SIZE = 72
 class DragBox extends React.Component {
   state = {
     hasCapture: false,
-    circleLeft: 80,
-    circleTop: 80,
+    circleLeft: 0,
+    circleTop: 0,
   }
   isDragging = false
   previousLeft = 0

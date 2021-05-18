@@ -25,20 +25,22 @@ import { ReactComponent as GithubLogo } from './images/github-logo.svg'
 
 const App = () => {
   return (
-    <Router>
-      <GlobalUiState>
-        <Layout>
-          <Route exact path="/" render={() => <MainPage />} />
-          <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
-          <Route
-            path="/analysis/:playlistId"
-            component={AnalysisPlaylistsPage}
-          />
-          <Route path="/discogs-callback" component={DiscogsCallbackPage} />
-          <Route path="*" render={() => <div />} />
-        </Layout>
-      </GlobalUiState>
-    </Router>
+    <>
+      <Router>
+        <GlobalUiState>
+          <Layout>
+            <Route exact path="/" render={() => <MainPage />} />
+            <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
+            <Route
+              path="/analysis/:playlistId"
+              component={AnalysisPlaylistsPage}
+            />
+            <Route path="/discogs-callback" component={DiscogsCallbackPage} />
+            <Route path="*" render={() => <div />} />
+          </Layout>
+        </GlobalUiState>
+      </Router>
+    </>
   )
 }
 

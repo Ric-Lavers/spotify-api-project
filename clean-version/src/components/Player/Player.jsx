@@ -14,6 +14,7 @@ import { ReactComponent as PlaylistsIcon } from '../../images/playlists.svg'
 import { ReactComponent as TopListsIcon } from '../../images/user-top-lists.svg'
 import { ReactComponent as StatsIcon } from '../../images/stats.svg'
 import { ReactComponent as SkipIcon } from '../../images/skip.svg'
+import { ReactComponent as AnalysisPlaylistsIcon } from '../../images/analysis-playlists.svg'
 import ActionButton from 'components/common/ActionButton'
 
 const noBorderTop = {
@@ -68,6 +69,14 @@ const PlayerAPI = () => {
           tooltip="Show the Skip List"
           action={() => {
             dispatch({ type: 'visible/toggle-skipList' })
+          }}
+          className={`device-button pointer ${touched}`}
+        />
+        <ActionButton
+          Icon={() => <AnalysisPlaylistsIcon height={24} wdith={24} />}
+          tooltip="Analysis your playlists"
+          action={() => {
+            window.location.pathname = '/analysis'
           }}
           className={`device-button pointer ${touched}`}
         />

@@ -32,6 +32,11 @@ export const useSkipTrack = () => {
       active,
     })
   }
+  const toggleVisiblitySkipList = (active) => {
+    dispatch({
+      type: 'visible/toggle-skipList',
+    })
+  }
 
   const { item } = currentTrack
 
@@ -89,6 +94,7 @@ export const useSkipTrack = () => {
     addToSkipList,
     removeFromSkipList,
     toggleSkipList,
+    toggleVisiblitySkipList,
     skipList,
     isVisible,
   }

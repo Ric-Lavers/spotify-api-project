@@ -1,28 +1,14 @@
-
-<svg
-  style="height: 24px;width: 24px; "
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
 
 
-  stroke-linecap="round"
-  stroke-width="1px"
-  viewBox="0 0 24 28" 
-  
-  opactity="0.8" fill="#FFF" stroke="#000"
-  
-  
-  xmlns="http://www.w3.org/2000/svg" >
-  <!-- surely browsers are not so antiquated -->
- 
+	opacity="0.8"
 
-	<polygon fill="#FFF"
-		points="0,0 0,23 14,12"
-	/>
-  
-    <polygon fill="#FFF"
-		data-points="14,2 14,21 28,12" data-left="x-4"
-		points="10,2 10,21 26,12" 
-	/> 
-  <rect fill="#FFF"
-    x="17" y="2" width="7" height="20" 
-  />
+>
+
+
+<polygon fill='#FFFFFF' points="85 50 38 13 38 87 85 50"/>
+<polygon fill='#FFFFFF' points="61 50 15 13 15 87 61 50"/>
+<rect fill='#FFFFFF' x="72" y="17" width="13" height="66.71"/>
+
 </svg>
+
