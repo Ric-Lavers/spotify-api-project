@@ -1,12 +1,19 @@
 import React from 'react'
 
-const CIRCLE_SIZE = 72
-
 class DragBox extends React.Component {
-  state = {
-    hasCapture: false,
-    circleLeft: 0,
-    circleTop: 0,
+  constructor(props) {
+    super(props)
+    this.container = React.createRef()
+    this.state = {
+      hasCapture: false,
+      containerLeft: 0,
+      containerTop: 0,
+    }
+  }
+
+  componentDidMount() {
+    const height = this.container.current.firstChild.clientHeight
+    this.setState({ containerTop: -(height + 7) })
   }
   isDragging = false
   previousLeft = 0
@@ -27,9 +34,9 @@ class DragBox extends React.Component {
     }
     const { left, top } = this.extractPositionDelta(event)
 
-    this.setState(({ circleLeft, circleTop }) => ({
-      circleLeft: circleLeft + left,
-      circleTop: circleTop + top,
+    this.setState(({ containerLeft, containerTop }) => ({
+      containerLeft: containerLeft + left,
+      containerTop: containerTop + top,
     }))
   }
 
@@ -51,7 +58,7 @@ class DragBox extends React.Component {
 
   render() {
     const { children } = this.props
-    const { hasCapture, circleLeft, circleTop } = this.state
+    const { hasCapture, containerLeft, containerTop } = this.state
 
     const boxStyle = {
       position: 'absolute',
@@ -59,8 +66,8 @@ class DragBox extends React.Component {
 
     const grabElement = {
       position: 'absolute',
-      left: circleLeft,
-      top: circleTop,
+      left: containerLeft,
+      top: containerTop,
       cursor: this.isDragging ? 'grabbing' : 'grab',
     }
 
@@ -74,6 +81,7 @@ class DragBox extends React.Component {
           onPointerCancel={this.onUp}
           onGotPointerCapture={this.onGotCapture}
           onLostPointerCapture={this.onLostCapture}
+          ref={this.container}
         >
           {children}
         </div>

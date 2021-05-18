@@ -106,9 +106,9 @@ const MainPage = () => {
   const [state, dispatch] = React.useContext(GlobalContext)
   const [data, setState] = useState(null)
 
+  if (!show) return null
   return (
     <CurrentlyPlaying>
-      <SkipList />
       {/*   <DiscogsLogin />
    
       <img src={logo} className="App-logo" alt="logo" onClick={toggleShow} />
@@ -122,31 +122,32 @@ const MainPage = () => {
       <a style={{ color: 'white' }} href="/analysis">
         Analysis your playlists{' '}
       </a>
-      <a>
-        {show &&
-          state.isSpotifyLoggedIn && [
-            <TopTable />,
-            <div className="app-grid">
-              <div className="device-area">
-                <Devices />
+
+      {state.isSpotifyLoggedIn && (
+        <>
+          <TopTable />
+          <div className="app-grid">
+            <div className="device-area">
+              <Devices />
+            </div>
+            <SearchResultsContext.Provider value={[data, setState]}>
+              <div className="player-area">
+                <SkipList />
+                <Player visible={show} />
               </div>
-              <SearchResultsContext.Provider value={[data, setState]}>
-                <div className="player-area">
-                  <Player visible={show} />
-                </div>
-                <div className="results-area">
-                  <SearchResults />
-                </div>
-              </SearchResultsContext.Provider>
-              <div className="playlists-area">
-                <Playlists />
+              <div className="results-area">
+                <SearchResults />
               </div>
-              <div className="stats-area">
-                <Stats />
-              </div>
-            </div>,
-          ]}
-      </a>
+            </SearchResultsContext.Provider>
+            <div className="playlists-area">
+              <Playlists />
+            </div>
+            <div className="stats-area">
+              <Stats />
+            </div>
+          </div>
+        </>
+      )}
     </CurrentlyPlaying>
   )
 }
