@@ -16,11 +16,11 @@ if (process.env.REACT_APP_ENV === 'PROD') {
 }
 
 class SpotifyHelpers {
-  static combineArtists = (artists) =>
+  static combineArtists = (artists = []) =>
     artists.map(({ name }) => name).join(', ')
 }
 
-export const combineArtists = (artists) =>
+export const combineArtists = (artists = []) =>
   artists.map(({ name }) => name).join(', ')
 class Utils {
   static scrollIntoView = (elementId) =>

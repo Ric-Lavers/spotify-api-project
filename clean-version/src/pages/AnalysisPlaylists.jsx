@@ -249,6 +249,10 @@ const useMergePlaylist = (
   }
 }
 
+const preferedStatKeys = JSON.parse(
+  localStorage.getItem('preferedStatKeys') ||
+    '["popularity", "danceability", "tempo"]'
+)
 const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   const [
     {
@@ -275,10 +279,6 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     },
   ] = useSongsWithAudioFeatures(playlistId)
 
-  const preferedStatKeys = JSON.parse(
-    localStorage.getItem('preferedStatKeys') ||
-      '["popularity", "danceability", "tempo"]'
-  )
   const [stats, TableSettings] = useStatKeys(preferedStatKeys)
 
   const [currentSortValue, setCurrentSortValue] = useState('')
@@ -331,7 +331,6 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     await getPlaylists()
     return playlist
   }
-
   return (
     <>
       <div className="analysis-playlists">

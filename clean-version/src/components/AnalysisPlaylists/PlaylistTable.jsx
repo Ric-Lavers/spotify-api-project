@@ -59,6 +59,8 @@ export const PlaylistTable = ({
                 <th className="table-average">
                   {stat === 'popularity'
                     ? `${averages[stat]}%`
+                    : averages[stat] === ''
+                    ? ''
                     : formatFeatures(stat, averages)}
                 </th>
               )

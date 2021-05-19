@@ -19,10 +19,11 @@ const keys = [
   'A♯/B♭',
   'B',
 ]
-const blockRaw = ['mode', 'artists', 'key', 'order']
+//audio_features are badly named its a col
+const blockRaw = ['mode', 'key', 'order']
 export function formatFeatures(key, audio_features, raw = false) {
   // i'm using this for averages now too which is has removed string types
-  if ((raw && !blockRaw.includes(key)) || !audio_features[key] === undefined) {
+  if (raw && !blockRaw.includes(key)) {
     return audio_features[key]
   }
   switch (key) {

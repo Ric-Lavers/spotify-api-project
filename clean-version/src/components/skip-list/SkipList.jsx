@@ -90,20 +90,6 @@ const Tabs = ({
   )
 }
 
-/**
- * <SkipList>
- *
- * <Tabs>
- *    <navMenu  skipList, add current playing, minimize (x)>
- *      <Toggle/>
- *    </navMenu>
- *    <SkipRows tracks/>      <SkipRows track/>
- *    <SkipRows artists/>  <SkipRows artists/>
- *    <SkipRows genres/>    <SkipRows genres/>
- *  </Tabs>
- *
- * </SkipList>
- */
 const SkipRows = ({
   title,
   list,
