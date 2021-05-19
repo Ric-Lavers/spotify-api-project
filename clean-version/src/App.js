@@ -18,6 +18,7 @@ import Devices from './components/settings/Devices'
 import Stats from './components/stats/Stats'
 import TopTable from './components/TopTable'
 import SkipList from './components/skip-list/SkipList'
+import ErrorBoundary from './components/common/ErrorBoundary'
 import AnalysisPlaylistsPage from './pages/AnalysisPlaylists'
 
 import { useToggle } from './hooks'
@@ -25,7 +26,7 @@ import { ReactComponent as GithubLogo } from './images/github-logo.svg'
 
 const App = () => {
   return (
-    <>
+    <ErrorBoundary>
       <Router>
         <GlobalUiState>
           <Layout>
@@ -40,7 +41,7 @@ const App = () => {
           </Layout>
         </GlobalUiState>
       </Router>
-    </>
+    </ErrorBoundary>
   )
 }
 
