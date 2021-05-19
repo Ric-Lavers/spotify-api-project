@@ -276,8 +276,9 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   ] = useSongsWithAudioFeatures(playlistId)
 
   const preferedStatKeys = JSON.parse(
-    localStorage.getItem('preferedStatKeys')
-  ) || ['popularity', 'danceability', 'tempo']
+    localStorage.getItem('preferedStatKeys') ||
+      '["popularity", "danceability", "tempo"]'
+  )
   const [stats, TableSettings] = useStatKeys(preferedStatKeys)
 
   const [currentSortValue, setCurrentSortValue] = useState('')
