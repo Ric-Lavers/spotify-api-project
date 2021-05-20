@@ -447,7 +447,15 @@ export const controls = async (action, body = {}) => {
 export const play = async (body = {}) => {
   if (body.uris) {
     body.uris = body.uris.filter((uri) => !uri.match('spotify:local'))
+
+    // note sure why 775 is the limit, but i tested it and this was the number, maybe its a JSON size thing.. if so should minus a few to be safe.
+    if (body.uris.length > 775 && body.offset) {
+      const { position } = body.offset
+      body.uris = body.uris.slice(position, 775 + position)
+      body.offset.position = 0
+    }
   }
+
   try {
     await fetch(`${baseUrl}/me/player/play`, {
       ...headers,
