@@ -1,17 +1,17 @@
 import React, { useState, useEffect, Component } from 'react'
 
 export const useWindowWidth = () => {
-	const [width, setWidth] = useState(window.innerWidth);
+	const [width, setWidth] = useState(window.innerWidth)
 	
   useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
+    const handleResize = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
     return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  });
+      window.removeEventListener('resize', handleResize)
+    }
+  })
   
-  return width;
+  return width
 }
 
 export const withWindowWidth = WrappedComponent => {
@@ -22,10 +22,10 @@ export const withWindowWidth = WrappedComponent => {
 		}
 
 		componentDidMount(){
-			window.addEventListener('resize', this.handleResize);
+			window.addEventListener('resize', this.handleResize)
 		}
 		componentWillUnmount() {
-			window.removeEventListener('resize', this.handleResize);
+			window.removeEventListener('resize', this.handleResize)
 		}
 
 		handleResize = () => this.setState({ width: window.innerWidth });
@@ -45,10 +45,10 @@ export class WindowWidthWrapper extends Component {
 	}
 
 	componentDidMount(){
-		window.addEventListener('resize', this.handleResize);
+		window.addEventListener('resize', this.handleResize)
 	}
 	componentWillUnmount() {
-		window.removeEventListener('resize', this.handleResize);
+		window.removeEventListener('resize', this.handleResize)
 	}
 
 	handleResize = () => this.setState({ width: window.innerWidth });
@@ -64,7 +64,7 @@ export const useColorOnInput = () => {
 	const [ color, setColor ] = useState(colors[0]) 
 
 	const onInput = ({target}) => {
-		const len = target.value.length;
+		const len = target.value.length
 		if ( len ) {
 			setValue(len)
 		}

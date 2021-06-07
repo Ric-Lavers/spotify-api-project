@@ -1,6 +1,7 @@
 //@flow
 import { LOGIN_URL } from '../helpers'
 import { top_time_range, savedTracks } from '../constants'
+import { getKey } from 'helpers/camelot'
 
 const spotifyClientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID
 const spotifyToken = sessionStorage.spotifyToken
@@ -50,7 +51,6 @@ export const refereshSpotifyLogin = async (
       method: 'POST',
       body,
     }).then((d) => d.json())
-    console.log(data)
   } catch (error) {
     console.error(error.message)
   }
@@ -308,7 +308,10 @@ const fetchNextItems = async (next, items = []) => {
   return await getNext()
 }
 
-export const getAllPlaylistsTracks = async (playlistId) => {
+export const getAllPlaylistsTracks = async (
+  playlistId,
+  removeIsLocal = true
+) => {
   try {
     const isTopTrack = top_time_range
       .map(({ value }) => value)
@@ -325,13 +328,18 @@ export const getAllPlaylistsTracks = async (playlistId) => {
       data.items = [...data.items, ...items]
       delete data.limit
     }
+    if (removeIsLocal) {
+      data.items = data.items.filter(({ is_local }) => !is_local)
+    }
     if (isTopTrack) {
       return {
         ...data,
         items: data.items.map((track) => ({ track })),
       }
     }
-
+    data.items.forEach(({ track }, i) => {
+      track.order = i + 1
+    })
     return data
   } catch (error) {
     return { items: [] }
@@ -357,9 +365,7 @@ export const createUserPlaylist = async (
     const data = await res.json()
 
     return data
-  } catch (error) {
-    console.log(error.message)
-  }
+  } catch (error) {}
 }
 export const createUserPlaylistWithTracks = async (
   user_id,
@@ -389,9 +395,7 @@ export const createUserPlaylistWithTracks = async (
     const playlist = await getAllPlaylistsTracks(playlist_id)
 
     return playlist
-  } catch (error) {
-    console.log(error.message)
-  }
+  } catch (error) {}
 }
 
 export const getRecentlyPlayed = async () => {
@@ -443,7 +447,15 @@ export const controls = async (action, body = {}) => {
 export const play = async (body = {}) => {
   if (body.uris) {
     body.uris = body.uris.filter((uri) => !uri.match('spotify:local'))
+
+    // note sure why 775 is the limit, but i tested it and this was the number, maybe its a JSON size thing.. if so should minus a few to be safe.
+    if (body.uris.length > 775 && body.offset) {
+      const { position } = body.offset
+      body.uris = body.uris.slice(position, 775 + position)
+      body.offset.position = 0
+    }
   }
+
   try {
     await fetch(`${baseUrl}/me/player/play`, {
       ...headers,
@@ -621,7 +633,21 @@ export const getManyAudioFeatures = async (trackIds) => {
   let res = await fetch(`${baseUrl}/audio-features?ids=${trackIds}`, headers)
   isOk(res)
   is204(res)
-  return res.json()
+  let data = await res.json()
+  data = {
+    ...data,
+    audio_features: data.audio_features.map((af) => ({
+      ...af,
+      camelot: `${
+        getKey({
+          mode: af['mode'],
+          pitchClass: af['key'],
+        }).camelotPosition
+      }${af['mode'] === 1 ? 'B' : 'A'}`,
+    })),
+  }
+
+  return data
 }
 export const getHeapsAudioFeatures = async (trackIds) => {
   const arrayOfIds = []
@@ -657,6 +683,13 @@ export const getHeapsTracks = async (trackIds) => {
   })
 }
 
+export const getArtists = async (artistIds) => {
+  let res = await fetch(`${baseUrl}/artists?ids=${artistIds}`, headers)
+  isOk(res)
+  is204(res)
+  return res.json()
+}
+
 export default {
   getMe,
   checkToken,
@@ -682,4 +715,5 @@ export default {
   getTopTracks,
   getAudioFeatures,
   getHeapsTracks,
+  getArtists,
 }

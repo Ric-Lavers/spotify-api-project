@@ -207,7 +207,6 @@ const Playlists = () => {
                       Your top tracks
                       <select
                         onChange={({ target: { value } }) => {
-                          console.log(value)
                           setTopTrackTime(value)
                         }}
                       >

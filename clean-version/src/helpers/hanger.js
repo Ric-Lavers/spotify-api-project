@@ -1,22 +1,20 @@
 import get from 'lodash/get'
 
 /**
- * 
- * @param {Object} obj 
- * @param  {...string} args 
+ *
+ * @param {Object} obj
+ * @param  {...string} args
  */
-
 
 function walkTheTree(obj, ...args) {
   let str = '(obj'
 
-  args.forEach(a => {
+  args.forEach((a) => {
     str = str + '["' + a + '"]'
   })
-  str = str + ")"
+  str = str + ')'
   try {
     return eval(str)
-
   } catch (error) {
     return undefined
   }
@@ -24,32 +22,28 @@ function walkTheTree(obj, ...args) {
 
 export const reduceGenres = (items) => {
   return items
-    .reduce((a, {
-      genres
-    }) => {
-      genres.forEach(genre => {
-        const index = a.findIndex(({
-          name
-        }) => name === genre);
+    .reduce((a, { genres }) => {
+      genres.forEach((genre) => {
+        const index = a.findIndex(({ name }) => name === genre)
 
         if (index === -1) {
           a.push({
             name: genre,
-            count: 1
-          });
+            count: 1,
+          })
         } else {
-          a[index].count++;
+          a[index].count++
         }
-      });
-      return a;
+      })
+      return a
     }, [])
-    .sort((a, b) => b.count - a.count);
+    .sort((a, b) => b.count - a.count)
 }
 
 export const getTopGenres = (genres) => {
-  const topThree = [];
+  const topThree = []
   genres.forEach((g, i) => {
-    if (i < 3 || (get(topThree, '[2].count') === g.count)) {
+    if (i < 3 || get(topThree, '[2].count') === g.count) {
       topThree.push(g)
     }
   })
@@ -57,9 +51,6 @@ export const getTopGenres = (genres) => {
   return topThree
 }
 
-
-
-
-Object.prototype.wtt = function (...args) {
+Object.prototype.wtt = function(...args) {
   return walkTheTree(this, ...args)
 }

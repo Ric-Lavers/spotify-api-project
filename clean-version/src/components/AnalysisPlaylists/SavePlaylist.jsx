@@ -7,6 +7,7 @@ export const SavePlaylist = ({
   currentPlaylist,
   createPlaylist,
   description: _description = '',
+  mergedPlaylistNames = [],
 }) => {
   const [{ name, description, isPublic, collaborative }, setValues] = useState({
     name: currentPlaylist.name || '',
@@ -15,14 +16,26 @@ export const SavePlaylist = ({
     collaborative: false,
   })
   useEffect(() => {
-    if (currentPlaylist.name)
+    if (currentPlaylist.name) {
+      const sortName =
+        currentSort &&
+        !currentSort.startsWith('order') &&
+        !currentSort.startsWith(' -')
+          ? ` (${currentSort})`
+          : ''
+      const playlistName = `${[
+        currentPlaylist.name || name,
+        ...mergedPlaylistNames.map((name) =>
+          name.replace(/(\(\w+\s-\s[A-Z]+\))/, '')
+        ),
+      ].join(' + ')}${sortName}`
+
       setValues((prev) => ({
         ...prev,
-        name: `${currentPlaylist.name || name}${
-          currentSort ? ` (${currentSort})` : ''
-        }`,
+        name: playlistName,
       }))
-  }, [currentPlaylist.name, currentSort])
+    }
+  }, [currentPlaylist.name, currentSort, mergedPlaylistNames])
 
   const handleChange = ({ target: { name, value, checked } }) => {
     setValues((prev) => ({
@@ -97,7 +110,7 @@ export const SavePlaylist = ({
           </label>
         </div>
 
-        <input className="s-submit" type="submit" value="SAVE" />
+        <input className="s-submit right" type="submit" value="SAVE" />
         {loading && '🤞'}
         {hadSuccess && '👍'}
         {hadError && '👎'}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
+import get from 'lodash.get'
 import { GlobalUiState, GlobalContext } from './globalContext'
 import Search, { SearchResultsContext } from './components/Player/Search'
 import CurrentlyPlaying from './context'
@@ -9,14 +10,15 @@ import hooks from './images/hooks.svg'
 import './styles/_index.scss'
 import DiscogsCallbackPage from './pages/DiscogsCallbackPage'
 import SpotifyLogin from './components/SpotifyLogin'
-import DiscogsLogin from './components/DiscogsLogin'
+// import DiscogsLogin from './components/DiscogsLogin'
 import Player from './components/Player/Player'
 import SearchResults from './components/Player/SearchResults'
 import Playlists from './components/playlists/Playlists'
 import Devices from './components/settings/Devices'
 import Stats from './components/stats/Stats'
 import TopTable from './components/TopTable'
-import SpotifyLogo from './images/custom-svgs/SpotifyLogo'
+import SkipList from './components/skip-list/SkipList'
+import ErrorBoundary from './components/common/ErrorBoundary'
 import AnalysisPlaylistsPage from './pages/AnalysisPlaylists'
 import PartyPlaylistPage from './pages/PartyPlaylist'
 
@@ -25,23 +27,26 @@ import { ReactComponent as GithubLogo } from './images/github-logo.svg'
 
 const App = () => {
   return (
-    <Router>
-      <GlobalUiState>
-        <Layout>
-          <Route exact path="/" render={() => <MainPage />} />
-          <Route
-            path={['/party-playlist/:playlistId', '/party-playlist']}
-            component={PartyPlaylistPage}
-          />
-          <Route
-            path={['/analysis/:playlistId', '/analysis']}
-            component={AnalysisPlaylistsPage}
-          />
-          <Route path="/discogs-callback" component={DiscogsCallbackPage} />
-          <Route path="*" render={() => <div />} />
-        </Layout>
-      </GlobalUiState>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <GlobalUiState>
+          <Layout>
+            <Route exact path="/" render={() => <MainPage />} />
+            <Route
+              path={['/party-playlist/:playlistId', '/party-playlist']}
+              component={PartyPlaylistPage}
+            />
+            <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
+            <Route
+              path="/analysis/:playlistId"
+              component={AnalysisPlaylistsPage}
+            />
+            <Route path="/discogs-callback" component={DiscogsCallbackPage} />
+            <Route path="*" render={() => <div />} />
+          </Layout>
+        </GlobalUiState>
+      </Router>
+    </ErrorBoundary>
   )
 }
 
@@ -78,7 +83,7 @@ const Layout = ({ children }) => {
       <section
         className="App-header"
         style={{
-          backgroundImage: `url(${state.currentPlaying.image.src})`,
+          backgroundImage: `url(${get(state, 'currentPlaying.image.src')})`,
           backgroundPosition: 'top',
         }}
       >
@@ -107,8 +112,9 @@ const MainPage = () => {
   const [state, dispatch] = React.useContext(GlobalContext)
   const [data, setState] = useState(null)
 
+  if (!show) return null
   return (
-    <>
+    <CurrentlyPlaying>
       {/*   <DiscogsLogin />
    
       <img src={logo} className="App-logo" alt="logo" onClick={toggleShow} />
@@ -122,34 +128,33 @@ const MainPage = () => {
       <a style={{ color: 'white' }} href="/analysis">
         Analysis your playlists{' '}
       </a>
-      <a>
-        {show &&
-          state.isSpotifyLoggedIn && [
-            <TopTable />,
-            <div className="app-grid">
-              <div className="device-area">
-                <Devices />
+
+      {state.isSpotifyLoggedIn && (
+        <>
+          <TopTable />
+          <div className="app-grid">
+            <div className="device-area">
+              <Devices />
+            </div>
+            <SearchResultsContext.Provider value={[data, setState]}>
+              <div className="player-area">
+                <SkipList />
+                <Player visible={show} />
               </div>
-              <CurrentlyPlaying>
-                <SearchResultsContext.Provider value={[data, setState]}>
-                  <div className="player-area">
-                    <Player visible={show} />
-                  </div>
-                  <div className="results-area">
-                    <SearchResults />
-                  </div>
-                </SearchResultsContext.Provider>
-                <div className="playlists-area">
-                  <Playlists />
-                </div>
-                <div className="stats-area">
-                  <Stats />
-                </div>
-              </CurrentlyPlaying>
-            </div>,
-          ]}
-      </a>
-    </>
+              <div className="results-area">
+                <SearchResults />
+              </div>
+            </SearchResultsContext.Provider>
+            <div className="playlists-area">
+              <Playlists />
+            </div>
+            <div className="stats-area">
+              <Stats />
+            </div>
+          </div>
+        </>
+      )}
+    </CurrentlyPlaying>
   )
 }
 

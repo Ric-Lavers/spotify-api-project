@@ -1,18 +1,19 @@
-import React from "react";
+import React from 'react'
 
 const ActionButton = ({ Icon, label, action, className, tooltip }) => (
   <div
-    className={`tooltip action ${(Icon && "icon-button") || ""} ${className}`}
-    onClick={action}>
+    className={`tooltip action ${(Icon && 'icon-button') || ''} ${className}`}
+    onClick={action}
+  >
     {tooltip && <span class="tooltiptext">{tooltip}</span>}
     {Icon && <Icon />}
 
     {label}
   </div>
-);
+)
 
 ActionButton.defaultProps = {
-  tooltip: ""
-};
+  tooltip: '',
+}
 
-export default ActionButton;
+export default ActionButton

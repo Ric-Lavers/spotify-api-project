@@ -1,7 +1,4 @@
 import React, { memo, useContext, useState, useEffect } from 'react'
-import Slide from 'react-reveal/Slide'
-import makeCarousel from 'react-reveal/makeCarousel'
-import truncate from 'lodash.truncate'
 import get from 'lodash.get'
 import { useParams } from 'react-router-dom'
 
@@ -17,17 +14,19 @@ import {
   getAllPlaylistsTracks,
   getMePlaylists,
   getHeapsAudioFeatures,
-  play,
   createUserPlaylistWithTracks,
 } from 'api/spotify'
-import { stats as _stats } from '../components/stats/Stats'
+import { stats as _stats } from '../components/stats'
 import { GlobalContext } from 'globalContext'
-import PopularityMeter from 'images/custom-svgs/PopularityMeter'
-import { combineArtists } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
 const favPlaylists = [...specialPlaylists, savedTracks]
 
-export const tableKeys = ['artists', 'albumName', ..._stats]
+export const tableKeys = [
+  'order',
+  'artists',
+  'albumName',
+  ..._stats.filter((s) => s !== 'order'),
+]
 
 const tableKeyToObjectKey = (tableKey, song) => {
   if (tableKey === 'artists') {
@@ -181,7 +180,7 @@ const useSongsWithAudioFeatures = (playlistId) => {
 const useStatKeys = (whiteStatsList = []) => {
   const [whiteList, setWhiteList] = useState(new Set(whiteStatsList))
 
-  const BlackStatList = ({ hide }) => {
+  const TableSettings = ({ hide, children }) => {
     const handleCheck = ({ target: { checked, id } }) => {
       checked ? whiteList.add(id) : whiteList.delete(id)
       setWhiteList(new Set(whiteList))
@@ -199,11 +198,11 @@ const useStatKeys = (whiteStatsList = []) => {
             <input id={stat} type="checkbox" checked={whiteList.has(stat)} />
           </div>
         ))}
-        <div className="stat-checkbox" />
+        {children}
       </form>
     )
   }
-  return [[...whiteList], BlackStatList]
+  return [[...whiteList], TableSettings]
 }
 
 const useMePlaylists = () => {
@@ -220,16 +219,22 @@ const useMePlaylists = () => {
   return [playlists, getPlaylists]
 }
 
-const useMergePlaylist = ({ mergeMoreTracks, currentPlaylistId }) => {
+const useMergePlaylist = (
+  { mergeMoreTracks, currentPlaylistId },
+  playlists
+) => {
   const [mergeLoadingStatus, setLoadingMerge] = useState('')
   const [mergedPlaylistIds, setMergedPlaylistIds] = useState(
     [currentPlaylistId].filter(Boolean)
   )
+  const [mergedPlaylistNames, setMergedPlaylistNames] = useState([])
   const handleMergeNewPlaylist = async (playlistId) => {
     setLoadingMerge('🤞')
     const moreTracks = await getSongsWithAudioFeatures(playlistId)
     mergeMoreTracks(moreTracks)
     setMergedPlaylistIds((prev) => [...prev, playlistId])
+    const mergedPl = playlists.find((pl) => pl.id === playlistId)
+    setMergedPlaylistNames((prev) => [...prev, mergedPl.name])
     setLoadingMerge(moreTracks.length ? '👍' : '👎')
     setTimeout(() => {
       setLoadingMerge('')
@@ -239,10 +244,15 @@ const useMergePlaylist = ({ mergeMoreTracks, currentPlaylistId }) => {
   return {
     mergeLoadingStatus,
     mergedPlaylistIds,
+    mergedPlaylistNames,
     handleMergeNewPlaylist,
   }
 }
 
+const preferedStatKeys = JSON.parse(
+  localStorage.getItem('preferedStatKeys') ||
+    '["popularity", "danceability", "tempo"]'
+)
 const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   const [
     {
@@ -269,10 +279,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     },
   ] = useSongsWithAudioFeatures(playlistId)
 
-  const preferedStatKeys = JSON.parse(
-    localStorage.getItem('preferedStatKeys')
-  ) || ['popularity', 'danceability', 'tempo']
-  const [stats, BlackStatList] = useStatKeys(preferedStatKeys)
+  const [stats, TableSettings] = useStatKeys(preferedStatKeys)
 
   const [currentSortValue, setCurrentSortValue] = useState('')
   const handleSort = ({ target: { value } }) => {
@@ -294,11 +301,15 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   const {
     mergeLoadingStatus,
     mergedPlaylistIds,
+    mergedPlaylistNames,
     handleMergeNewPlaylist,
-  } = useMergePlaylist({
-    mergeMoreTracks,
-    currentPlaylistId: playlistId,
-  })
+  } = useMergePlaylist(
+    {
+      mergeMoreTracks,
+      currentPlaylistId: playlistId,
+    },
+    playlists
+  )
 
   const handleCreatePlaylist = async ({
     name,
@@ -320,21 +331,30 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
     await getPlaylists()
     return playlist
   }
-
   return (
     <>
       <div className="analysis-playlists">
         <UserPlaylistsSelect
-          label={'select a playlist'}
+          label={'Select a playlist'}
           onChange={handleChangePlaylist}
           playlists={playlists}
           currentPlaylistId={playlistId}
         />
+      </div>
+      <div className="analysis-playlists">
         <CurrentPlaylist currentPlaylist={currentPlaylist} />
       </div>
       <div className="analysis-playlists">
         {currentPlaylist && (
           <>
+            <SavePlaylist
+              user_id={userId}
+              currentPlaylist={currentPlaylist}
+              currentSort={currentSort}
+              createPlaylist={handleCreatePlaylist}
+              description={currentPlaylist.description}
+              mergedPlaylistNames={mergedPlaylistNames}
+            />
             <UserPlaylistsSelect
               label={'Merge another playlist'}
               onChange={handleMergeNewPlaylist}
@@ -344,30 +364,12 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
               currentPlaylistId={''}
               loadingStatus={mergeLoadingStatus}
             />
-
-            <SavePlaylist
-              user_id={userId}
-              currentPlaylist={currentPlaylist}
-              currentSort={currentSort}
-              createPlaylist={handleCreatePlaylist}
-              description={currentPlaylist.description}
-            />
           </>
         )}
       </div>
       <div className="analysis-playlists">
-        <BlackStatList hide={isHidden} />
-        {min + max !== 0 && (
-          <Range min={min} max={max} onRangeChange={checkByRange} />
-        )}
-
-        <div>
-          <button onClick={toggleHidden}>
-            table settings (audio features)
-          </button>
-
+        <TableSettings hide={isHidden}>
           <select value={currentSortValue} onChange={handleSort}>
-            <option value="">unsorted</option>
             {tableKeys.map((key) => (
               <>
                 <option value={`${key}-ASC`}>{key} - ASC</option>
@@ -375,6 +377,15 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
               </>
             ))}
           </select>
+        </TableSettings>
+        {min + max !== 0 && (
+          <Range min={min} max={max} onRangeChange={checkByRange} />
+        )}
+
+        <div>
+          <button className="s-submit grey" onClick={toggleHidden}>
+            Settings (audio features)
+          </button>
         </div>
       </div>
 

@@ -8,22 +8,16 @@ $bp-lg-min: 1024 !default;
 $bp-xl-min: 1244 !default;
 $bp-xxl-min: 1410 !default;
 
-
-
-
-
-
-
 .app-grid {
   padding: $lg;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-auto-rows: minmax(auto, auto);
   grid-template-areas:
-    "toptable toptable toptable"
-    "... device  ..."
-    "stats player  playlists"
-    "results results  playlists";
+    'toptable toptable toptable'
+    '... device  ...'
+    'stats player  playlists'
+    'results results  playlists';
 }
 
 .top-table {
@@ -68,9 +62,7 @@ $bp-xxl-min: 1410 !default;
   .hide-xs {
     display: none;
   }
-
 }
-
 
 @media (max-width: 960px) {
   .hide-up-md {
@@ -79,12 +71,11 @@ $bp-xxl-min: 1410 !default;
 
   .app-grid {
     grid-template-columns: 1fr 1fr 1fr;
-    grid-auto-rows: minmax(auto, 550px);
     grid-template-areas:
-      "... device  ..."
-      "... player  playlists"
-      "... results  playlists"
-      "... results  playlists";
+      '... device  ...'
+      '... player  playlists'
+      '... results  playlists'
+      '... results  playlists';
   }
 }
 
@@ -96,7 +87,6 @@ $bp-xxl-min: 1410 !default;
   .hide-md {
     display: none;
   }
-
 }
 
 @media (max-width: 1280px) {
@@ -131,12 +121,10 @@ $bp-xxl-min: 1410 !default;
   }
 }
 
-
 @media (max-width: 900px) {
   .hide-up-sm {
     display: none;
   }
-
 
   .app-grid {
     // display: block;
@@ -145,12 +133,12 @@ $bp-xxl-min: 1410 !default;
     grid-template-columns: 1fr;
     grid-auto-rows: auto;
     grid-template-areas:
-      "toptable"
-      "device"
-      "playlists"
-      "player"
-      "results"
-      "stats";
+      'toptable'
+      'device'
+      'playlists'
+      'player'
+      'results'
+      'stats';
   }
 }
 
