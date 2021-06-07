@@ -1,8 +1,30 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, useRef } from 'react'
 import { getAlbumById, getArtists, controls } from 'api/spotify'
 import { CurrentPlayingContext } from '../context'
 import { GlobalContext } from '../globalContext'
 
+const useSkippedIdsCount = () => {
+  const didMount = useRef(false)
+  const [skippedIds, setSkippedIds] = useState(
+    JSON.parse(localStorage.skippedIds || '{}')
+  )
+
+  const addSkip = (skippedId) => {
+    setSkippedIds((prev) => {
+      return {
+        ...prev,
+        [skippedId]: (prev[skippedId] || 0) + 1,
+      }
+    })
+  }
+  useEffect(() => {
+    if (didMount.current)
+      localStorage.setItem('skippedIds', JSON.stringify(skippedIds))
+    didMount.current = true
+  }, [skippedIds])
+
+  return { skippedIds, addSkip }
+}
 export const useSkipTrack = () => {
   const currentTrack = useContext(CurrentPlayingContext)
   const [
@@ -56,22 +78,34 @@ export const useSkipTrack = () => {
     return genres
   }
 
+  const { addSkip } = useSkippedIdsCount()
   /**
    * skips the track when its included in the block list
    */
   const skipTrack = async (skipList, item, currentGenres) => {
     const toSkipId = (a, b) => [a, b].join(' - ')
+
     const trackSkipId = toSkipId(item.id, item.name)
     const artistsSkipIds = item.artists.map((artist) =>
       toSkipId(artist.id, artist.name)
     )
     const genreSkips = currentGenres.map((g) => toSkipId(g, g))
+
+    let skippedId = ''
+    const setSkippedId = (id) => {
+      skippedId = id
+      return true
+    }
+
     if (
       skipList.active &&
-      (skipList.tracks.has(trackSkipId) ||
-        artistsSkipIds.some((id) => skipList.artists.has(id)) ||
-        genreSkips.some((id) => skipList.genres.has(id)))
+      ((skipList.tracks.has(trackSkipId) && setSkippedId(trackSkipId)) ||
+        artistsSkipIds.some(
+          (id) => skipList.artists.has(id) && setSkippedId(id)
+        ) ||
+        genreSkips.some((id) => skipList.genres.has(id) && setSkippedId(id)))
     ) {
+      addSkip(skippedId)
       await controls('next')
     }
   }
