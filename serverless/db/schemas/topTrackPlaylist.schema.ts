@@ -9,7 +9,15 @@ const trackSchema = new Schema(
 
     user_ids: [{ type: String }],
     // the position from user top tables
-    rank: {
+    rank: [
+      {
+        type: Number,
+        default: 0,
+      },
+    ],
+    // used to determine the position in the playlist,
+    // lowest to highest
+    score: {
       type: Number,
       default: 0,
     },
@@ -23,9 +31,9 @@ const trackSchema = new Schema(
 );
 // used to determine the position in the playlist,
 // lowest to highest
-trackSchema.virtual("score").get(function () {
-  return this.rank / this.count;
-});
+// trackSchema.virtual("score").get(function () {
+//   return this.rank / this.count;
+// });
 
 export const topTracksPlaylistSchema = new Schema(
   {

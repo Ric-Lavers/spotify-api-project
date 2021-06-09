@@ -3,9 +3,9 @@ import { TrackObjectFull } from "../../types/spotify-api";
 
 export const getTopTablePlaylistById = async (topTablePlaylistId: string) => {
   const { TopTracksPlaylist } = connectToDatabase();
-  let list = await TopTracksPlaylist.findById(topTablePlaylistId);
+  let list = await TopTracksPlaylist.findById(topTablePlaylistId).sort("score");
 
-  list.tracks.sort((a, b) => a.score - b.score);
+  console.log(list);
 
   return list;
 };
@@ -29,7 +29,6 @@ export const getTopTablePlaylistsByUserIds = async (
  */
 export const createNewTopTablePlaylist = async (userId: string, body) => {
   const { TopTracksPlaylist } = connectToDatabase();
-  console.log(body);
 
   const tracks: TrackObjectFull[] = body.tracks;
   // create top table instance
@@ -38,7 +37,8 @@ export const createNewTopTablePlaylist = async (userId: string, body) => {
     ...body,
     tracks: tracks.map((spotify_id, rank) => ({
       _id: spotify_id,
-      rank: rank + 1,
+      rank: [rank + 1],
+      score: rank + 1,
       user_ids: [userId],
     })),
   });
@@ -59,14 +59,19 @@ export const addTracksToTopTablePlaylist = async (
 
   list.user_ids.push(userId);
   trackIds
-    .map((spotify_id, rank) => ({
+    .map((spotify_id) => ({
       _id: spotify_id,
-      rank: rank + 1,
     }))
-    .forEach((t) => {
+    .forEach((t, rank) => {
       const exists = list.tracks.find((track) => track._id === t._id);
       if (exists) {
         exists.count = exists.count + 1;
+        exists.rank.push(rank + 1);
+        exists.score =
+          Math.round(
+            (exists.rank.reduce((a, c) => a + c, 0) / exists.count) * 1000
+          ) / 1000;
+
         exists.user_ids.push(userId);
       } else list.tracks.push({ ...t, user_ids: [userId] });
     });
