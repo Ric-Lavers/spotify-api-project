@@ -37,8 +37,8 @@ export const UserPlaylistsSelect = ({
   }
 
   const options = playlists.map((pl) => ({
-    value: pl.id,
-    label: pl.name,
+    value: pl.value || pl.id,
+    label: pl.label || pl.name,
   }))
 
   return (

@@ -10,13 +10,14 @@ export const SavePlaylist = ({
   mergedPlaylistNames = [],
 }) => {
   const [{ name, description, isPublic, collaborative }, setValues] = useState({
-    name: currentPlaylist.name || '',
+    name: currentPlaylist ? currentPlaylist.name : '',
     description: _description,
     isPublic: false,
     collaborative: false,
   })
+  const currentPlaylistName = currentPlaylist && currentPlaylist.name
   useEffect(() => {
-    if (currentPlaylist.name) {
+    if (currentPlaylist && currentPlaylist.name) {
       const sortName =
         currentSort &&
         !currentSort.startsWith('order') &&
@@ -35,7 +36,7 @@ export const SavePlaylist = ({
         name: playlistName,
       }))
     }
-  }, [currentPlaylist.name, currentSort, mergedPlaylistNames])
+  }, [currentPlaylistName, currentSort, mergedPlaylistNames])
 
   const handleChange = ({ target: { name, value, checked } }) => {
     setValues((prev) => ({
@@ -70,13 +71,14 @@ export const SavePlaylist = ({
       }, 3000)
     }
   }
+  const preventSubmit = !name.length
 
   return (
     <form
       onSubmit={handleSubmitPlaylist}
       onChange={handleChange}
       className="add-playlist"
-      autocomplete="off"
+      autoComplete="off"
     >
       <fieldset>
         <legend>Create new playlist</legend>
@@ -98,19 +100,24 @@ export const SavePlaylist = ({
         <div>
           <label>
             <span>Public</span>
-            <input name="isPublic" type="checkbox" checked={isPublic} />
+            <input name="isPublic" type="checkbox" defaultChecked={isPublic} />
           </label>
           <label>
             <span>Collaborative</span>
             <input
               name="collaborative"
               type="checkbox"
-              checked={collaborative}
+              defaultChecked={collaborative}
             />
           </label>
         </div>
 
-        <input className="s-submit right" type="submit" value="SAVE" />
+        <input
+          className="s-submit right"
+          disabled={preventSubmit}
+          type="submit"
+          value="SAVE"
+        />
         {loading && '🤞'}
         {hadSuccess && '👍'}
         {hadError && '👎'}

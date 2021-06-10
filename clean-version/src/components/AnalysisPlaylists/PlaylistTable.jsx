@@ -46,7 +46,7 @@ export const PlaylistTable = ({
       </table>
     )
   }
-
+  console.log({ tracks, currentSortValue })
   return !tracks.length ? null : (
     <>
       <table className="playlist-table">
@@ -81,7 +81,9 @@ export const PlaylistTable = ({
               <th onClick={() => handleSort(statKey)}>
                 <span
                   className={
-                    sortValue.includes(statKey) && sortValue.split('-')[1]
+                    sortValue &&
+                    sortValue.includes(statKey) &&
+                    sortValue.split('-')[1]
                   }
                 >
                   {statKey}

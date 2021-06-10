@@ -1,4 +1,3 @@
-//@flow
 import { LOGIN_URL } from '../helpers'
 import { top_time_range, savedTracks } from '../constants'
 import { getKey } from 'helpers/camelot'
@@ -663,7 +662,9 @@ export const getHeapsAudioFeatures = async (trackIds) => {
 }
 
 const getManyTracks = async (trackIds) => {
-  let res = await fetch(`${baseUrl}/tracks?ids=${trackIds}`, headers)
+  const _trackIds = trackIds.filter(Boolean)
+
+  let res = await fetch(`${baseUrl}/tracks?ids=${_trackIds}`, headers)
   isOk(res)
   is204(res)
   return res.json()
@@ -674,7 +675,7 @@ export const getHeapsTracks = async (trackIds) => {
   for (let i = 0; i < trackIds.length; i += 50) {
     arrayOfIds.push(trackIds.slice(i, i + 50))
   }
-
+  console.log({ trackIds })
   let res = await Promise.all(arrayOfIds.map((ids) => getManyTracks(ids)))
 
   return res.reduce((a, c) => {
