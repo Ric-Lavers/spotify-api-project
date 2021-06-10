@@ -8,9 +8,10 @@ module.exports = cors(async function (req, res) {
       res.send();
       return;
     }
+    const time_range = req.query.time_range ? `-${req.query.time_range}` : "";
 
     let playlist = await createNewTopTablePlaylist(
-      req.query.spotify_user_id,
+      `${req.query.spotify_user_id}${time_range}`,
       req.body
     );
 

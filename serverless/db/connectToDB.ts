@@ -11,14 +11,16 @@ const {
 } = require("./schemas");
 const mongoose = require("mongoose");
 import wordSchema from "./schemas/word.schema";
-
+import { getMongoUri } from "./getMongoUri";
 // Create cached connection variable
 let cachedDb = null;
 
 //* setup
-export function connectToDatabase(uri = "mongodb://localhost/demo") {
-  // attach schemas
 
+export function connectToDatabase(
+  uri = getMongoUri() || "mongodb://localhost/demo"
+) {
+  // attach schemas
   const Group = mongoose.model("group", groupSchema);
   const Artist = mongoose.model("artist", artistSchema);
   const Track = mongoose.model("track", trackSchema);

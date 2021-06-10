@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const trackSchema = new Schema(
   {
-    _id: String,
+    id: String,
 
     user_ids: [{ type: String }],
     // the position from user top tables

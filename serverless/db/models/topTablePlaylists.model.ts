@@ -3,11 +3,14 @@ import { TrackObjectFull } from "../../types/spotify-api";
 
 export const getTopTablePlaylistById = async (topTablePlaylistId: string) => {
   const { TopTracksPlaylist } = connectToDatabase();
-  let list = await TopTracksPlaylist.findById(topTablePlaylistId).sort("score");
+  let data;
+  await TopTracksPlaylist.findById(topTablePlaylistId).then((playlist) => {
+    playlist.tracks.sort((a, b) => a.score - b.score);
 
-  console.log(list);
+    data = playlist;
+  });
 
-  return list;
+  return data;
 };
 
 export const getTopTablePlaylistsByUserIds = async (
@@ -19,7 +22,7 @@ export const getTopTablePlaylistsByUserIds = async (
     user_ids: {
       $in: spotify_user_id,
     },
-  });
+  }).select(["_id", "description", "title", "created_at", "user_ids"]);
 
   return usersLists;
 };
@@ -29,14 +32,20 @@ export const getTopTablePlaylistsByUserIds = async (
  */
 export const createNewTopTablePlaylist = async (userId: string, body) => {
   const { TopTracksPlaylist } = connectToDatabase();
+  //TODO
+  const actualUserId = userId
+    .replace("-short_term", "")
+    .replace("-medium_term", "")
+    .replace("-long_term", "");
+  console.log(actualUserId, userId);
 
   const tracks: TrackObjectFull[] = body.tracks;
   // create top table instance
   const newTopTablePlaylist = new TopTracksPlaylist({
-    user_ids: [userId],
+    user_ids: [actualUserId],
     ...body,
     tracks: tracks.map((spotify_id, rank) => ({
-      _id: spotify_id,
+      id: spotify_id,
       rank: [rank + 1],
       score: rank + 1,
       user_ids: [userId],
@@ -51,19 +60,29 @@ export const createNewTopTablePlaylist = async (userId: string, body) => {
 export const addTracksToTopTablePlaylist = async (
   topTablePlaylistId,
   userId: string,
-  trackIds: TrackObjectFull[]
+  trackIds: string[]
 ) => {
+  //TODO
+  const actualUserId = userId
+    .replace("-short_term", "")
+    .replace("-medium_term", "")
+    .replace("-long_term", "");
   const list = await getTopTablePlaylistById(topTablePlaylistId);
 
   if (list.user_ids.some((u) => u === userId)) return list;
 
-  list.user_ids.push(userId);
+  if (!list.user_ids.some((id) => id === actualUserId)) {
+    list.user_ids.push(actualUserId);
+  }
   trackIds
-    .map((spotify_id) => ({
-      _id: spotify_id,
+    .map((spotify_id, rank) => ({
+      id: spotify_id,
+      rank: [rank + 1],
+      score: rank + 1,
+      user_ids: [userId],
     }))
     .forEach((t, rank) => {
-      const exists = list.tracks.find((track) => track._id === t._id);
+      const exists = list.tracks.find((track) => track.id === t.id);
       if (exists) {
         exists.count = exists.count + 1;
         exists.rank.push(rank + 1);
@@ -73,7 +92,9 @@ export const addTracksToTopTablePlaylist = async (
           ) / 1000;
 
         exists.user_ids.push(userId);
-      } else list.tracks.push({ ...t, user_ids: [userId] });
+      } else {
+        list.tracks.push(t);
+      }
     });
   await list.save();
 
