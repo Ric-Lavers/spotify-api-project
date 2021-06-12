@@ -1,6 +1,6 @@
 export const BlackList = {
   ids: []
-};
+}
 
 interface limitList {
   ids: string[];
@@ -17,5 +17,5 @@ function useBlackList(): string[] {
   function append() {}
   function read() {}
 
-  return ["BlackList"];
+  return ["BlackList"]
 }

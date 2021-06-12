@@ -67,7 +67,7 @@ const useSongsWithAudioFeatures = (playlistId) => {
   }
   useEffect(async () => {
     getTrackByPlaylist()
-  }, [])
+  }, [getTrackByPlaylist])
 
   const mergeMoreTracks = (tracksWithAudioFeatures) => {
     const trackIds = new Set()
@@ -85,9 +85,9 @@ const useSongsWithAudioFeatures = (playlistId) => {
       sortTracks(tableKey, direction)
       didMergeTrack.current = false
     }
-  }, [didMergeTrack.current])
+  }, [currentSort, songWithFeatures.length, sortTracks])
 
-  const sortTracks = (tableKey, direction = 'ASC') => {
+  const sortTracks = useCallback((tableKey, direction = 'ASC') => {
     const newSort = `${tableKey} - ${direction}`
     setCurrentSort(newSort)
 
@@ -127,7 +127,7 @@ const useSongsWithAudioFeatures = (playlistId) => {
       setMinMax([min, max])
       setSongWithFeatures([...sorted])
     }
-  }
+  })
 
   const uris = songWithFeatures.map(({ uri }) => uri)
   const includedUris = songWithFeatures

@@ -107,7 +107,7 @@ const PartyPlaylistGroup = ({ topTracks, playlistId }) => {
     getPartyPlaylist(playlistId)
       .then((d) => setData({ playlistTracks: d }))
       .finally(setData({ loading: false }))
-  }, [playlistId])
+  }, [playlistId, setData])
 
   return (
     <div className="analysis-playlists">

@@ -21,4 +21,4 @@ const CircleSvg = ({ offset, style, ...props }) =>
 		</text> */}
 	</svg>
 
-export default CircleSvg;
+export default CircleSvg

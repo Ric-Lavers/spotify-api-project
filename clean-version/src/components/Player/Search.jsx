@@ -1,78 +1,78 @@
-import React, { useContext, useState, useEffect, createContext } from "react";
+import React, { useContext, useState, useEffect, createContext } from "react"
 
-import { useHandleChange } from "../../hooks";
+import { useHandleChange } from "../../hooks"
 
-import { searchSpotify } from "../../api/spotify.js";
-import { Utils } from "../../helpers";
-import SearchIcon from "../../images/custom-svgs/SearchIcon";
+import { searchSpotify } from "../../api/spotify.js"
+import { Utils } from "../../helpers"
+import SearchIcon from "../../images/custom-svgs/SearchIcon"
 
-export const SearchResultsContext = createContext({});
+export const SearchResultsContext = createContext({})
 
-export const types = ["track", "artist", "album", "playlist"];
+export const types = ["track", "artist", "album", "playlist"]
 
 const useType = () => {
-  const [type, setType] = useState(sessionStorage.searchTermType || types[0]);
+  const [type, setType] = useState(sessionStorage.searchTermType || types[0])
 
   const setAndStoreType = newType => {
-    sessionStorage.setItem("searchTermType", newType);
-    setType(newType);
-  };
-  return [type, setAndStoreType];
-};
+    sessionStorage.setItem("searchTermType", newType)
+    setType(newType)
+  }
+  return [type, setAndStoreType]
+}
 
 const Search = ({ query }) => {
-  const [, setData] = useContext(SearchResultsContext);
-  const [type, setType] = useType();
+  const [, setData] = useContext(SearchResultsContext)
+  const [type, setType] = useType()
 
   let [formState, handleFormState, setFormState] = useHandleChange({
     type,
     searchText: "",
     searchLabel: false
-  });
-  const [prevFormState, setLastSearchObject] = useState({});
+  })
+  const [prevFormState, setLastSearchObject] = useState({})
 
   useEffect(() => {
-    setFormState(query);
-    setType(query.type ? query.type : type);
-  }, [query]);
+    setFormState(query)
+    setType(query.type ? query.type : type)
+  }, [query, setFormState, setType, type])
 
   // let [ resultsPageOffset, setResultsPageOffset ] = useState(0)
-  const [isFetching, setFetching] = useState(false);
-  const [isError, setError] = useState(false);
+  const [isFetching, setFetching] = useState(false)
+  const [isError, setError] = useState(false)
   // const [ data, setData ] = useState( null )
 
   const flashError = () => {
-    setError(true);
+    setError(true)
     setTimeout(() => {
-      setError(false);
-    }, 750);
-  };
+      setError(false)
+    }, 750)
+  }
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    const { searchLabel, searchText } = formState;
+    e.preventDefault()
+    const { searchLabel, searchText } = formState
     if (!searchText.length) {
-      flashError();
-      return;
+      flashError()
+      return
     }
     if (prevFormState !== formState) {
       // resultsPageOffset = 0
     }
-    setFetching(true);
+    setFetching(true)
     try {
       const res = await searchSpotify(
         searchLabel ? `label:${searchText}` : searchText,
         type
-      );
-      Utils.scrollIntoView("search-results");
-      setLastSearchObject(formState);
-      setData(res);
+      )
+      Utils.scrollIntoView("search-results")
+      setLastSearchObject(formState)
+      setData(res)
     } catch (error) {
-      console.error(error);
-      flashError();
+      console.error(error)
+      flashError()
     }
-    setFetching(false);
-  };
+    setFetching(false)
+  }
 
   return (
     <>
@@ -119,7 +119,7 @@ const Search = ({ query }) => {
         </div>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default Search;
+export default Search

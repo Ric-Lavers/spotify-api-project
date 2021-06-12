@@ -1,17 +1,17 @@
-import React, { useMemo, useState } from "react";
-import classNames from "classnames";
+import React, { useMemo, useState } from "react"
+import classNames from "classnames"
 
 const PlayerButton = ({ text, action, onClick }) => {
-  const [successClass, setSuccess] = useState("");
+  const [successClass, setSuccess] = useState("")
 
   const handleClick = () => {
-    const isSuccess = onClick(action) ? "touched-success" : "touched-error";
-    setSuccess(isSuccess);
-    window.navigator.vibrate(200);
+    const isSuccess = onClick(action) ? "touched-success" : "touched-error"
+    setSuccess(isSuccess)
+    window.navigator.vibrate(200)
     setTimeout(() => {
-      setSuccess("");
-    }, 1000);
-  };
+      setSuccess("")
+    }, 1000)
+  }
 
   const formatButton = useMemo(
     () => (
@@ -19,11 +19,11 @@ const PlayerButton = ({ text, action, onClick }) => {
         {text}
       </div>
     ),
-    [successClass, text]
-  );
+    [handleClick, successClass, text]
+  )
 
-  return formatButton;
-};
+  return formatButton
+}
 
 /* 
 class ButtonClass extends React.Component {
@@ -55,4 +55,4 @@ console.count( 'Class Button' )
   }
 } */
 
-export default PlayerButton;
+export default PlayerButton

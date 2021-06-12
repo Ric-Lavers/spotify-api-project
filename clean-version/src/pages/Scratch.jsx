@@ -22,7 +22,7 @@ const useData = () => {
 
   useEffect(() => {
     getData()
-  }, [userId])
+  }, [getData, userId])
 
   return {
     userTopTracks: data,

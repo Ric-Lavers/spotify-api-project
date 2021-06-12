@@ -55,7 +55,7 @@ const useTopData = (type, range) => {
     } else {
       setItems(rawData[key].items)
     }
-  }, [type, range])
+  }, [type, range, rawData, key, getData])
 
   return {
     items: get(rawData, `${key}.items`, []),

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import Slide from 'react-reveal/Slide'
-import Flip from 'react-reveal/Flip';
+import Flip from 'react-reveal/Flip'
 import { GlobalContext } from '../../globalContext'
 
 export default function Devices() {

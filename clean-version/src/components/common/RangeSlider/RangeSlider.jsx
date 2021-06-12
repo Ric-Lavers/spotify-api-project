@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Range, getTrackBackground } from "react-range";
-import ErrorBoundary from "components/ErrorBoundary";
+import React, { useState, useEffect } from "react"
+import { Range, getTrackBackground } from "react-range"
+import ErrorBoundary from "components/ErrorBoundary"
 
 const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
-  const [rangeValues, setRangeValues] = useState([min, max]);
+  const [rangeValues, setRangeValues] = useState([min, max])
 
   useEffect(() => {
-    setRangeValues([min, max]);
-  }, [min, max]);
+    setRangeValues([min, max])
+  }, [min, max])
 
-  if (min + max === 0 || rangeValues[1] < rangeValues[0]) return null;
+  if (min + max === 0 || rangeValues[1] < rangeValues[0]) return null
 
   return (
     <ErrorBoundary>
@@ -37,7 +37,7 @@ const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
               >
                 {children}
               </div>
-            );
+            )
           }}
           renderThumb={({ props }) => {
             return (
@@ -50,12 +50,12 @@ const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
                   backgroundColor: "#fff"
                 }}
               />
-            );
+            )
           }}
         />
       </div>
     </ErrorBoundary>
-  );
-};
+  )
+}
 
-export default RangeSlider;
+export default RangeSlider

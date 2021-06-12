@@ -1,7 +1,7 @@
-import React from "react";
+import React from "react"
 
-import PopularityMeter from "../../images/custom-svgs/PopularityMeter";
-import { handlePlay } from "helpers";
+import PopularityMeter from "../../images/custom-svgs/PopularityMeter"
+import { handlePlay } from "helpers"
 
 const ArtistTable = ({ items, followArtist, toggleFollowAll, iterate }) => (
   <table id="search-results">
@@ -16,7 +16,7 @@ const ArtistTable = ({ items, followArtist, toggleFollowAll, iterate }) => (
             Follow
             <input
               onChange={({ target: { checked } }) => {
-                toggleFollowAll(checked);
+                toggleFollowAll(checked)
               }}
               id="follow-check"
               type="checkbox"
@@ -60,11 +60,11 @@ const ArtistTable = ({ items, followArtist, toggleFollowAll, iterate }) => (
                 </td>
               )}
             </tr>
-          );
+          )
         }
       )}
     </tbody>
   </table>
-);
+)
 
-export default ArtistTable;
+export default ArtistTable

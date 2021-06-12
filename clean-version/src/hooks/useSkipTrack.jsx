@@ -115,7 +115,7 @@ export const useSkipTrack = () => {
     getGenres().then((genres) => {
       skipTrack(skipList, item, genres)
     })
-  }, [item.id])
+  }, [getGenres, item, item.id, skipList, skipTrack])
 
   return {
     currentTrack,

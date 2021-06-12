@@ -59,7 +59,7 @@ const PaginationContainer = ({ total, limit, offset, onPageChange }) => {
       if (i === 9) break
     }
     setPages(pages)
-  }, [offset])
+  }, [limit, offset, onPageChange, total])
 
   const handlePageChange = (direction) => {
     let nextOffset = (offset + direction * limit) % total

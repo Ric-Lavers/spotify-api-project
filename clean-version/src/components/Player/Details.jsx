@@ -47,7 +47,7 @@ const DetailsData = () => {
 
   useEffect(() => {
     id && handleGetAlbumById(id)
-  }, [id])
+  }, [handleGetAlbumById, id])
 
   return (
     <Details

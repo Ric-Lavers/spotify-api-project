@@ -1,7 +1,7 @@
-import React from "react";
+import React from "react"
 
-import { SpotifyHelpers, handlePlay } from "helpers";
-import PopularityMeter from "images/custom-svgs/PopularityMeter";
+import { SpotifyHelpers, handlePlay } from "helpers"
+import PopularityMeter from "images/custom-svgs/PopularityMeter"
 
 export const TrackTable = ({
   items,
@@ -25,7 +25,7 @@ export const TrackTable = ({
             Like
             <input
               onChange={({ target: { checked } }) => {
-                toggleSaveAll(checked);
+                toggleSaveAll(checked)
               }}
               id="follow-check"
               type="checkbox"
@@ -79,13 +79,13 @@ export const TrackTable = ({
                 </td>
               )}
             </tr>
-          );
+          )
         }
       )}
     </tbody>
   </table>
-);
+)
 
 TrackTable.defaultProps = {
   id: "search-results"
-};
+}

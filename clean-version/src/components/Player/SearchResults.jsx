@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react";
-import { useKeepFetching } from "../../hooks/apiHooks";
-import { useToggle } from "../../hooks";
+import React, { useContext, useState } from "react"
+import { useKeepFetching } from "../../hooks/apiHooks"
+import { useToggle } from "../../hooks"
 
-import { SearchResultsContext } from "./Search";
-import { SpotifyHelpers } from "../../helpers";
-import { ReactComponent as ArrowDown } from "../../images/custom-svgs/arrow-down.svg";
-import PopularityMeter from "../../images/custom-svgs/PopularityMeter";
-import Pagination from "../common/Pagination";
+import { SearchResultsContext } from "./Search"
+import { SpotifyHelpers } from "../../helpers"
+import { ReactComponent as ArrowDown } from "../../images/custom-svgs/arrow-down.svg"
+import PopularityMeter from "../../images/custom-svgs/PopularityMeter"
+import Pagination from "../common/Pagination"
 import {
   play,
   getHref,
@@ -17,55 +17,55 @@ import {
   getAlbums,
   saveTracks,
   removeTracks
-} from "../../api/spotify";
-import { types } from "./Search";
-import { reduceGenres, getTopGenres } from "../../helpers/hanger";
+} from "../../api/spotify"
+import { types } from "./Search"
+import { reduceGenres, getTopGenres } from "../../helpers/hanger"
 
 const findType = data => {
-  const [type] = types.map(t => t + "s").filter(t => data[t]);
-  return type;
-};
+  const [type] = types.map(t => t + "s").filter(t => data[t])
+  return type
+}
 
 // you can only check the status of 100 artist at a time
 const addFollowingStatus = async data => {
-  let itemObject = {};
-  let { items } = data["artists"];
+  let itemObject = {}
+  let { items } = data["artists"]
   let itemsIds = items
     .filter(({ following }) => following === undefined)
-    .map(({ id }) => id);
+    .map(({ id }) => id)
 
-  let statusArray = await getFollowingState(itemsIds, "artist");
+  let statusArray = await getFollowingState(itemsIds, "artist")
   itemsIds.forEach((id, i) => {
-    itemObject[id] = statusArray[i];
-  });
+    itemObject[id] = statusArray[i]
+  })
 
   if (!statusArray || !statusArray.length) {
-    return data;
+    return data
   }
 
   const itemsWithStatus = items.map((item, i) => ({
     following: item.following ? item.following : itemObject[item.id],
     ...item
-  }));
+  }))
 
-  return { artists: { ...data["artists"], items: itemsWithStatus } };
-};
+  return { artists: { ...data["artists"], items: itemsWithStatus } }
+}
 
 const addLabelToAlbum = async data => {
-  let itemObject = {};
-  let { items } = data["albums"];
+  let itemObject = {}
+  let { items } = data["albums"]
   let itemsIds = items
     .filter(({ label }) => label === undefined)
-    .map(({ id }) => id);
+    .map(({ id }) => id)
 
-  let { albums: albumArray } = await getAlbums(itemsIds, "artist");
+  let { albums: albumArray } = await getAlbums(itemsIds, "artist")
 
   itemsIds.forEach((id, i) => {
-    itemObject[id] = albumArray[i];
-  });
+    itemObject[id] = albumArray[i]
+  })
 
   if (!albumArray || !albumArray.length) {
-    return data;
+    return data
   }
 
   const itemsWithLabels = items.map((item, i) => ({
@@ -75,49 +75,49 @@ const addLabelToAlbum = async data => {
       : itemObject[item.id].popularity,
 
     ...item
-  }));
-  return { albums: { ...data["albums"], items: itemsWithLabels } };
-};
+  }))
+  return { albums: { ...data["albums"], items: itemsWithLabels } }
+}
 const addSavedToTrack = async data => {
-  let itemObject = {};
-  let { items } = data["tracks"];
+  let itemObject = {}
+  let { items } = data["tracks"]
   let itemsIds = items
     .filter(({ saved }) => saved === undefined)
-    .map(({ id }) => id);
+    .map(({ id }) => id)
 
-  let statusArray = await getSavedState(itemsIds, "track");
+  let statusArray = await getSavedState(itemsIds, "track")
   itemsIds.forEach((id, i) => {
-    itemObject[id] = statusArray[i];
-  });
+    itemObject[id] = statusArray[i]
+  })
 
   if (!statusArray || !statusArray.length) {
-    return data;
+    return data
   }
 
   const itemsWithStatus = items.map((item, i) => ({
     saved: item.saved ? item.saved : itemObject[item.id],
     ...item
-  }));
+  }))
 
-  return { tracks: { ...data["tracks"], items: itemsWithStatus } };
-};
+  return { tracks: { ...data["tracks"], items: itemsWithStatus } }
+}
 
 const SearchResultsContatiner = props => {
-  const [genres, setGenres] = useState([]);
-  const [data, setData] = useContext(SearchResultsContext);
+  const [genres, setGenres] = useState([])
+  const [data, setData] = useContext(SearchResultsContext)
 
   const addStatus = async artistData => {
-    const statusData = await addFollowingStatus(artistData);
-    setData(statusData);
-  };
+    const statusData = await addFollowingStatus(artistData)
+    setData(statusData)
+  }
   const addLabel = async albumData => {
-    const statusData = await addLabelToAlbum(albumData);
-    setData(statusData);
-  };
+    const statusData = await addLabelToAlbum(albumData)
+    setData(statusData)
+  }
   const addSaved = async trackData => {
-    const statusData = await addSavedToTrack(trackData);
-    setData(statusData);
-  };
+    const statusData = await addSavedToTrack(trackData)
+    setData(statusData)
+  }
 
   React.useEffect(() => {
     if (data && findType(data) === "artists") {
@@ -125,102 +125,102 @@ const SearchResultsContatiner = props => {
         data["artists"].items.filter(({ following }) => following === undefined)
           .length
       ) {
-        setGenres(getTopGenres(reduceGenres(data["artists"].items)));
-        addStatus(data);
+        setGenres(getTopGenres(reduceGenres(data["artists"].items)))
+        addStatus(data)
       }
     }
     if (data && findType(data) === "albums") {
       if (
         data["albums"].items.filter(({ label }) => label === undefined).length
       ) {
-        addLabel(data);
+        addLabel(data)
       }
     }
     if (data && findType(data) === "tracks") {
       if (
         data["tracks"].items.filter(({ saved }) => saved === undefined).length
       ) {
-        addSaved(data);
+        addSaved(data)
       }
     }
-  }, [data]);
+  }, [addLabel, addSaved, addStatus, data])
 
   if (!data || !Object.keys(data).length) {
-    return <span id="search-results" />;
+    return <span id="search-results" />
   }
 
   const followArtist = async (ids, checked) => {
     const success = checked
       ? await follow(ids, "artist")
-      : await unFollow(ids, "artist");
+      : await unFollow(ids, "artist")
 
     if (success) {
       const updatedItems = data["artists"].items.map(item => {
         item.following = [].concat(ids).includes(item.id)
           ? checked
-          : item.following;
-        return item;
-      });
-      setData({ artists: { ...data["artists"], items: updatedItems } });
+          : item.following
+        return item
+      })
+      setData({ artists: { ...data["artists"], items: updatedItems } })
     }
-  };
+  }
 
   const saveTrack = async (ids, checked) => {
-    const success = checked ? await saveTracks(ids) : await removeTracks(ids);
+    const success = checked ? await saveTracks(ids) : await removeTracks(ids)
 
     if (success) {
       const updatedItems = data["tracks"].items.map(item => {
         item.following = [].concat(ids).includes(item.id)
           ? checked
-          : item.following;
-        return item;
-      });
-      setData({ tracks: { ...data["tracks"], items: updatedItems } });
+          : item.following
+        return item
+      })
+      setData({ tracks: { ...data["tracks"], items: updatedItems } })
     }
-  };
+  }
 
   const addData = async next => {
-    const moreData = await getHref(next);
-    const moreType = findType(moreData); // this should be the same as type!
+    const moreData = await getHref(next)
+    const moreType = findType(moreData) // this should be the same as type!
 
     const nextData = {
       [moreType]: {
         ...moreData[moreType],
         items: [...data[type].items, ...moreData[moreType].items]
       }
-    };
-    setData({ ...data, ...nextData });
+    }
+    setData({ ...data, ...nextData })
 
-    return moreData[type].next;
-  };
+    return moreData[type].next
+  }
 
   // const [showAll, stopShowing ] = useKeepFetching(addData)
   const showAll = async next => {
     // little bit of recurssion
     if (next /* && fetchingNext */) {
-      let nextNext = await addData(next);
-      showAll(nextNext);
+      let nextNext = await addData(next)
+      showAll(nextNext)
     }
     // setFetching(false)
-  };
+  }
 
-  const type = findType(data);
+  const type = findType(data)
 
-  let { next, offset, limit, total, items, href } = data[type];
+  let { next, offset, limit, total, items, href } = data[type]
 
   const toggleFollowAll = checked => {
     // TODO batch these in arrays of max 50
     if (items && items.length) {
-      items.map(({ id }) => followArtist(id, checked));
+      items.map(({ id }) => followArtist(id, checked))
     }
-  };
+  }
 
   const toggleSaveAll = checked => {
     // TODO batch these in arrays of max 50
     if (items && items.length) {
-      items.map(({ id }) => saveTrack(id, checked));
+      items.map(({ id }) => saveTrack(id, checked))
     }
-  };
+  }
 
   return (
     <SearchResults
@@ -241,20 +241,20 @@ const SearchResultsContatiner = props => {
       genres={genres}
       {...props}
     />
-  );
-};
+  )
+}
 
 export const handlePlay = (type, uri) => {
-  let body = {};
+  let body = {}
   if (type === "tracks") {
-    body = { uris: [uri] };
+    body = { uris: [uri] }
   } else if (type === "albums") {
-    body = { context_uri: uri };
+    body = { context_uri: uri }
   } else {
-    body = { context_uri: uri };
+    body = { context_uri: uri }
   }
-  play(body);
-};
+  play(body)
+}
 
 export const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
   <table id="search-results">
@@ -270,7 +270,7 @@ export const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
             Like
             <input
               onChange={({ target: { checked } }) => {
-                toggleSaveAll(checked);
+                toggleSaveAll(checked)
               }}
               id="follow-check"
               type="checkbox"
@@ -320,12 +320,12 @@ export const TrackTable = ({ items, saveTrack, toggleSaveAll }) => (
                 </td>
               )}
             </tr>
-          );
+          )
         }
       )}
     </tbody>
   </table>
-);
+)
 
 const ArtistTable = ({ items, followArtist, toggleFollowAll }) => (
   <table id="search-results">
@@ -338,7 +338,7 @@ const ArtistTable = ({ items, followArtist, toggleFollowAll }) => (
           Follow
           <input
             onChange={({ target: { checked } }) => {
-              toggleFollowAll(checked);
+              toggleFollowAll(checked)
             }}
             id="follow-check"
             type="checkbox"
@@ -377,12 +377,12 @@ const ArtistTable = ({ items, followArtist, toggleFollowAll }) => (
                 />
               </td>
             </tr>
-          );
+          )
         }
       )}
     </tbody>
   </table>
-);
+)
 const AlbumTable = ({ items }) => (
   <table id="search-results">
     <thead>
@@ -431,12 +431,12 @@ const AlbumTable = ({ items }) => (
               </td>
               <td className="hide-up-md">{album_type}</td>
             </tr>
-          );
+          )
         }
       )}
     </tbody>
   </table>
-);
+)
 
 const SearchResults = ({
   type,
@@ -454,16 +454,16 @@ const SearchResults = ({
   showAll,
   genres
 }) => {
-  const [isShowingAll, setShowing] = useState(false);
-  const searchByLabel = href.includes("label");
-  const shown = offset + limit;
-  const more = total - shown;
-  const hasArtistsName = type === "tracks" || type === "albums"; //&& searchByLabel
-  const hasPopulatity = type === "tracks" || type === "artists";
+  const [isShowingAll, setShowing] = useState(false)
+  const searchByLabel = href.includes("label")
+  const shown = offset + limit
+  const more = total - shown
+  const hasArtistsName = type === "tracks" || type === "albums" //&& searchByLabel
+  const hasPopulatity = type === "tracks" || type === "artists"
 
   //TODO Add different results tables for the Four types.
   if (!items.length) {
-    return <p id="search-results">no results</p>;
+    return <p id="search-results">no results</p>
   }
 
   return (
@@ -484,9 +484,9 @@ const SearchResults = ({
                   toggleFollowAll={toggleFollowAll}
                 />
               </>
-            );
+            )
           case "albums":
-            return <AlbumTable items={items} />;
+            return <AlbumTable items={items} />
           case "tracks":
             return (
               <TrackTable
@@ -495,9 +495,9 @@ const SearchResults = ({
                 toggleSaveAll={toggleSaveAll}
                 handlePlay={handlePlay}
               />
-            );
+            )
           default:
-            return <></>;
+            return <></>
         }
       })()}
 
@@ -513,9 +513,9 @@ const SearchResults = ({
           </thead>
           <tbody>
             {items.map(({ artists, name, id, uri, popularity, followers }) => {
-              let artistsNames;
+              let artistsNames
               if (hasArtistsName) {
-                artistsNames = SpotifyHelpers.combineArtists(artists);
+                artistsNames = SpotifyHelpers.combineArtists(artists)
               }
               return (
                 <tr
@@ -535,7 +535,7 @@ const SearchResults = ({
                   )}
                   {type === "artists" && <td>{followers.total.toString()}</td>}
                 </tr>
-              );
+              )
             })}
           </tbody>
         </table>
@@ -555,8 +555,8 @@ const SearchResults = ({
             )}
             <p
               onClick={() => {
-                const r = window.confirm(`look up ${total} more results?`);
-                r && showAll(next);
+                const r = window.confirm(`look up ${total} more results?`)
+                r && showAll(next)
               }}
             >
               {" "}
@@ -566,7 +566,7 @@ const SearchResults = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SearchResultsContatiner;
+export default SearchResultsContatiner

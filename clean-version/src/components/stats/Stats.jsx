@@ -55,7 +55,7 @@ const StatsContainer = ({ song }) => {
     if (song.item.id.length) {
       setAudioFeatures(song.item.id)
     }
-  }, [song.item.id])
+  }, [setAudioFeatures, song.item.id])
 
   return audio_features ? (
     <Stats id={song.item.id} audio_features={audio_features} />

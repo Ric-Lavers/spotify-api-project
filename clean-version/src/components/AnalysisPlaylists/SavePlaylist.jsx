@@ -36,7 +36,7 @@ export const SavePlaylist = ({
         name: playlistName,
       }))
     }
-  }, [currentPlaylistName, currentSort, mergedPlaylistNames])
+  }, [currentPlaylist, currentPlaylistName, currentSort, mergedPlaylistNames, name])
 
   const handleChange = ({ target: { name, value, checked } }) => {
     setValues((prev) => ({

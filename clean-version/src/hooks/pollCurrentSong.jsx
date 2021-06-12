@@ -22,7 +22,7 @@ export const pollCurrentSong = (initialSong = null) => {
   const [song, setSong] = useState(currentSong)
   useEffect(() => {
     if (currentTrackId) setSong(currentSong)
-  }, [currentTrackId])
+  }, [currentSong, currentTrackId])
 
   return song
 }

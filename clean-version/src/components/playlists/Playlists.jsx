@@ -84,7 +84,7 @@ export const usePlaylistSongs = (playlistId, fetchAllTracks = false) => {
   }
   useEffect(() => {
     fetchAll && addData(nextHref)
-  }, [nextHref, fetchAll])
+  }, [nextHref, fetchAll, addData])
 
   const uris = songs.map(({ track: { uri } }) => uri)
 

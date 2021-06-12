@@ -14,7 +14,7 @@ export const useAudioControls = (initialSong = null) => {
   useEffect(async () => {
     setInterval(setCurrentPlaying, 5000)
     return clearInterval(setCurrentPlaying)
-  }, [])
+  }, [setCurrentPlaying])
 
   const handleClick = async (e, action) => {
     e.preventDefault()
@@ -77,7 +77,7 @@ export const useAudioControls = (initialSong = null) => {
     return Math.floor((progress_ms / duration_ms) * 100)
   }
 
-  const setCurrentPlaying = async () => {
+  const setCurrentPlaying = useCallback(async () => {
     if (isFetching) return
     setFetching(true)
     try {
@@ -87,7 +87,7 @@ export const useAudioControls = (initialSong = null) => {
       setRange(findRange(playingNow))
     } catch (error) {}
     setFetching(false)
-  }
+  })
 
   return {
     playOrPause,

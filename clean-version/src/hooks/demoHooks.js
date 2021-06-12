@@ -72,7 +72,7 @@ export const useColorOnInput = () => {
 
 	useEffect( () => {
 		setColor( colors[ Math.random() * colors.length | 0 ] )
-	}, [length])
+	}, [colors, length])
 
 	return [ {border: `8px solid ${color}`}, onInput ]
 }
