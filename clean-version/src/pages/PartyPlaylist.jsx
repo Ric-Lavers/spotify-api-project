@@ -24,6 +24,7 @@ import {
   getTopTrackIds,
   createTopTracksPlaylist,
   formatUserPlaylists,
+  addTopTracksToPlaylist,
 } from './PartyPlaylist.utils'
 
 const favPlaylists = [...specialPlaylists, savedTracks]
@@ -57,7 +58,7 @@ const PartyPlaylist = React.memo(
       const data = await createTopTracksPlaylist(
         userId,
         { title, description, isPublic, collaborative },
-        getTopTrackIds(formatUserPlaylists(topTracks))
+        getTopTrackIds(topTracks)
       )
       return data
     }
@@ -78,6 +79,8 @@ const PartyPlaylist = React.memo(
         <PartyPlaylistGroup
           playlistId={playlistId}
           currentPlayingId={currentSong ? currentSong.item.id : ''}
+          spotify_user_id={userId}
+          topTrackIds={getTopTrackIds(topTracks)}
         />
       )
     }
@@ -105,36 +108,44 @@ const PartyPlaylist = React.memo(
   })
 )
 
-const PartyPlaylistGroup = memo(({ playlistId, currentPlayingId }) => {
-  const [{ playlist, loading }, setData] = useState({
-    playlist: [],
-    loading: true,
-  })
+const PartyPlaylistGroup = memo(
+  ({ playlistId, currentPlayingId, spotify_user_id, topTrackIds }) => {
+    console.log({ topTrackIds })
+    const [{ playlist, loading }, setData] = useState({
+      playlist: [],
+      loading: true,
+    })
 
-  useEffect(() => {
-    setData((s) => ({ ...s, loading: true }))
-    getPartyPlaylist(playlistId).then((d) =>
-      setData({ playlist: d, loading: false })
+    useEffect(() => {
+      setData((s) => ({ ...s, loading: true }))
+      getPartyPlaylist(playlistId).then((d) =>
+        setData({ playlist: d, loading: false })
+      )
+    }, [playlistId])
+
+    const handleAddToPartyPlaylist = async () => {
+      await addTopTracksToPlaylist(spotify_user_id, playlistId, topTrackIds)
+    }
+
+    console.log({ currentPlayingId, playlist })
+
+    return (
+      <div className="analysis-playlists">
+        <button onClick={handleAddToPartyPlaylist}> add ya tracks</button>
+        <PlaylistTable
+          loading={loading}
+          tracks={playlist.tracks}
+          currentTrackId={currentPlayingId}
+          uris={playlist.uris || []}
+          stats={['score']}
+          onAllCheck={(checked) => {}}
+          onCheckTrack={(id, checked) => {}}
+          onSort={({ target: { value } }) => {}}
+          currentSortValue={'title'}
+        />
+      </div>
     )
-  }, [playlistId])
-
-  console.log({ currentPlayingId, playlist })
-
-  return (
-    <div className="analysis-playlists">
-      <PlaylistTable
-        loading={loading}
-        tracks={playlist.tracks}
-        currentTrackId={currentPlayingId}
-        uris={playlist.uris || []}
-        stats={['score']}
-        onAllCheck={(checked) => {}}
-        onCheckTrack={(id, checked) => {}}
-        onSort={({ target: { value } }) => {}}
-        currentSortValue={'title'}
-      />
-    </div>
-  )
-})
+  }
+)
 
 export default PartyPlaylist

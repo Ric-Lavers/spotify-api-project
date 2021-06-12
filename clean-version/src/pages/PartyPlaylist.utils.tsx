@@ -91,6 +91,36 @@ export const createTopTracksPlaylist = async (
   }
 }
 
+export const addTopTracksToPlaylist = async (
+  spotify_user_id: string,
+  topTablePlaylistId: string,
+  allTopTracksIds: AllTopTracks
+) => {
+  try {
+    await addToPartyPlaylist(
+      spotify_user_id,
+      topTablePlaylistId,
+      allTopTracksIds.short_term,
+      'short_term'
+    )
+    await addToPartyPlaylist(
+      spotify_user_id,
+      topTablePlaylistId,
+      allTopTracksIds.medium_term,
+      'medium_term'
+    )
+    const data = await addToPartyPlaylist(
+      spotify_user_id,
+      topTablePlaylistId,
+      allTopTracksIds.long_term,
+      'long_term'
+    )
+    return data
+  } catch (error) {
+    console.log('error creating top table', error)
+  }
+}
+
 export const getTopTrackIds = (tracks: {
   short_term: TrackObjectFull[]
   medium_term: TrackObjectFull[]
