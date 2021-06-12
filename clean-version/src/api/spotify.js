@@ -675,7 +675,6 @@ export const getHeapsTracks = async (trackIds) => {
   for (let i = 0; i < trackIds.length; i += 50) {
     arrayOfIds.push(trackIds.slice(i, i + 50))
   }
-  console.log({ trackIds })
   let res = await Promise.all(arrayOfIds.map((ids) => getManyTracks(ids)))
 
   return res.reduce((a, c) => {

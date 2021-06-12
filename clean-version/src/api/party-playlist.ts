@@ -1,4 +1,6 @@
 import { serverFetch } from './utils'
+import { getHeapsTracks, getHeapsAudioFeatures } from './spotify'
+import { TrackObjectFull, AudioFeaturesObject } from '../types/spotify-api'
 
 export enum TopTimeRange {
   SHORT_TERM = 'short_term',
@@ -63,11 +65,46 @@ export const createPartyPlaylist = async (
 
   return data
 }
+interface Song extends TrackObjectFull {
+  audioFeatures: AudioFeaturesObject
+  include: boolean
+}
+interface PartySong extends Song {
+  custom: {
+    count: number
+    score: number
+    rank: number[]
+    user_ids: string[]
+  }
+}
 
-export const getPartyPlaylist = async function name(playlistId: string) {
+export const getPartyPlaylist = async (
+  playlistId: string
+): Promise<{
+  uris: string[]
+  tracks: PartySong[]
+}> => {
   try {
     let data = await serverFetch(`playlists/${playlistId}`)
-    return data
+    const trackIds = data.tracks.map(({ id }) => id)
+    const [{ tracks }, audioFeatures] = await Promise.all([
+      getHeapsTracks(trackIds),
+      getHeapsAudioFeatures(trackIds),
+    ])
+
+    return {
+      ...data,
+      uris: tracks.map(({ uri }) => uri),
+      tracks: data.tracks.map((t, i) => ({
+        ...tracks[i],
+        audioFeatures: audioFeatures[i],
+        include: true,
+        custom: (() => {
+          const { count, score, rank, user_ids } = t
+          return { count, score, rank, user_ids }
+        })(),
+      })),
+    }
   } catch (error) {}
 }
 

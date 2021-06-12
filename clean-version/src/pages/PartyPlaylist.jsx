@@ -1,4 +1,4 @@
-import React, { memo, useContext, useState, useEffect } from 'react'
+import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
 import Slide from 'react-reveal/Slide'
 import makeCarousel from 'react-reveal/makeCarousel'
 import truncate from 'lodash.truncate'
@@ -6,7 +6,7 @@ import get from 'lodash.get'
 import { useParams } from 'react-router-dom'
 
 import Range from 'components/common/RangeSlider'
-import { useToggle, withCurrentSong } from 'hooks'
+import { withCurrentSong } from '../hooks'
 import {
   PlaylistTable,
   SavePlaylist,
@@ -36,46 +36,55 @@ const Dev = ({ data }) => (
   </>
 )
 
-const PartyPlaylist = React.memo(() => {
-  const [
-    {
-      userData: { id: userId },
-    },
-  ] = useContext(GlobalContext)
-  const { playlistId } = useParams()
-  const { topTracks, loading } = useTopTracks(userId)
-  const [playlists, setPlaylists] = useState([])
+const PartyPlaylist = React.memo(
+  withCurrentSong(({ currentSong }) => {
+    const [
+      {
+        userData: { id: userId },
+      },
+    ] = useContext(GlobalContext)
 
-  const createPartyPlaylist = async ({
-    name: title,
-    description,
-    isPublic,
-    collaborative,
-  }) => {
-    const data = await createTopTracksPlaylist(
-      userId,
-      { title, description, isPublic, collaborative },
-      getTopTrackIds(formatUserPlaylists(topTracks))
-    )
-    return data
-  }
+    const { playlistId } = useParams()
+    const { topTracks, loading } = useTopTracks(userId)
+    const [playlists, setPlaylists] = useState([])
 
-  useEffect(() => {
-    if (userId) {
-      getUserPartyPlaylists(userId).then((playlists) => {
-        setPlaylists(formatUserPlaylists(playlists))
-      })
+    const createPartyPlaylist = async ({
+      name: title,
+      description,
+      isPublic,
+      collaborative,
+    }) => {
+      const data = await createTopTracksPlaylist(
+        userId,
+        { title, description, isPublic, collaborative },
+        getTopTrackIds(formatUserPlaylists(topTracks))
+      )
+      return data
     }
-  }, [userId])
-  const handleChangePlaylist = (partyPlaylistId) => {
-    window.location.replace(`/party-playlist/${partyPlaylistId}`)
-  }
 
-  if (!userId || loading) {
-    return <div>loading...</div>
-  }
+    useEffect(() => {
+      if (userId) {
+        getUserPartyPlaylists(userId).then((playlists) => {
+          setPlaylists(formatUserPlaylists(playlists))
+        })
+      }
+    }, [userId])
+    const handleChangePlaylist = (partyPlaylistId) => {
+      window.location.replace(`/party-playlist/${partyPlaylistId}`)
+    }
 
-  if (!playlistId) {
+    if (playlistId) {
+      return (
+        <PartyPlaylistGroup
+          playlistId={playlistId}
+          currentPlayingId={currentSong ? currentSong.item.id : ''}
+        />
+      )
+    }
+    if (!userId || loading) {
+      return <div>loading...</div>
+    }
+
     return (
       <>
         <div className="analysis-playlists">
@@ -93,26 +102,39 @@ const PartyPlaylist = React.memo(() => {
         )}
       </>
     )
-  }
+  })
+)
 
-  return <PartyPlaylistGroup playlistId={playlistId} topTracks={topTracks} />
-})
-
-const PartyPlaylistGroup = ({ topTracks, playlistId }) => {
-  const [data, setData] = useState({ playlistTracks: [], loading: false })
+const PartyPlaylistGroup = memo(({ playlistId, currentPlayingId }) => {
+  const [{ playlist, loading }, setData] = useState({
+    playlist: [],
+    loading: true,
+  })
 
   useEffect(() => {
-    setData({ loading: true })
-    getPartyPlaylist(playlistId)
-      .then((d) => setData((s) => ({ ...s, playlistTracks: d })))
-      .finally(setData((s) => ({ ...s, loading: false })))
-  }, [playlistId, setData])
+    setData((s) => ({ ...s, loading: true }))
+    getPartyPlaylist(playlistId).then((d) =>
+      setData({ playlist: d, loading: false })
+    )
+  }, [playlistId])
+
+  console.log({ currentPlayingId, playlist })
 
   return (
     <div className="analysis-playlists">
-      <Dev data={data} />
+      <PlaylistTable
+        loading={loading}
+        tracks={playlist.tracks}
+        currentTrackId={currentPlayingId}
+        uris={playlist.uris || []}
+        stats={['score']}
+        onAllCheck={(checked) => {}}
+        onCheckTrack={(id, checked) => {}}
+        onSort={({ target: { value } }) => {}}
+        currentSortValue={'title'}
+      />
     </div>
   )
-}
+})
 
 export default PartyPlaylist

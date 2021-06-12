@@ -21,6 +21,7 @@ const initalState = {
     searchLabel: false,
   },
   currentPlaying: {
+    id: '',
     image: {
       src: '',
       alt: '',

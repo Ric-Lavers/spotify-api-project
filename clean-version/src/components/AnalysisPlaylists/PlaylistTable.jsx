@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import get from 'lodash.get'
+import remove from 'lodash.remove'
 import { play } from 'api/spotify'
 import { formatFeatures } from 'helpers'
 import { isChecked, getAverages, getRows } from './PlaylistTable.utils'
@@ -27,10 +29,11 @@ export const PlaylistTable = ({
     setSortValue(currentSortValue)
   }, [currentSortValue])
 
-  const averages = React.useMemo(() => getAverages(tracks, stats), [
-    tracks,
-    stats,
-  ])
+  const averages = React.useMemo(() => {
+    if (loading) return []
+    console.log('here', { loading, tracks, stats })
+    return getAverages(tracks, stats)
+  }, [tracks, stats])
 
   let tracksUnavailableMsg = loading
     ? 'Loading...'
@@ -46,7 +49,7 @@ export const PlaylistTable = ({
       </table>
     )
   }
-  console.log({ tracks, currentSortValue })
+  const _stats = remove(stats, ['score'])
   return !tracks.length ? null : (
     <>
       <table className="playlist-table">
@@ -54,7 +57,7 @@ export const PlaylistTable = ({
           <tr>
             <th className="table-average">{averages.checked}</th>
             <th className="table-average">count {tracks.length}</th>
-            {stats.map((stat) => {
+            {_stats.map((stat) => {
               return (
                 <th className="table-average">
                   {stat === 'popularity'
@@ -75,9 +78,10 @@ export const PlaylistTable = ({
                 defaultChecked={true}
               />
             </th>
+            {get(tracks[0], 'custom.score') && <th>score</th>}
             <th>title</th>
 
-            {stats.map((statKey) => (
+            {_stats.map((statKey) => (
               <th onClick={() => handleSort(statKey)}>
                 <span
                   className={
@@ -97,7 +101,10 @@ export const PlaylistTable = ({
             const { id, custom, name, uri, include } = track
             const rows = getRows(track)
             if (custom) {
-              rows['score'] = custom.score
+              // rows.score = custom.score
+              rows.count = custom.count
+              rows.rank = custom.rank.join(', ')
+              rows.user_ids = custom.user_ids.join(', ')
             }
             const { checked, isLocalFile } = isChecked(uri, include)
             return (
@@ -113,6 +120,7 @@ export const PlaylistTable = ({
                     disabled={isLocalFile}
                   />
                 </td>
+                {rows.score && stats.includes('score') && <td>{rows.score}</td>}
                 <td
                   className={`playlist__song ${
                     currentTrackId === id ? 'green' : ''
@@ -121,10 +129,10 @@ export const PlaylistTable = ({
                     uris && play({ uris: uris, offset: { position: i } })
                   }
                 >
-                  {`${name} ${rows.score ? ` (${rows.score})` : ''}`}
+                  {name}
                 </td>
 
-                {stats.map((statKey) => (
+                {_stats.map((statKey) => (
                   <td>{formatFeatures(statKey, rows)}</td>
                 ))}
               </tr>

@@ -20,8 +20,11 @@ export const usePollCurrentSong = (initialSong = null) => {
   const { currentSong } = useAudioControls(initialSong)
   const currentTrackId = get(currentSong, 'item.id')
   const [song, setSong] = useState(currentSong)
+
   useEffect(() => {
-    if (currentTrackId) setSong(currentSong)
+    if (currentTrackId) {
+      setSong(currentSong)
+    }
   }, [currentSong, currentTrackId])
 
   return song
