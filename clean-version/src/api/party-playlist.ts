@@ -64,6 +64,13 @@ export const createPartyPlaylist = async (
   return data
 }
 
+export const getPartyPlaylist = async function name(playlistId: string) {
+  try {
+    let data = await serverFetch(`playlists/${playlistId}`)
+    return data
+  } catch (error) {}
+}
+
 export const getUserTopTracks = async (user_id: string) => {
   try {
     let data = await serverFetch(

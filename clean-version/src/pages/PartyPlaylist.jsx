@@ -1,4 +1,5 @@
 import React, { memo, useContext, useState, useEffect } from 'react'
+import { useSetState } from 'react-use'
 import Slide from 'react-reveal/Slide'
 import makeCarousel from 'react-reveal/makeCarousel'
 import truncate from 'lodash.truncate'
@@ -13,19 +14,11 @@ import {
   CurrentPlaylist,
   UserPlaylistsSelect,
 } from '../components/AnalysisPlaylists'
-import {
-  getAllPlaylistsTracks,
-  getMePlaylists,
-  getHeapsAudioFeatures,
-  play,
-  createUserPlaylistWithTracks,
-  getHeapsTracks,
-} from 'api/spotify'
+import {} from 'api/spotify'
 import { GlobalContext } from 'globalContext'
-import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { combineArtists } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
-import { getUserPartyPlaylists } from 'api/party-playlist'
+import { getUserPartyPlaylists, getPartyPlaylist } from 'api/party-playlist'
 import { stats as _stats } from '../components/stats/Stats'
 import {
   useTopTracks,
@@ -103,41 +96,24 @@ const PartyPlaylist = React.memo(() => {
     )
   }
 
-  return (
-    <>
-      <Dev data={topTracks} />
-    </>
-  )
-
-  // return (
-  //   <>
-  //
-
-  //     <div className="analysis-playlists">
-  //       <UserPlaylistsSelect
-  //         label={'select your party playlist'}
-  //         onChange={handleChangePlaylist}
-  //         playlists={playlistList}
-  //         currentPlaylistId={playlistId}
-  //       />
-  //     </div>
-  //     <div className="analysis-playlists">
-  //       <BlackStatList hide={isHidden} />
-  //       <button onClick={toggleHidden}>table settings (audio features)</button>
-  //     </div>
-  //     <div className="analysis-playlists">
-  //       <PlaylistTable
-  //         tracks={[]}
-  //         // currentTrackId={currentTrackId}
-  //         uris={uris}
-  //         stats={stats}
-  //         onAllCheck={() => void {}}
-  //         onCheckTrack={() => void {}}
-  //         currentSortValue={''}
-  //       />
-  //     </div>
-  //   </>
-  // )
+  return <PartyPlaylistGroup playlistId={playlistId} topTracks={topTracks} />
 })
+
+const PartyPlaylistGroup = ({ topTracks, playlistId }) => {
+  const [data, setData] = useSetState({ playlistTracks: [], loading: false })
+
+  useEffect(() => {
+    setData({ loading: true })
+    getPartyPlaylist(playlistId)
+      .then((d) => setData({ playlistTracks: d }))
+      .finally(setData({ loading: false }))
+  }, [playlistId])
+
+  return (
+    <div className="analysis-playlists">
+      <Dev data={data} />
+    </div>
+  )
+}
 
 export default PartyPlaylist
