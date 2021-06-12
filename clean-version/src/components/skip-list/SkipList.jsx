@@ -40,7 +40,7 @@ const Tabs = ({
     },
   ],
 }) => {
-  const withLocal = () => {
+  const useWithLocal = () => {
     const [openTab, setOpenTab] = useState(
       localStorage.getItem('OPEN_TAB') || tabList[0].id
     )
@@ -55,7 +55,7 @@ const Tabs = ({
     return [openTab, setOpenTab]
   }
 
-  const [openTab, setOpenTab] = withLocal()
+  const [openTab, setOpenTab] = useWithLocal()
   let hideToggle = false
   const CurrentTab = (() => {
     try {
@@ -249,7 +249,7 @@ const SkipList = memo(
   }
 )
 
-const withData = () => {
+const SkipListData = () => {
   const {
     genres,
     artists,
@@ -282,4 +282,4 @@ const withData = () => {
   ) : null
 }
 
-export default memo(withData)
+export default memo(SkipListData)

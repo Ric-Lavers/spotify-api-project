@@ -40,32 +40,33 @@ const Pagination = ({
 const PaginationContainer = ({ total, limit, offset, onPageChange }) => {
   const [pages, setPages] = useState([])
   let numOfPages = (total / limit) | 0
-  if (!numOfPages) {
-    return null
-  }
 
   useEffect(() => {
-    const pages = []
-    for (let i = 0; (i < total / limit) | 0; i++) {
-      let isSelected = i === (offset / limit) % 10
+    if (numOfPages) {
+      const pages = []
+      for (let i = 0; (i < total / limit) | 0; i++) {
+        let isSelected = i === (offset / limit) % 10
 
-      pages.push(
-        <Circle
-          onClick={() => onPageChange(offset + i * limit)}
-          offset={isSelected && offset / limit + 1}
-          style={isSelected ? {} : { opacity: 0.2 }}
-        />
-      )
-      if (i === 9) break
+        pages.push(
+          <Circle
+            onClick={() => onPageChange(offset + i * limit)}
+            offset={isSelected && offset / limit + 1}
+            style={isSelected ? {} : { opacity: 0.2 }}
+          />
+        )
+        if (i === 9) break
+      }
+      setPages(pages)
     }
-    setPages(pages)
   }, [limit, offset, onPageChange, total])
 
   const handlePageChange = (direction) => {
     let nextOffset = (offset + direction * limit) % total
     onPageChange(nextOffset >= limit ? nextOffset : 0)
   }
-
+  if (!numOfPages) {
+    return null
+  }
   return (
     <Pagination
       onPageChange={onPageChange}

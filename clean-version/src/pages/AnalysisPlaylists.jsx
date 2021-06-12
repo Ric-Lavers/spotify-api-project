@@ -1,4 +1,4 @@
-import React, { memo, useContext, useState, useEffect } from 'react'
+import React, { useCallback, useContext, useState, useEffect } from 'react'
 import get from 'lodash.get'
 import { useParams } from 'react-router-dom'
 

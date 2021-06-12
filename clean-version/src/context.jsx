@@ -1,12 +1,12 @@
 import React, { createContext } from 'react'
 import { currentPlaying } from './api/spotify'
 import CurrentPlayingInital from './mocks/currentlyPlaying_empty.json'
-import { pollCurrentSong } from './hooks/pollCurrentSong'
+import { usePollCurrentSong } from './hooks/pollCurrentSong'
 
 export const CurrentPlayingContext = createContext(CurrentPlayingInital)
 
 const CurrentlyPlaying = ({ children }) => {
-  const currentSong = pollCurrentSong(CurrentPlayingInital)
+  const currentSong = usePollCurrentSong(CurrentPlayingInital)
 
   return (
     <CurrentPlayingContext.Provider value={currentSong}>

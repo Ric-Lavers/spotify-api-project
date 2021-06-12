@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import { controls, currentPlaying, seek } from '../api/spotify'
 import { combineArtists } from '../helpers'

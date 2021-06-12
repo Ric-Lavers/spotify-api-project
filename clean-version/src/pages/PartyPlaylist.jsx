@@ -1,5 +1,4 @@
 import React, { memo, useContext, useState, useEffect } from 'react'
-import { useSetState } from 'react-use'
 import Slide from 'react-reveal/Slide'
 import makeCarousel from 'react-reveal/makeCarousel'
 import truncate from 'lodash.truncate'
@@ -100,13 +99,13 @@ const PartyPlaylist = React.memo(() => {
 })
 
 const PartyPlaylistGroup = ({ topTracks, playlistId }) => {
-  const [data, setData] = useSetState({ playlistTracks: [], loading: false })
+  const [data, setData] = useState({ playlistTracks: [], loading: false })
 
   useEffect(() => {
     setData({ loading: true })
     getPartyPlaylist(playlistId)
-      .then((d) => setData({ playlistTracks: d }))
-      .finally(setData({ loading: false }))
+      .then((d) => setData((s) => ({ ...s, playlistTracks: d })))
+      .finally(setData((s) => ({ ...s, loading: false })))
   }, [playlistId, setData])
 
   return (

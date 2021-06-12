@@ -21,7 +21,6 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.0",
     "react-switch": "^4.0.1",
-    "react-use": "^17.2.4",
     "typescript": "^3.3.3"
   },
   "scripts": {

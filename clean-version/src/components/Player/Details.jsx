@@ -14,9 +14,6 @@ import SfChecked from '../common/SfCheck'
 
 const DetailsData = () => {
   const song = useContext(CurrentPlayingContext)
-  if (!song || !song.item) {
-    return null
-  }
 
   const {
     item: {
@@ -48,6 +45,10 @@ const DetailsData = () => {
   useEffect(() => {
     id && handleGetAlbumById(id)
   }, [handleGetAlbumById, id])
+
+  if (!song || !song.item) {
+    return null
+  }
 
   return (
     <Details

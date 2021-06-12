@@ -37,10 +37,11 @@ function millisToMinutesAndSeconds(millis) {
 }
 const keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
-const StatsContainer = ({ song }) => {
+const StatsContainer = ({ song: _song }) => {
   const [audio_features, setFeatures] = useState(null)
-  if (!song) {
-    song = useContext(CurrentPlayingContext)
+  let song = useContext(CurrentPlayingContext)
+  if (_song) {
+    song = _song
   }
 
   const setAudioFeatures = async (trackId) => {

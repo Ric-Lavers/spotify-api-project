@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react"
-import { CurrentPlayingContext } from "../../context"
-import { seek } from "../../api/spotify"
+import React, { useState, useEffect, useContext, useCallback } from 'react'
+import { CurrentPlayingContext } from '../../context'
+import { seek } from '../../api/spotify'
 
 const ProgressContainer = () => {
   const song = useContext(CurrentPlayingContext)
@@ -16,7 +16,7 @@ const ProgressContainer = () => {
 }
 
 const Progress = React.memo(({ progress_ms, duration_ms }) => {
-  const findRange = useCallback(currentSong => {
+  const findRange = useCallback((currentSong) => {
     return Math.floor((progress_ms / duration_ms) * 100)
   })
 
@@ -28,7 +28,7 @@ const Progress = React.memo(({ progress_ms, duration_ms }) => {
 
   const handleSeek = ({ target: { value } }) => {
     seek({
-      position_ms: Math.floor(value * 0.01 * duration_ms)
+      position_ms: Math.floor(value * 0.01 * duration_ms),
     })
   }
 

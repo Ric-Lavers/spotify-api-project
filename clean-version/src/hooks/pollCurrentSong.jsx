@@ -16,7 +16,7 @@ export const pulseIds = (
   })
 }
 
-export const pollCurrentSong = (initialSong = null) => {
+export const usePollCurrentSong = (initialSong = null) => {
   const { currentSong } = useAudioControls(initialSong)
   const currentTrackId = get(currentSong, 'item.id')
   const [song, setSong] = useState(currentSong)
@@ -28,6 +28,6 @@ export const pollCurrentSong = (initialSong = null) => {
 }
 
 export const withCurrentSong = (Component) => () => {
-  const currentSong = pollCurrentSong()
+  const currentSong = usePollCurrentSong()
   return <Component currentSong={currentSong} />
 }
