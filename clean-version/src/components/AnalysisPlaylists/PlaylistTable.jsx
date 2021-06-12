@@ -31,7 +31,6 @@ export const PlaylistTable = ({
 
   const averages = React.useMemo(() => {
     if (loading) return []
-    console.log('here', { loading, tracks, stats })
     return getAverages(tracks, stats)
   }, [tracks, stats])
 

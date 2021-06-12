@@ -13,7 +13,7 @@ import {
   CurrentPlaylist,
   UserPlaylistsSelect,
 } from '../components/AnalysisPlaylists'
-import {} from 'api/spotify'
+import { createUserPlaylistWithTracks } from 'api/spotify'
 import { GlobalContext } from 'globalContext'
 import { combineArtists } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
@@ -110,7 +110,6 @@ const PartyPlaylist = React.memo(
 
 const PartyPlaylistGroup = memo(
   ({ playlistId, currentPlayingId, spotify_user_id, topTrackIds }) => {
-    console.log({ topTrackIds })
     const [{ playlist, loading }, setData] = useState({
       playlist: [],
       loading: true,
@@ -127,11 +126,37 @@ const PartyPlaylistGroup = memo(
       await addTopTracksToPlaylist(spotify_user_id, playlistId, topTrackIds)
     }
 
-    console.log({ currentPlayingId, playlist })
+    const handleCreatePlaylist = async () => {
+      const includedUris = playlist.tracks
+        .filter((t) => t.include && !t.is_local)
+        .map((t) => t.uri)
+
+      if (!includedUris.length) return
+      const data = await createUserPlaylistWithTracks(
+        spotify_user_id,
+        {
+          name: playlist.title,
+          description: playlist.description,
+          isPublic: false,
+          collaborative: true,
+        },
+        includedUris
+      )
+
+      return data
+    }
 
     return (
       <div className="analysis-playlists">
-        <button onClick={handleAddToPartyPlaylist}> add ya tracks</button>
+        <p>
+          <button onClick={handleAddToPartyPlaylist}> add ya tracks</button>
+        </p>
+        <p>
+          <button onClick={handleCreatePlaylist}>
+            {' '}
+            save dis to ya spotify
+          </button>
+        </p>
         <PlaylistTable
           loading={loading}
           tracks={playlist.tracks}

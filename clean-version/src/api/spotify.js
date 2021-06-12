@@ -360,6 +360,7 @@ export const createUserPlaylist = async (
         collaborative,
       }),
     })
+    console.log(res)
     isOk(res)
     const data = await res.json()
 
