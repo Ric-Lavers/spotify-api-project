@@ -3,7 +3,7 @@ import get from 'lodash.get'
 import { useParams } from 'react-router-dom'
 
 import Range from 'components/common/RangeSlider'
-import { useToggle, withCurrentSong } from 'hooks'
+import { useToggle, withCurrentSong, usePollCurrentSong } from 'hooks'
 import {
   PlaylistTable,
   SavePlaylist,
@@ -60,14 +60,22 @@ const useSongsWithAudioFeatures = (playlistId) => {
   const didMergeTrack = React.useRef(false)
   const [minMax, setMinMax] = useState([0, 0])
 
-  const getTrackByPlaylist = async () => {
-    setLoading(true)
-    setSongWithFeatures(await getSongsWithAudioFeatures(playlistId))
-    setLoading(false)
-  }
-  useEffect(async () => {
+  useEffect(() => {
+    const getTrackByPlaylist = async () => {
+      setLoading(true)
+      setSongWithFeatures(await getSongsWithAudioFeatures(playlistId))
+      setLoading(false)
+    }
     getTrackByPlaylist()
-  }, [getTrackByPlaylist])
+  }, [])
+
+  useEffect(() => {
+    if (songWithFeatures.length) {
+      const [tableKey, direction] = currentSort.split(' - ')
+      sortTracks(tableKey, direction)
+      didMergeTrack.current = false
+    }
+  }, [currentSort, songWithFeatures.length])
 
   const mergeMoreTracks = (tracksWithAudioFeatures) => {
     const trackIds = new Set()
@@ -79,13 +87,6 @@ const useSongsWithAudioFeatures = (playlistId) => {
     )
     didMergeTrack.current = true
   }
-  useEffect(() => {
-    if (songWithFeatures.length) {
-      const [tableKey, direction] = currentSort.split(' - ')
-      sortTracks(tableKey, direction)
-      didMergeTrack.current = false
-    }
-  }, [currentSort, songWithFeatures.length, sortTracks])
 
   const sortTracks = useCallback((tableKey, direction = 'ASC') => {
     const newSort = `${tableKey} - ${direction}`
@@ -127,7 +128,7 @@ const useSongsWithAudioFeatures = (playlistId) => {
       setMinMax([min, max])
       setSongWithFeatures([...sorted])
     }
-  })
+  }, [])
 
   const uris = songWithFeatures.map(({ uri }) => uri)
   const includedUris = songWithFeatures
@@ -253,6 +254,7 @@ const preferedStatKeys = JSON.parse(
   localStorage.getItem('preferedStatKeys') ||
     '["popularity", "danceability", "tempo"]'
 )
+
 const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
   const [
     {
@@ -278,6 +280,9 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
       minMax: [min, max],
     },
   ] = useSongsWithAudioFeatures(playlistId)
+  return (
+    <div>test</div>
+  ) /*
 
   const [stats, TableSettings] = useStatKeys(preferedStatKeys)
 
@@ -401,7 +406,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
         onCheckTrack={checkById}
       />
     </>
-  )
+  ) */
 })
 
 export default withCurrentSong(AnalysisPlaylistsPage)

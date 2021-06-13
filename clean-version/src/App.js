@@ -96,11 +96,9 @@ const Layout = ({ children }) => {
           <></>
         ) : (
           <>
-            <p>this site does not have a db, so can't record your data.</p>
             <p>
-              please login and allow all the spotify permissions...
-              <br />
-              yehhh all of them, but you know no data base.
+              hey, so to make this work you need to login into spotify and allow
+              all permissions :)
             </p>
           </>
         )}
