@@ -44,7 +44,7 @@ const DetailsData = () => {
 
   useEffect(() => {
     id && handleGetAlbumById(id)
-  }, [handleGetAlbumById, id])
+  }, [id])
 
   if (!song || !song.item) {
     return null

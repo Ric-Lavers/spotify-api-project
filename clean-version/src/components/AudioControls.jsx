@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 
 import { controls, currentPlaying, seek } from '../api/spotify'
 import { combineArtists } from '../helpers'
-import { pulseIds } from 'hooks/pollCurrentSong'
+import { pulseIds } from '../hooks/pollCurrentSong'
 
 export const useAudioControls = (initialSong = null) => {
   let [audioIs, setAudio] = useState('')

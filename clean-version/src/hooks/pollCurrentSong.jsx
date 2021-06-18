@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import get from 'lodash.get'
 
+import { currentPlaying } from '../api/spotify'
 import { useAudioControls } from 'components/AudioControls'
+import CurrentPlayingInital from '../mocks/currentlyPlaying_empty.json'
 
 export const pulseIds = (
   elementList = [
@@ -16,18 +18,25 @@ export const pulseIds = (
   })
 }
 
-export const usePollCurrentSong = (initialSong = null) => {
-  const { currentSong } = useAudioControls(initialSong)
-  const currentTrackId = get(currentSong, 'item.id')
-  const [song, setSong] = useState(currentSong)
-
+export const usePollCurrentSong = (initialSong = CurrentPlayingInital) => {
+  let [currentSong, setSong] = useState(initialSong)
+  let [isFetching, setFetching] = useState(false)
+  const setCurrentPlaying = async () => {
+    if (isFetching) return
+    setFetching(true)
+    try {
+      let playingNow = await currentPlaying()
+      setSong(playingNow)
+      setFetching(false)
+    } catch (error) {}
+    setFetching(false)
+  }
   useEffect(() => {
-    if (currentTrackId) {
-      setSong(currentSong)
-    }
-  }, [currentSong, currentTrackId])
+    setInterval(setCurrentPlaying, 3000)
+    return clearInterval(setCurrentPlaying)
+  }, [])
 
-  return song
+  return currentSong || initialSong
 }
 
 export const withCurrentSong = (Component) => () => {

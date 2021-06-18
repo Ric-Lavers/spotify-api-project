@@ -7,7 +7,7 @@ stroke='#FFFFFF'
 	stroke-linecap='round'
 >
 	<defs>
-		<style>.a,.b{fill:none;stroke-linecap:round;}.a,.b,.c{stroke:#000;stroke-miterlimit:10;}.a{stroke-width:5.37px;}.b{stroke-width:5.34px;}</style>
+		<style>.a,.b{fill:none;stroke-linecap:round;}.a,.b,.c{stroke:#FFF;stroke-miterlimit:10;}.a{stroke-width:5.37px;}.b{stroke-width:5.34px;}</style>
 	</defs>
 	<line class="a" x1="17.5" y1="89" x2="17.5" y2="11"/>
 	<line class="b" x1="39.5" y1="88.5" x2="39.5" y2="11.5"/>
