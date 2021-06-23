@@ -16,14 +16,15 @@ import SfChecked from '../common/SfCheck'
 const useJunoTrack = ({ trackName, artistName }) => {
   const [trackInfo, setTrackInfo] = useState(null)
 
-  const checkJunoForTrack = async () => {
-    const trackInfo = await getJunoTrackInfo({
-      track: trackName,
-      artist: artistName,
-    })
-    setTrackInfo(trackInfo)
-  }
   useEffect(() => {
+    const checkJunoForTrack = async () => {
+      const trackInfo = await getJunoTrackInfo({
+        track: trackName,
+        artist: artistName,
+      })
+      setTrackInfo(trackInfo)
+    }
+    setTrackInfo(null)
     if (trackName && artistName) checkJunoForTrack()
   }, [trackName, artistName])
 
