@@ -22,6 +22,7 @@ import { specialPlaylists, savedTracks } from 'constants/index'
 const favPlaylists = [...specialPlaylists, savedTracks]
 
 export const tableKeys = [
+  'download',
   'order',
   'artists',
   'albumName',
@@ -183,7 +184,9 @@ const useSongsWithAudioFeatures = (playlistId) => {
 }
 
 const useStatKeys = (whiteStatsList = []) => {
-  const [whiteList, setWhiteList] = useState(new Set(whiteStatsList))
+  const [whiteList, setWhiteList] = useState(
+    new Set(whiteStatsList.filter((s) => tableKeys.includes(s)))
+  )
 
   const TableSettings = ({ hide, children }) => {
     const handleCheck = ({ target: { checked, id } }) => {

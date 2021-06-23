@@ -78,17 +78,20 @@
   display: flex;
 }
 
-.audio-controls {
-  width: 100%;
-  .download-links {
-    display: flex;
-    justify-content: flex-end;
-    .download-logo {
-      img {
-        width: 2em;
-      }
+.download-links {
+  display: flex;
+  justify-content: flex-end;
+  .download-logo {
+    img {
+      width: 2em;
+    }
+    &.sm img {
+      width: 28px;
     }
   }
+}
+.audio-controls {
+  width: 100%;
   .label {
     margin-bottom: 8px;
   }

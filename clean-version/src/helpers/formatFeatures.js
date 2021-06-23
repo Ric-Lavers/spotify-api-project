@@ -4,6 +4,7 @@ import React from 'react'
 import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { millisToMinutesAndSeconds } from './millisToMinutesAndSeconds'
 import { combineArtists } from 'helpers'
+import { JunoLink } from '../hooks/useJunoTrack'
 
 const keys = [
   'C',
@@ -39,6 +40,18 @@ export function formatFeatures(key, audio_features, raw = false) {
       return millisToMinutesAndSeconds(audio_features[key])
     case 'popularity':
       return <PopularityMeter popularity={audio_features[key]} />
+
+    case 'download':
+      return (
+        <div className="download-links">
+          <JunoLink
+            size="sm"
+            loader={'🤞'}
+            trackName={audio_features.name}
+            artistName={audio_features.artists[0].name}
+          />
+        </div>
+      )
     default:
       return audio_features[key]
   }

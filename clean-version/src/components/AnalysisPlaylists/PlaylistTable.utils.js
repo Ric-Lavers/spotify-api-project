@@ -10,6 +10,7 @@ export const isChecked = (uri, include) => {
 }
 
 export const getRows = ({
+  name,
   album: { name: albumName },
   artists,
   audioFeatures,
@@ -17,13 +18,7 @@ export const getRows = ({
   order,
   custom,
 }) => {
-  const rows = {
-    artists,
-    albumName,
-    popularity,
-    order,
-    ...audioFeatures,
-  }
+  const rows = { name, artists, albumName, popularity, order, ...audioFeatures }
   if (custom) {
     rows['score'] = custom.score
   }

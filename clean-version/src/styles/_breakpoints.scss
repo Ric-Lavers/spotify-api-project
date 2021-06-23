@@ -55,10 +55,6 @@ $bp-xxl-min: 1410 !default;
 }
 
 @media (min-width: 0px) {
-  .xs {
-    border: 1px solid powderblue;
-  }
-
   .hide-xs {
     display: none;
   }
@@ -80,10 +76,6 @@ $bp-xxl-min: 1410 !default;
 }
 
 @media (min-width: 960px) {
-  .md {
-    border: 1px solid red;
-  }
-
   .hide-md {
     display: none;
   }
@@ -96,10 +88,6 @@ $bp-xxl-min: 1410 !default;
 }
 
 @media (min-width: 1280px) {
-  .lg {
-    border: 1px solid purple;
-  }
-
   .hide-lg {
     display: none;
   }
@@ -112,10 +100,6 @@ $bp-xxl-min: 1410 !default;
 }
 
 @media (min-width: 1920px) {
-  .xl {
-    border: 1px solid orchid;
-  }
-
   .hide-xl {
     display: none;
   }
@@ -143,10 +127,6 @@ $bp-xxl-min: 1410 !default;
 }
 
 @media (min-width: 600px) {
-  .sm {
-    border: 1px solid lime;
-  }
-
   .hide-sm {
     display: none;
   }
