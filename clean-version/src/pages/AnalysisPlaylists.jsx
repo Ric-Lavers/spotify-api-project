@@ -70,7 +70,7 @@ const useSongsWithAudioFeatures = (playlistId) => {
   }, [])
 
   useEffect(() => {
-    if (songWithFeatures.length) {
+    if (currentSort && songWithFeatures.length) {
       const [tableKey, direction] = currentSort.split(' - ')
       sortTracks(tableKey, direction)
       didMergeTrack.current = false
@@ -89,6 +89,9 @@ const useSongsWithAudioFeatures = (playlistId) => {
   }
 
   const sortTracks = useCallback((tableKey, direction = 'ASC') => {
+    if (!(tableKey && direction)) {
+      return
+    }
     const newSort = `${tableKey} - ${direction}`
     setCurrentSort(newSort)
 
@@ -160,7 +163,6 @@ const useSongsWithAudioFeatures = (playlistId) => {
       return [...prev]
     })
   }
-
   return [
     songWithFeatures,
     {
@@ -280,9 +282,6 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
       minMax: [min, max],
     },
   ] = useSongsWithAudioFeatures(playlistId)
-  return (
-    <div>test</div>
-  ) /*
 
   const [stats, TableSettings] = useStatKeys(preferedStatKeys)
 
@@ -406,7 +405,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
         onCheckTrack={checkById}
       />
     </>
-  ) */
+  )
 })
 
 export default withCurrentSong(AnalysisPlaylistsPage)

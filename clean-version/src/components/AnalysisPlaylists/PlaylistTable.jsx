@@ -48,9 +48,10 @@ export const PlaylistTable = ({
       </table>
     )
   }
-  const _stats = remove(stats, ['score'])
+  const _stats = stats.filter((s) => s !== 'score')
+
   return !tracks.length ? null : (
-    <>
+    <div className="table-container">
       <table className="playlist-table">
         <thead>
           <tr>
@@ -139,6 +140,6 @@ export const PlaylistTable = ({
           })}
         </tbody>
       </table>
-    </>
+    </div>
   )
 }

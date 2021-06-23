@@ -1,4 +1,11 @@
+.table-container {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
 .playlist-table {
+  display: block;
+  overflow-x: auto;
   thead {
     .table-average {
       text-align: center;
