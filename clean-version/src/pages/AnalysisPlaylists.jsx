@@ -34,7 +34,7 @@ const tableKeyToObjectKey = (tableKey, song) => {
   }
   if (tableKey === 'albumName') {
     return 'album.name'
-  } else if (song[0].audioFeatures.hasOwnProperty(tableKey)) {
+  } else if (get(song, '[0].audioFeatures', {}).hasOwnProperty(tableKey)) {
     return `audioFeatures.${tableKey}`
   }
   return tableKey
@@ -55,7 +55,7 @@ const getSongsWithAudioFeatures = async (playlistId) => {
 
 const useSongsWithAudioFeatures = (playlistId) => {
   const [loading, setLoading] = useState(false)
-  const [songWithFeatures, setSongWithFeatures] = useState([])
+  const [songsWithFeatures, setSongWithFeatures] = useState([])
   const [currentSort, setCurrentSort] = useState('')
   const didMergeTrack = React.useRef(false)
   const [minMax, setMinMax] = useState([0, 0])
@@ -70,12 +70,12 @@ const useSongsWithAudioFeatures = (playlistId) => {
   }, [])
 
   useEffect(() => {
-    if (currentSort && songWithFeatures.length) {
+    if (currentSort && songsWithFeatures.length) {
       const [tableKey, direction] = currentSort.split(' - ')
       sortTracks(tableKey, direction)
       didMergeTrack.current = false
     }
-  }, [currentSort, songWithFeatures.length])
+  }, [currentSort, songsWithFeatures.length])
 
   const mergeMoreTracks = (tracksWithAudioFeatures) => {
     const trackIds = new Set()
@@ -88,53 +88,55 @@ const useSongsWithAudioFeatures = (playlistId) => {
     didMergeTrack.current = true
   }
 
-  const sortTracks = useCallback((tableKey, direction = 'ASC') => {
-    if (!(tableKey && direction)) {
-      return
-    }
-    const newSort = `${tableKey} - ${direction}`
-    setCurrentSort(newSort)
+  const sortTracks = useCallback(
+    (tableKey, direction = 'ASC') => {
+      if (!(tableKey && direction)) {
+        return
+      }
+      const newSort = `${tableKey} - ${direction}`
+      setCurrentSort(newSort)
+      const key = tableKeyToObjectKey(tableKey, songsWithFeatures)
 
-    const key = tableKeyToObjectKey(tableKey, songWithFeatures)
+      const keyType = typeof get(songsWithFeatures[0], key)
+      if (get(songsWithFeatures[0], key) === undefined) return
 
-    const keyType = typeof get(songWithFeatures[0], key)
-    if (get(songWithFeatures[0], key) === undefined) return
-
-    if (keyType === 'string') {
-      const sorted =
-        direction === 'ASC'
-          ? songWithFeatures.sort((a, b) =>
-              get(a, key).localeCompare(get(b, key))
-            )
-          : songWithFeatures
-              .sort((a, b) =>
-                get(a, key)
-                  .toUpperCase()
-                  .localeCompare(get(b, key).toUpperCase())
+      if (keyType === 'string') {
+        const sorted =
+          direction === 'ASC'
+            ? songsWithFeatures.sort((a, b) =>
+                get(a, key).localeCompare(get(b, key))
               )
-              .reverse()
-      setMinMax([0, 0])
-      setSongWithFeatures([...sorted])
-    }
+            : songsWithFeatures
+                .sort((a, b) =>
+                  get(a, key)
+                    .toUpperCase()
+                    .localeCompare(get(b, key).toUpperCase())
+                )
+                .reverse()
+        setMinMax([0, 0])
+        setSongWithFeatures([...sorted])
+      }
 
-    if (keyType === 'number') {
-      const values = []
-      const sorted = songWithFeatures.sort((a, b) => {
-        values.push(get(b, key))
-        return direction === 'ASC'
-          ? get(a, key) - get(b, key)
-          : get(b, key) - get(a, key)
-      })
-      const min = Math.min(...values)
-      const max = Math.max(...values)
+      if (keyType === 'number') {
+        const values = []
+        const sorted = songsWithFeatures.sort((a, b) => {
+          values.push(get(b, key))
+          return direction === 'ASC'
+            ? get(a, key) - get(b, key)
+            : get(b, key) - get(a, key)
+        })
+        const min = Math.min(...values)
+        const max = Math.max(...values)
 
-      setMinMax([min, max])
-      setSongWithFeatures([...sorted])
-    }
-  }, [])
+        setMinMax([min, max])
+        setSongWithFeatures([...sorted])
+      }
+    },
+    [songsWithFeatures]
+  )
 
-  const uris = songWithFeatures.map(({ uri }) => uri)
-  const includedUris = songWithFeatures
+  const uris = songsWithFeatures.map(({ uri }) => uri)
+  const includedUris = songsWithFeatures
     .filter(({ include }) => include)
     .map(({ uri }) => uri)
     .filter((uri) => !uri.match('spotify:local'))
@@ -154,7 +156,7 @@ const useSongsWithAudioFeatures = (playlistId) => {
 
   const checkByRange = ([min, max]) => {
     const [tableKey] = currentSort.split(' -')
-    const key = tableKeyToObjectKey(tableKey, songWithFeatures)
+    const key = tableKeyToObjectKey(tableKey, songsWithFeatures)
     setSongWithFeatures((prev) => {
       prev.map((track) => {
         const field = get(track, key)
@@ -164,7 +166,7 @@ const useSongsWithAudioFeatures = (playlistId) => {
     })
   }
   return [
-    songWithFeatures,
+    songsWithFeatures,
     {
       mergeMoreTracks,
       sortTracks,

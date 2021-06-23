@@ -7,29 +7,11 @@ import {
   saveTracks,
   removeTracks,
   getSavedState,
-  controls,
 } from '../../api/spotify'
-import { getJunoTrackInfo } from '../../api/juno'
+import { useJunoTrack } from '../../hooks/useJunoTrack'
 import JunoLogo from '../../images/juno_download.png'
 
 import SfChecked from '../common/SfCheck'
-const useJunoTrack = ({ trackName, artistName }) => {
-  const [trackInfo, setTrackInfo] = useState(null)
-
-  useEffect(() => {
-    const checkJunoForTrack = async () => {
-      const trackInfo = await getJunoTrackInfo({
-        track: trackName,
-        artist: artistName,
-      })
-      setTrackInfo(trackInfo)
-    }
-    setTrackInfo(null)
-    if (trackName && artistName) checkJunoForTrack()
-  }, [trackName, artistName])
-
-  return trackInfo
-}
 
 const DetailsData = () => {
   const song = useContext(CurrentPlayingContext)

@@ -333,7 +333,9 @@ export const getAllPlaylistsTracks = async (
     if (isTopTrack) {
       return {
         ...data,
-        items: data.items.map((track) => ({ track })),
+        items: data.items.map((track, i) => ({
+          track: { ...track, order: i + 1 },
+        })),
       }
     }
     data.items.forEach(({ track }, i) => {
