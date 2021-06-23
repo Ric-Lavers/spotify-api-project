@@ -29,7 +29,7 @@ export const serverFetch = (href, options) => {
 }
 
 export const junoFetch = (href, options) => {
-  return fetch('http://localhost:4000/api/juno/' + href, {
+  return fetch(baseServerUrl + 'juno/' + href, {
     ...options,
   })
 }
