@@ -1,7 +1,7 @@
 @mixin audio-buttons {
   display: flex;
   justify-content: space-between;
-  margin: $md;
+  margin: $md 0;
 
   .icon {
     cursor: pointer;
@@ -25,9 +25,7 @@
     height: 0;
     border: $md solid $spotify-white;
   }
-
 }
-
 
 @mixin seek {
   .seek {
@@ -49,8 +47,6 @@
   border-radius: $md $md 0 0;
 }
 
-;
-
 .player {
   border: 1px solid aliceblue;
   @include container;
@@ -60,11 +56,9 @@
   justify-content: flex-start;
   position: relative;
   @import 'search-bar';
-
 }
 
 .icon-button {
-
   @include font-xs;
 
   & {
@@ -84,9 +78,18 @@
   display: flex;
 }
 
-
 .audio-controls {
   width: 100%;
+  .download-logo {
+    display: flex;
+    justify-content: flex-end;
+    img {
+      width: 2em;
+    }
+  }
+  .label {
+    margin-bottom: 8px;
+  }
 
   .audio-buttons {
     @include audio-buttons;

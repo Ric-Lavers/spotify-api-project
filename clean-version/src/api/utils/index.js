@@ -29,10 +29,7 @@ export const serverFetch = (href, options) => {
 }
 
 export const junoFetch = (href, options) => {
-  return fetch('https://www.junodownload.com/' + href, {
+  return fetch('http://localhost:4000/api/juno/' + href, {
     ...options,
-  }).then((res) => {
-    isOk(res)
-    return res.json()
   })
 }

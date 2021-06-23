@@ -8,9 +8,27 @@ import {
   removeTracks,
   getSavedState,
   controls,
-} from '../../api/spotify.js'
+} from '../../api/spotify'
+import { getJunoTrackInfo } from '../../api/juno'
+import JunoLogo from '../../images/juno_download.png'
 
 import SfChecked from '../common/SfCheck'
+const useJunoTrack = ({ trackName, artistName }) => {
+  const [trackInfo, setTrackInfo] = useState(null)
+
+  const checkJunoForTrack = async () => {
+    const trackInfo = await getJunoTrackInfo({
+      track: trackName,
+      artist: artistName,
+    })
+    setTrackInfo(trackInfo)
+  }
+  useEffect(() => {
+    if (trackName && artistName) checkJunoForTrack()
+  }, [trackName, artistName])
+
+  return trackInfo
+}
 
 const DetailsData = () => {
   const song = useContext(CurrentPlayingContext)
@@ -25,6 +43,11 @@ const DetailsData = () => {
       album: { id },
     },
   } = song
+
+  const junoTrackInfo = useJunoTrack({
+    trackName: song.item.name,
+    artistName: song.item.artists[0].name,
+  })
 
   const [extraAlbumData, setData] = useState({})
 
@@ -59,80 +82,82 @@ const DetailsData = () => {
       uri={uri}
       id={trackId}
       setSaved={setSaved}
+      junoTrackInfo={junoTrackInfo}
     />
   )
 }
 
-const Details = React.memo(
-  ({ uri, name, artists, album, id, setSaved }) => {
-    const [state, dispatch] = useContext(GlobalContext)
-    if (
-      album.images.length &&
-      state.currentPlaying.image.src !== album.images[0].url
-    ) {
-      dispatch({
-        type: 'currentPlaying/image',
-        payload: {
-          src: album.images[0].url,
-          alt: 'currently playing',
-        },
-      })
-      dispatch({
-        type: 'currentPlaying/details',
-        payload: { uri, name, artists, album, id },
-      })
-    }
-
-    return (
-      <>
-        <h3>
-          <span onClick={() => alert(uri)}>
-            {' '}
-            {name} - {album.name}{' '}
-          </span>
-          <SfChecked
-            checked={album.saved}
-            onClick={() => {
-              let success = album.saved ? removeTracks(id) : saveTracks(id)
-              success.then((b) => b && setSaved(!album.saved))
-            }}
-          />
-        </h3>
-        <h4>
-          <i>{SpotifyHelpers.combineArtists(artists)}</i>
-          {` ( ${album.release_date} )`}
-        </h4>
-        <h4
-          className="pointer"
-          onClick={() =>
-            dispatch({
-              type: 'search/set',
-              payload: {
-                type: 'artist',
-                searchText: album.label.replace(' Recordings', ''),
-                searchLabel: true,
-              },
-            })
-          }
-        >
-          {album.label}
-        </h4>
-      </>
-    )
-  },
-  (prevProps, nextProps) => {
-    if (prevProps.album.label !== nextProps.album.label) {
-      return false
-    }
-    if (prevProps.album.saved !== nextProps.album.saved) {
-      return false
-    }
-    if (prevProps.name === nextProps.name) {
-      return true
-    }
-
-    return false
+const Details = ({
+  uri,
+  name,
+  artists,
+  album,
+  id,
+  setSaved,
+  junoTrackInfo,
+}) => {
+  const [state, dispatch] = useContext(GlobalContext)
+  if (
+    album.images.length &&
+    state.currentPlaying.image.src !== album.images[0].url
+  ) {
+    dispatch({
+      type: 'currentPlaying/image',
+      payload: {
+        src: album.images[0].url,
+        alt: 'currently playing',
+      },
+    })
+    dispatch({
+      type: 'currentPlaying/details',
+      payload: { uri, name, artists, album, id },
+    })
   }
-)
+  return (
+    <>
+      <h3>
+        <span onClick={() => alert(uri)}>
+          {name} - {album.name}
+        </span>
+        <SfChecked
+          checked={album.saved}
+          onClick={() => {
+            let success = album.saved ? removeTracks(id) : saveTracks(id)
+            success.then((b) => b && setSaved(!album.saved))
+          }}
+        />
+      </h3>
+      <h4>
+        <i>{SpotifyHelpers.combineArtists(artists)}</i>
+        {` ( ${album.release_date} )`}
+      </h4>
+
+      <h4
+        className="label pointer"
+        onClick={() =>
+          dispatch({
+            type: 'search/set',
+            payload: {
+              type: 'artist',
+              searchText: album.label.replace(' Recordings', ''),
+              searchLabel: true,
+            },
+          })
+        }
+      >
+        {album.label}
+      </h4>
+      {junoTrackInfo && junoTrackInfo.trackUrl && (
+        <a
+          className="download-logo"
+          target="_blank"
+          href={junoTrackInfo.trackUrl}
+        >
+          <img src={JunoLogo} alt="juno download" />
+        </a>
+      )}
+    </>
+  )
+}
 
 export default DetailsData

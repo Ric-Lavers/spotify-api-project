@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import get from 'lodash.get'
 import cheerio from 'cheerio'
 const cors = require('micro-cors')()
 const url = require('url')
@@ -10,16 +11,18 @@ module.exports = cors(async (req, res) => {
     )
 
     const $ = await cheerio.load(data)
-    const notFound = $('.mt-5 > h2')?.text() === 'Sorry!'
+    const notFound = $('.mt-5 > h2')
 
-    if (notFound) {
-      res.status(404).send({ message: 'Not Found' })
-      return
+    if (notFound.length && notFound.text() === 'Sorry!') {
+      throw new Error('Not Found')
     }
-    const trackHref = $('.juno-title')?.[0]?.attribs?.href
-    if (!trackHref) {
+
+    const track = $('.juno-title')
+    if (!track.length) {
       throw new Error('Something went wrong')
     }
+    const trackHref = get(track[0], 'attribs.href') || track.attr('href')
+
     /** wishlist
      *
      * /products/acheless/4672772-02/?track_number=1
@@ -31,6 +34,6 @@ module.exports = cors(async (req, res) => {
 
     res.send(result)
   } catch (error) {
-    res.status(400).send(error)
+    res.status(400).send({ ...error, message: error.message })
   }
 })

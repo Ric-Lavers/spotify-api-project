@@ -3,9 +3,9 @@ import Fade from 'react-reveal/Fade'
 import Slide from 'react-reveal/Slide'
 import { CurrentPlayingContext } from '../../context'
 import { getOneAudioFeatures } from '../../api/spotify'
+import { getJunoTrackInfo } from '../../api/juno'
 import { Utils } from '../../helpers'
 import { GlobalContext } from 'globalContext'
-import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { formatFeatures } from 'helpers'
 
 const { ucfirst } = Utils
@@ -52,11 +52,12 @@ const StatsContainer = ({ song: _song }) => {
       setFeatures(null)
     }
   }
+
   useEffect(() => {
-    if (song.item.id.length) {
+    if (song.item.id) {
       setAudioFeatures(song.item.id)
     }
-  }, [setAudioFeatures, song.item.id])
+  }, [song.item.id])
 
   return audio_features ? (
     <Stats id={song.item.id} audio_features={audio_features} />
@@ -80,7 +81,7 @@ const Stats = memo(({ id, audio_features }) => {
                 let value = formatFeatures(key, audio_features)
 
                 return (
-                  <tr>
+                  <tr key={key}>
                     <td>{ucfirst(key.replace('_', ' ').replace(' ms', ''))}</td>
                     <td>{value}</td>
                   </tr>
