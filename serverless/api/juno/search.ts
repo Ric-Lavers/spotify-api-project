@@ -5,17 +5,21 @@ const url = require('url')
 
 module.exports = cors(async (req, res) => {
   try {
-    console.log(
-      `https://www.junodownload.com/search/?${url.parse(req.url).query}`
-    )
-
     const { data } = await Axios.get(
       `https://www.junodownload.com/search/?${url.parse(req.url).query}`
     )
 
     const $ = await cheerio.load(data)
-    const trackHref = $('.juno-title')?.[0].attribs.href
+    const notFound = $('.mt-5 > h2')?.text() === 'Sorry!'
 
+    if (notFound) {
+      res.status(404).send({ message: 'Not Found' })
+      return
+    }
+    const trackHref = $('.juno-title')?.[0]?.attribs?.href
+    if (!trackHref) {
+      throw new Error('Something went wrong')
+    }
     /** wishlist
      *
      * /products/acheless/4672772-02/?track_number=1
@@ -24,7 +28,6 @@ module.exports = cors(async (req, res) => {
     const result = {
       trackUrl: 'https://www.junodownload.com' + trackHref,
     }
-    console.log('result', result)
 
     res.send(result)
   } catch (error) {
