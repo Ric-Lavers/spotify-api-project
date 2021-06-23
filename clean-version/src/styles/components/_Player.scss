@@ -80,11 +80,13 @@
 
 .audio-controls {
   width: 100%;
-  .download-logo {
+  .download-links {
     display: flex;
     justify-content: flex-end;
-    img {
-      width: 2em;
+    .download-logo {
+      img {
+        width: 2em;
+      }
     }
   }
   .label {

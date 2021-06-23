@@ -8,8 +8,7 @@ import {
   removeTracks,
   getSavedState,
 } from '../../api/spotify'
-import { useJunoTrack } from '../../hooks/useJunoTrack'
-import JunoLogo from '../../images/juno_download.png'
+import { JunoLink } from '../../hooks/useJunoTrack'
 
 import SfChecked from '../common/SfCheck'
 
@@ -26,11 +25,6 @@ const DetailsData = () => {
       album: { id },
     },
   } = song
-
-  const junoTrackInfo = useJunoTrack({
-    trackName: song.item.name,
-    artistName: song.item.artists[0].name,
-  })
 
   const [extraAlbumData, setData] = useState({})
 
@@ -65,20 +59,11 @@ const DetailsData = () => {
       uri={uri}
       id={trackId}
       setSaved={setSaved}
-      junoTrackInfo={junoTrackInfo}
     />
   )
 }
 
-const Details = ({
-  uri,
-  name,
-  artists,
-  album,
-  id,
-  setSaved,
-  junoTrackInfo,
-}) => {
+const Details = ({ uri, name, artists, album, id, setSaved }) => {
   const [state, dispatch] = useContext(GlobalContext)
   if (
     album.images.length &&
@@ -130,15 +115,9 @@ const Details = ({
       >
         {album.label}
       </h4>
-      {junoTrackInfo && junoTrackInfo.trackUrl && (
-        <a
-          className="download-logo"
-          target="_blank"
-          href={junoTrackInfo.trackUrl}
-        >
-          <img src={JunoLogo} alt="juno download" />
-        </a>
-      )}
+      <div className="download-links">
+        <JunoLink trackName={name} artistName={artists[0].name} />
+      </div>
     </>
   )
 }
