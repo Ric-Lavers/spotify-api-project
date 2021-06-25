@@ -33,3 +33,9 @@ export const junoFetch = (href, options) => {
     ...options,
   })
 }
+
+export const beatportFetch = (href, options) => {
+  return fetch(baseServerUrl + 'beatport/' + href, {
+    ...options,
+  })
+}

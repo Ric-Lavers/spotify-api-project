@@ -5,6 +5,7 @@ import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { millisToMinutesAndSeconds } from './millisToMinutesAndSeconds'
 import { combineArtists } from 'helpers'
 import { JunoLink } from '../hooks/useJunoTrack'
+import { BeatportLink } from '../hooks/useBeatportTrack'
 
 const keys = [
   'C',
@@ -44,6 +45,12 @@ export function formatFeatures(key, audio_features, raw = false) {
     case 'download':
       return (
         <div className="download-links">
+          <BeatportLink
+            size="sm"
+            loader={'🤞'}
+            trackName={audio_features.name}
+            artistName={audio_features.artists[0].name}
+          />
           <JunoLink
             size="sm"
             loader={'🤞'}
