@@ -1,4 +1,5 @@
 const cors = require('micro-cors')()
+import get from 'lodash.get'
 import {
   addTracksToTopTablePlaylist,
   getTopTablePlaylistById,
@@ -11,19 +12,19 @@ module.exports = cors(async function (req, res) {
       res.send()
       return
     }
+
     if (!req.query.spotify_user_id) throw new Error('no spotify user id')
     const time_range = req.query.time_range ? `-${req.query.time_range}` : ''
+
     let currentPlaylist = await getTopTablePlaylistById(
       req.query['top-table-playlist-id']
     )
 
     if (
-      currentPlaylist?.tracks[0]?.user_id?.includes(
+      get(currentPlaylist, 'tracks[0].user_id', []).includes(
         `${req.query.spotify_user_id}${time_range}`
       )
     ) {
-      console.log('SKIp')
-
       res.status(200).json(currentPlaylist)
       return
     }
@@ -36,8 +37,6 @@ module.exports = cors(async function (req, res) {
 
     res.status(200).json(playlist)
   } catch (error) {
-    console.log('api/playlists/all.ts', error)
-
     res.status(400).send(error)
   }
 })
