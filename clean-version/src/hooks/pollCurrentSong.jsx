@@ -21,7 +21,7 @@ export const pulseIds = (
 export const usePollCurrentSong = (initialSong = CurrentPlayingInital) => {
   let [currentSong, setSong] = useState(initialSong)
   let [isFetching, setFetching] = useState(false)
-  const disablePoll = useState(
+  const [disablePoll] = useState(
     localStorage.getItem('disablePoll') === 'true' || false
   )
   const setCurrentPlaying = async () => {
