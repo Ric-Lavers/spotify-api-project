@@ -21,8 +21,11 @@ export const pulseIds = (
 export const usePollCurrentSong = (initialSong = CurrentPlayingInital) => {
   let [currentSong, setSong] = useState(initialSong)
   let [isFetching, setFetching] = useState(false)
+  const disablePoll = useState(
+    localStorage.getItem('disablePoll') === 'true' || false
+  )
   const setCurrentPlaying = async () => {
-    if (isFetching) return
+    if (isFetching || disablePoll) return
     setFetching(true)
     try {
       let playingNow = await currentPlaying()
@@ -32,7 +35,7 @@ export const usePollCurrentSong = (initialSong = CurrentPlayingInital) => {
     setFetching(false)
   }
   useEffect(() => {
-    setInterval(setCurrentPlaying, 3000)
+    setInterval(setCurrentPlaying, 5000)
     return clearInterval(setCurrentPlaying)
   }, [])
 

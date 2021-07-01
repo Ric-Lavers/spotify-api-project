@@ -1,21 +1,28 @@
 /* eslint-disable react/jsx-no-target-blank */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import useSWR from 'swr'
 import get from 'lodash.get'
 import { getBeatportTrackInfo } from '../api/beatport'
 import BeatportLogo from '../images/beatport-logo.png'
+import { FetchContext } from './useFetchCache'
 
 export const useBeatportTrack = ({ trackName, artistName }) => {
+  const remember = useContext(FetchContext)
   const [data, setTrackInfo] = useState(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const checkBeatportForTrack = async () => {
       setLoading(true)
-      const trackInfo = await getBeatportTrackInfo({
-        title: trackName,
-        artist: artistName,
-      })
+
+      const trackInfo = await remember(
+        `beatport${trackName}${artistName}`,
+        () =>
+          getBeatportTrackInfo({
+            title: trackName,
+            artist: artistName,
+          })
+      )
       setTrackInfo(trackInfo)
       setLoading(false)
     }

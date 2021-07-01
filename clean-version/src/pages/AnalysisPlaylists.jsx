@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import Range from 'components/common/RangeSlider'
 import { useToggle, withCurrentSong, usePollCurrentSong } from 'hooks'
+import { FetchProvider } from '../hooks/useFetchCache'
 import {
   PlaylistTable,
   SavePlaylist,
@@ -397,18 +398,19 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
           </button>
         </div>
       </div>
-
-      <PlaylistTable
-        loading={loading}
-        tracks={tracks}
-        onSort={handleSort}
-        currentSortValue={currentSortValue}
-        currentTrackId={currentTrackId}
-        uris={uris}
-        stats={stats}
-        onAllCheck={checkIncludeAll}
-        onCheckTrack={checkById}
-      />
+      <FetchProvider>
+        <PlaylistTable
+          loading={loading}
+          tracks={tracks}
+          onSort={handleSort}
+          currentSortValue={currentSortValue}
+          currentTrackId={currentTrackId}
+          uris={uris}
+          stats={stats}
+          onAllCheck={checkIncludeAll}
+          onCheckTrack={checkById}
+        />
+      </FetchProvider>
     </>
   )
 })

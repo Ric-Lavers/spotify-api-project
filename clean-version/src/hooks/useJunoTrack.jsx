@@ -1,20 +1,24 @@
 /* eslint-disable react/jsx-no-target-blank */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import get from 'lodash.get'
 import { getJunoTrackInfo } from '../api/juno'
 import JunoLogo from '../images/juno_download.png'
+import { FetchContext } from './useFetchCache'
 
 export const useJunoTrack = ({ trackName, artistName }) => {
+  const remember = useContext(FetchContext)
   const [trackInfo, setTrackInfo] = useState(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const checkJunoForTrack = async () => {
       setLoading(true)
-      const trackInfo = await getJunoTrackInfo({
-        track: trackName,
-        artist: artistName,
-      })
+      const trackInfo = await remember(`juno${trackName}${artistName}`, () =>
+        getJunoTrackInfo({
+          track: trackName,
+          artist: artistName,
+        })
+      )
       setTrackInfo(trackInfo)
       setLoading(false)
     }

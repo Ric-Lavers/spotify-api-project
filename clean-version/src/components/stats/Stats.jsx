@@ -1,9 +1,9 @@
 import React, { memo, useState, useContext, useEffect } from 'react'
 import Fade from 'react-reveal/Fade'
 import Slide from 'react-reveal/Slide'
+import get from 'lodash.get'
 import { CurrentPlayingContext } from '../../context'
 import { getOneAudioFeatures } from '../../api/spotify'
-import { getJunoTrackInfo } from '../../api/juno'
 import { Utils } from '../../helpers'
 import { GlobalContext } from 'globalContext'
 import { formatFeatures } from 'helpers'
@@ -54,10 +54,10 @@ const StatsContainer = ({ song: _song }) => {
   }
 
   useEffect(() => {
-    if (song.item.id) {
+    if (get(song, 'item.id')) {
       setAudioFeatures(song.item.id)
     }
-  }, [song.item.id])
+  }, [get(song, 'item.id')])
 
   return audio_features ? (
     <Stats id={song.item.id} audio_features={audio_features} />
