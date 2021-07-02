@@ -3,6 +3,7 @@ import get from 'lodash.get'
 import cheerio from 'cheerio'
 const cors = require('micro-cors')()
 const url = require('url')
+var { log } = console
 /**
  * searches for artist and title, looks through track table.
  *   if no match then looks through artists tracks for a match
@@ -72,9 +73,18 @@ const getTrackViaSearch = async (data, title, artistName) => {
   })
   const artistHref = $(artist).find('a').attr('href')
 
+  let price = $(`[data-track="${trackHref.match(/\d+/)[0]}"][data-price]`)
+  if (price) {
+    log(price.attr('data-price'))
+
+    price = price.attr('data-price')
+  }
+  // log(price)
+
   return {
     artistUrl: 'https://www.beatport.com' + artistHref,
     trackUrl: 'https://www.beatport.com' + trackHref,
+    price,
   }
 }
 

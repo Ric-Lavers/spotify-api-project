@@ -3,6 +3,7 @@ import get from 'lodash.get'
 import cheerio from 'cheerio'
 const cors = require('micro-cors')()
 const url = require('url')
+var { log } = console
 
 module.exports = cors(async (req, res) => {
   try {
@@ -22,6 +23,12 @@ module.exports = cors(async (req, res) => {
       throw new Error('Something went wrong')
     }
     const trackHref = get(track[0], 'attribs.href') || track.attr('href')
+
+    try {
+      // price not found as js n never in axios fetch - cherio doesn't do js
+      const price = $('.col.text-right.order-3 div.text-cta').first()
+      price && (() => log(price.text()))()
+    } catch (error) {}
 
     /** wishlist
      *
