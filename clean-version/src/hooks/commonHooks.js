@@ -1,34 +1,33 @@
 import { useState, useCallback } from 'react'
 
-export const useToggle = intialValue => {
-  const [ value, setValue ] = useState( intialValue )
+export const useToggle = (intialValue) => {
+  const [value, setValue] = useState(intialValue)
 
-  const toggler = useCallback( () => {
-    setValue(!value) 
+  const toggler = useCallback(() => {
+    setValue(!value)
   })
 
-  return [ value, toggler ]
+  return [value, toggler]
 }
 
 export const useHandleChange = (inialState) => {
-	const [ formState, setFormState ] = useState(inialState)
-	
-	const handleChange = ({ target }) => {
-		let { name, value, checked, type } = target
-		if (type === 'checkbox') value = checked
+  const [formState, setFormState] = useState(inialState)
 
-		setFormState({ ...formState, [name]: value }) 
-	}
+  const handleChange = ({ target }) => {
+    let { name, value, checked, type } = target
+    if (type === 'checkbox') value = checked
+    setFormState({ ...formState, [name]: value })
+  }
 
-	return [ formState, handleChange, setFormState ]
+  return [formState, handleChange, setFormState]
 }
 
-export function useFlash (className, timeout=1000) {
-  const [value, setClass] = useState("")
+export function useFlash(className, timeout = 1000) {
+  const [value, setClass] = useState('')
 
   const flashClassname = () => {
     setClass(className)
-    setTimeout(() => setClass(""), timeout)
+    setTimeout(() => setClass(''), timeout)
   }
   return [value, flashClassname]
 }

@@ -10,6 +10,7 @@ import {
 } from '../../api/spotify'
 import { JunoLink } from '../../hooks/useJunoTrack'
 import { BeatportLink } from '../../hooks/useBeatportTrack'
+import { DiscogsLink } from '../../hooks/useDiscogs'
 
 import SfChecked from '../common/SfCheck'
 
@@ -119,6 +120,7 @@ const Details = ({ uri, name, artists, album, id, setSaved }) => {
       <div className="download-links">
         <BeatportLink trackName={name} artistName={artists[0].name} />
         <JunoLink trackName={name} artistName={artists[0].name} />
+        <DiscogsLink title={name} artist={artists[0].name} />
       </div>
     </>
   )

@@ -39,3 +39,9 @@ export const beatportFetch = (href, options) => {
     ...options,
   })
 }
+
+export const discogsFetch = (href, options) => {
+  return fetch(baseServerUrl + 'discogs/' + href, {
+    ...options,
+  })
+}

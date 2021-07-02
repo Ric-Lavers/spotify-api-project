@@ -52,12 +52,14 @@ export const BeatportLink = ({
     return null
   }
 
+  const price = trackInfo.price
   return (
     <a
       className={`download-logo ${size}`}
       target="_blank"
       href={trackInfo.trackUrl}
     >
+      {price && <span className="price"> {price} </span>}
       <img src={BeatportLogo} alt="beatport download" />
     </a>
   )
