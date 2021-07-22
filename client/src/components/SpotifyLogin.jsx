@@ -96,7 +96,7 @@ class SpotifyLogin extends Component {
         return true
       } catch (error) {
         // timed out or bad token
-        // window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`;
+        window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
         this.setState({ tokenPresent: true, tokenValid: false })
         onLogIn(false)
       }
