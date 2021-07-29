@@ -1,27 +1,36 @@
 import React, { useContext } from 'react'
-import Slide from 'react-reveal/Slide'
 import Flip from 'react-reveal/Flip'
+import { transferDevice } from '../../api/spotify'
 import { GlobalContext } from '../../globalContext'
 
 export default function Devices() {
-	const { devices, visible } = useContext(GlobalContext)[0]
+  const [{ devices, visible }, , { fetchDevices }] = useContext(GlobalContext)
 
-	return (
-		<Flip /* big */bottom when={visible.devices}>
-		
-		<div className='player devices' style={visible.devices?{}:{display: 'none' } }>
-			<ul>
-				{devices.map( ({ id, is_active, type, name }) => (
-					<li
-						key={id}
-						className={`${is_active ? 'green' : ''}`}
-					>
-						{name} ({type})
-					</li>
-				))}
-			</ul>
-		</div>
-
+  const handleDeviceClick = async (id) => {
+    await transferDevice(id)
+    await fetchDevices()
+  }
+  return (
+    <Flip /* big */ bottom when={visible.devices}>
+      <div
+        className="player devices"
+        style={visible.devices ? {} : { display: 'none' }}
+      >
+        <ul>
+          {devices.map(({ id, is_active, type, name }) => (
+            <li
+              key={id}
+              className={`pointer ${is_active ? 'green' : ''}`}
+              onClick={(e) => {
+                e.preventDefault()
+                handleDeviceClick(id)
+              }}
+            >
+              {name} ({type})
+            </li>
+          ))}
+        </ul>
+      </div>
     </Flip>
-	)
+  )
 }

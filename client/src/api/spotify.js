@@ -578,6 +578,19 @@ export const getDevices = async () => {
     return []
   }
 }
+
+export const transferDevice = async (deviceId) => {
+  try {
+    await fetch(`${baseUrl}/me/player`, {
+      ...headers,
+      method: 'PUT',
+      body: JSON.stringify({
+        device_ids: [deviceId],
+      }),
+    })
+  } catch (error) {}
+}
+
 /**
  * gets the top tracks/ artists
  * *time_range*
