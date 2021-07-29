@@ -1,13 +1,13 @@
-import { connectToDatabase } from "../connectToDB"
-import { IUser } from "../db.types"
+import { connectToDatabase } from '../connectToDB'
+import { IUser } from '../db.types'
 
 export const getTopTableFromUser = async (
   User: IUser,
-  table_type: "artist" | "track",
-  time_range: "short_term" | "medium_term" | "long_term",
+  table_type: 'artist' | 'track',
+  time_range: 'short_term' | 'medium_term' | 'long_term'
 ) => {
   const { TopTable } = connectToDatabase()
-  const key = [table_type, time_range].join("_")
+  const key = [table_type, time_range].join('_')
   const id = User[key][0]
   if (!id) return null
 
@@ -33,13 +33,12 @@ export const getAllTopTablesFromUser = async (User: IUser) => {
  */
 export const saveTopTable = async (
   User: IUser,
-  table_type: "artist" | "track",
+  table_type: 'artist' | 'track',
   trackOrArtistIds: string[],
-  time_range: "short_term" | "medium_term" | "long_term",
+  time_range: 'short_term' | 'medium_term' | 'long_term'
 ) => {
   const { TopTable } = connectToDatabase()
-  const key = [table_type, time_range].join("_")
-  console.log("!!")
+  const key = [table_type, time_range].join('_')
 
   // create top table instance
   const newTopTable = new TopTable({
