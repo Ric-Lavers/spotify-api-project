@@ -26,7 +26,8 @@ module.exports = cors(async function (req, res) {
       let playlist = await updateTracksToTopTablePlaylist(
         req.query['top-table-playlist-id'],
         `${req.query.spotify_user_id}${time_range}`,
-        req.body.tracks
+        req.body.tracks,
+        req.body.user
       )
 
       res.status(200).json(playlist)

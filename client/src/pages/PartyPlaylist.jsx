@@ -42,6 +42,7 @@ const PartyPlaylist = React.memo(
   withCurrentSong(({ currentSong }) => {
     const [
       {
+        userData,
         userData: { id: userId },
       },
     ] = useContext(GlobalContext)
@@ -56,11 +57,11 @@ const PartyPlaylist = React.memo(
       isPublic,
     }) => {
       const data = await createTopTracksPlaylist(
-        userId,
+        userData,
         { title, description, isPublic, collaborative: true },
         getTopTrackIds(topTracks)
       )
-      if (data._id) {
+      if (data && data._id) {
         handleChangePlaylist(data._id)
       }
       return data
@@ -83,6 +84,7 @@ const PartyPlaylist = React.memo(
           playlistId={playlistId}
           currentPlayingId={currentSong ? currentSong.item.id : ''}
           spotify_user_id={userId}
+          user={userData}
           topTrackIds={getTopTrackIds(topTracks)}
         />
       )
@@ -117,7 +119,7 @@ const PartyPlaylist = React.memo(
 )
 
 const PartyPlaylistGroup = memo(
-  ({ playlistId, currentPlayingId, spotify_user_id, topTrackIds }) => {
+  ({ playlistId, currentPlayingId, spotify_user_id, user, topTrackIds }) => {
     const [
       {
         data: { tracks, user_ids, title, description },
@@ -149,20 +151,13 @@ const PartyPlaylistGroup = memo(
 
     const handleAddToPartyPlaylist = async () => {
       setUpdateState('loading')
-      const data = await addTopTracksToPlaylist(
-        spotify_user_id,
-        playlistId,
-        topTrackIds
-      )
+      const data = await addTopTracksToPlaylist(user, playlistId, topTrackIds)
       setUpdateState(data ? 'success' : 'error')
     }
     const handleUpdateToPartyPlaylist = async () => {
       setUpdateState('loading')
-      const data = await updateTopTracksPlaylist(
-        spotify_user_id,
-        playlistId,
-        topTrackIds
-      )
+      const data = await updateTopTracksPlaylist(user, playlistId, topTrackIds)
+
       setUpdateState(data ? 'success' : 'error')
     }
 
@@ -203,29 +198,33 @@ const PartyPlaylistGroup = memo(
 
     return (
       <div className="analysis-playlists">
-        <p>
-          <button
-            className="s-button"
-            onClick={
-              isUserContributor
-                ? handleUpdateToPartyPlaylist
-                : handleAddToPartyPlaylist
-            }
-          >
-            {isUserContributor ? 'update' : 'add'} ya tracks
-            {updateState === 'loading' && '🤞'}
-            {updateState === 'success' && '👍'}
-            {updateState === 'error' && '👎'}
-          </button>
-        </p>
-        <p>
-          <button className="s-submit " onClick={handleCreatePlaylist}>
-            save to spotify
-            {createState === 'loading' && '🤞'}
-            {createState === 'success' && '👍'}
-            {createState === 'error' && '👎'}
-          </button>
-        </p>
+        {!loading && (
+          <>
+            <p>
+              <button
+                className="s-button"
+                onClick={
+                  isUserContributor
+                    ? handleUpdateToPartyPlaylist
+                    : handleAddToPartyPlaylist
+                }
+              >
+                {isUserContributor ? 'update' : 'add'} ya tracks
+                {updateState === 'loading' && '🤞'}
+                {updateState === 'success' && '👍'}
+                {updateState === 'error' && '👎'}
+              </button>
+            </p>
+            <p>
+              <button className="s-submit " onClick={handleCreatePlaylist}>
+                save to spotify
+                {createState === 'loading' && '🤞'}
+                {createState === 'success' && '👍'}
+                {createState === 'error' && '👎'}
+              </button>
+            </p>
+          </>
+        )}
         <PlaylistTable
           loading={loading}
           tracks={tracks}

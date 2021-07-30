@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { TrackObjectFull } from '../types/spotify-api'
+import { TrackObjectFull, UserObjectPrivate } from '../types/spotify-api'
 import { getAllPlaylistsTracks } from '../api/spotify'
 import {
   addToPartyPlaylist,
@@ -61,7 +61,7 @@ interface AllTopTracks {
 }
 
 export const createTopTracksPlaylist = async (
-  spotify_user_id: string,
+  user: UserObjectPrivate,
   body: {
     title: string
     description?: string
@@ -72,19 +72,19 @@ export const createTopTracksPlaylist = async (
 ) => {
   try {
     const { _id: topTablePlaylistId } = await createPartyPlaylist(
-      spotify_user_id,
+      user,
       body,
       allTopTracksIds.short_term,
       'short_term'
     )
     await addToPartyPlaylist(
-      spotify_user_id,
+      user,
       topTablePlaylistId,
       allTopTracksIds.medium_term,
       'medium_term'
     )
     const data = await addToPartyPlaylist(
-      spotify_user_id,
+      user,
       topTablePlaylistId,
       allTopTracksIds.long_term,
       'long_term'
@@ -96,25 +96,25 @@ export const createTopTracksPlaylist = async (
 }
 
 export const addTopTracksToPlaylist = async (
-  spotify_user_id: string,
+  user: UserObjectPrivate,
   topTablePlaylistId: string,
   allTopTracksIds: AllTopTracks
 ) => {
   try {
     await addToPartyPlaylist(
-      spotify_user_id,
+      user,
       topTablePlaylistId,
       allTopTracksIds.short_term,
       'short_term'
     )
     await addToPartyPlaylist(
-      spotify_user_id,
+      user,
       topTablePlaylistId,
       allTopTracksIds.medium_term,
       'medium_term'
     )
     const data = await addToPartyPlaylist(
-      spotify_user_id,
+      user,
       topTablePlaylistId,
       allTopTracksIds.long_term,
       'long_term'
@@ -125,25 +125,25 @@ export const addTopTracksToPlaylist = async (
   }
 }
 export const updateTopTracksPlaylist = async (
-  spotify_user_id: string,
+  user: UserObjectPrivate,
   topTablePlaylistId: string,
   allTopTracksIds: AllTopTracks
 ) => {
   try {
     await updatePartyPlaylist(
-      spotify_user_id,
+      user,
       topTablePlaylistId,
       allTopTracksIds.short_term,
       'short_term'
     )
     await updatePartyPlaylist(
-      spotify_user_id,
+      user,
       topTablePlaylistId,
       allTopTracksIds.medium_term,
       'medium_term'
     )
     const data = await updatePartyPlaylist(
-      spotify_user_id,
+      user,
       topTablePlaylistId,
       allTopTracksIds.long_term,
       'long_term'

@@ -1,3 +1,4 @@
+import { UserObjectPrivate } from '../types/spotify-api'
 import { serverFetch } from './utils'
 import { getHeapsTracks, getHeapsAudioFeatures } from './spotify'
 import { TrackObjectFull, AudioFeaturesObject } from '../types/spotify-api'
@@ -19,19 +20,23 @@ export const getUserPartyPlaylists = async (user_id: string) => {
 }
 
 export const addToPartyPlaylist = async (
-  spotify_user_id: string,
+  user: UserObjectPrivate,
   topTablePlaylistId: string,
   topTrackIds: string[],
   time_range: TopTimeRange | string = ''
 ) => {
   try {
-    const searchParams = new URLSearchParams({ spotify_user_id, time_range })
+    const searchParams = new URLSearchParams({
+      spotify_user_id: user.id,
+      time_range,
+    })
     let data = await serverFetch(
       `playlists/${topTablePlaylistId}/add?${searchParams.toString()}`,
       {
         method: 'POST',
         body: JSON.stringify({
           tracks: topTrackIds,
+          user,
         }),
       }
     )
@@ -43,19 +48,23 @@ export const addToPartyPlaylist = async (
   }
 }
 export const updatePartyPlaylist = async (
-  spotify_user_id: string,
+  user: UserObjectPrivate,
   topTablePlaylistId: string,
   topTrackIds: string[],
   time_range: TopTimeRange | string = ''
 ) => {
   try {
-    const searchParams = new URLSearchParams({ spotify_user_id, time_range })
+    const searchParams = new URLSearchParams({
+      spotify_user_id: user.id,
+      time_range,
+    })
     let data = await serverFetch(
       `playlists/${topTablePlaylistId}/update?${searchParams.toString()}`,
       {
         method: 'POST',
         body: JSON.stringify({
           tracks: topTrackIds,
+          user,
         }),
       }
     )
@@ -63,12 +72,12 @@ export const updatePartyPlaylist = async (
     return data
   } catch (error) {
     console.error(error.message)
-    return []
+    return null
   }
 }
 
 export const createPartyPlaylist = async (
-  spotify_user_id: string,
+  user: UserObjectPrivate,
   body: {
     title: string
     description?: string
@@ -78,12 +87,16 @@ export const createPartyPlaylist = async (
   topTrackIds: string[],
   time_range: TopTimeRange | string = ''
 ) => {
-  const searchParams = new URLSearchParams({ spotify_user_id, time_range })
+  const searchParams = new URLSearchParams({
+    spotify_user_id: user.id,
+    time_range,
+  })
   let data = await serverFetch(`playlists/create?${searchParams.toString()}`, {
     method: 'POST',
     body: JSON.stringify({
       ...body,
       tracks: topTrackIds,
+      user,
     }),
   })
 

@@ -1,5 +1,5 @@
 import { connectToDatabase } from '../connectToDB'
-import { TrackObjectFull } from '../../types/spotify-api'
+import { TrackObjectFull, UserObjectPrivate } from '../../types/spotify-api'
 
 interface ListTrack {
   //spotify track id
@@ -12,31 +12,6 @@ interface ListTrack {
   score: number
   // list of user ids
   user_ids: string[]
-}
-interface PrivateUserObject {
-  id: string
-  birthdate: string
-  country: string
-  display_name: string
-  email: string
-  explicit_content: {
-    filter_enabled: boolean
-    filter_locked: boolean
-  }
-  external_urls: { [key: string]: string }
-  followers: {
-    href: null | string
-    total: number
-  }
-  href: string
-  images: {
-    height: number | null
-    width: number | null
-    url: string
-  }[]
-  product: string
-  type: string
-  uri: string
 }
 
 export const getTopTablePlaylistById = async (topTablePlaylistId: string) => {
@@ -57,7 +32,7 @@ export const getTopTablePlaylistsByUserIds = async (
   const { TopTracksPlaylist } = connectToDatabase()
 
   let usersLists = await TopTracksPlaylist.find({
-    user_iuserSchemads: {
+    user_ids: {
       $in: spotify_user_id,
     },
   }).select(['_id', 'description', 'title', 'created_at', 'user_ids'])
@@ -77,10 +52,12 @@ export const createNewTopTablePlaylist = async (userId: string, body) => {
     .replace('-long_term', '')
 
   const tracks: TrackObjectFull[] = body.tracks
+  const user: TrackObjectFull[] = body.user
   // create top table instance
   const newTopTablePlaylist = new TopTracksPlaylist({
-    user_ids: [actualUserId],
     ...body,
+    user_ids: [actualUserId],
+    users: [user],
     tracks: tracks.map((spotify_id, rank) => ({
       id: spotify_id,
       rank: [rank + 1],
@@ -100,7 +77,8 @@ const calculateScore = (rank: number[], count) =>
 export const addTracksToTopTablePlaylist = async (
   topTablePlaylistId,
   userId: string,
-  trackIds: string[]
+  trackIds: string[],
+  user: UserObjectPrivate
 ) => {
   //TODO
   const actualUserId = userId
@@ -141,18 +119,19 @@ export const addTracksToTopTablePlaylist = async (
 export const updateTracksToTopTablePlaylist = async (
   topTablePlaylistId,
   userId: string,
-  trackIds: string[]
+  trackIds: string[],
+  user: UserObjectPrivate
 ) => {
   const list = await getTopTablePlaylistById(topTablePlaylistId)
 
   const listWithoutUserTracks = removeUserTracks(list, trackIds, userId)
-  console.log('listWithoutUserTracks', listWithoutUserTracks.tracks)
 
   await listWithoutUserTracks.save()
   const result = await addTracksToTopTablePlaylist(
     topTablePlaylistId,
     userId,
-    trackIds
+    trackIds,
+    user
   )
 
   return result
