@@ -25,6 +25,7 @@ import {
   createTopTracksPlaylist,
   formatUserPlaylists,
   addTopTracksToPlaylist,
+  updateTopTracksPlaylist,
 } from './PartyPlaylist.utils'
 
 const favPlaylists = [...specialPlaylists, savedTracks]
@@ -53,13 +54,15 @@ const PartyPlaylist = React.memo(
       name: title,
       description,
       isPublic,
-      collaborative,
     }) => {
       const data = await createTopTracksPlaylist(
         userId,
-        { title, description, isPublic, collaborative },
+        { title, description, isPublic, collaborative: true },
         getTopTrackIds(topTracks)
       )
+      if (data._id) {
+        handleChangePlaylist(data._id)
+      }
       return data
     }
 
@@ -91,7 +94,12 @@ const PartyPlaylist = React.memo(
     return (
       <>
         <div className="analysis-playlists">
-          <SavePlaylist user_id={userId} createPlaylist={createPartyPlaylist} />
+          <SavePlaylist
+            hideCollaborative
+            hidePublic
+            user_id={userId}
+            createPlaylist={createPartyPlaylist}
+          />
         </div>
         {playlists.length !== 0 && (
           <div className="analysis-playlists">
@@ -110,58 +118,119 @@ const PartyPlaylist = React.memo(
 
 const PartyPlaylistGroup = memo(
   ({ playlistId, currentPlayingId, spotify_user_id, topTrackIds }) => {
-    const [{ playlist, loading }, setData] = useState({
-      playlist: [],
+    const [
+      {
+        data: { tracks, user_ids, title, description },
+        loading,
+      },
+      setData,
+    ] = useState({
+      data: {
+        created_at: '',
+        description: '',
+        title: '',
+        tracks: [],
+        updated_at: '',
+        user_ids: [],
+      },
       loading: true,
     })
 
+    const isUserContributor = user_ids.includes(spotify_user_id)
+
     useEffect(() => {
       setData((s) => ({ ...s, loading: true }))
-      getPartyPlaylist(playlistId).then((d) =>
-        setData({ playlist: d, loading: false })
+      getPartyPlaylist(playlistId).then((data) =>
+        setData({ data, loading: false })
       )
     }, [playlistId])
+    const [createState, setCreateState] = useState('')
+    const [updateState, setUpdateState] = useState('')
 
     const handleAddToPartyPlaylist = async () => {
-      await addTopTracksToPlaylist(spotify_user_id, playlistId, topTrackIds)
+      setUpdateState('loading')
+      const data = await addTopTracksToPlaylist(
+        spotify_user_id,
+        playlistId,
+        topTrackIds
+      )
+      setUpdateState(data ? 'success' : 'error')
+    }
+    const handleUpdateToPartyPlaylist = async () => {
+      setUpdateState('loading')
+      const data = await updateTopTracksPlaylist(
+        spotify_user_id,
+        playlistId,
+        topTrackIds
+      )
+      setUpdateState(data ? 'success' : 'error')
     }
 
-    const handleCreatePlaylist = async () => {
-      const includedUris = playlist.tracks
-        .filter((t) => t.include && !t.is_local)
-        .map((t) => t.uri)
+    const includedUris = useMemo(
+      () => tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri),
+      [tracks]
+    )
 
+    const handleCreatePlaylist = async () => {
       if (!includedUris.length) return
+      setCreateState('loading')
       const data = await createUserPlaylistWithTracks(
         spotify_user_id,
         {
-          name: playlist.title,
-          description: playlist.description,
+          name: title,
+          description: description,
           isPublic: false,
           collaborative: true,
         },
         includedUris
       )
 
+      setCreateState(data ? 'success' : 'error')
       return data
     }
+    useEffect(() => {
+      const id = setTimeout(() => {
+        setCreateState('')
+      }, 3000)
+      return () => clearTimeout(id)
+    }, [createState])
+    useEffect(() => {
+      const id = setTimeout(() => {
+        setUpdateState('')
+      }, 3000)
+      return () => clearTimeout(id)
+    }, [updateState])
 
     return (
       <div className="analysis-playlists">
         <p>
-          <button onClick={handleAddToPartyPlaylist}> add ya tracks</button>
+          <button
+            className="s-button"
+            onClick={
+              isUserContributor
+                ? handleUpdateToPartyPlaylist
+                : handleAddToPartyPlaylist
+            }
+          >
+            {isUserContributor ? 'update' : 'add'} ya tracks
+            {updateState === 'loading' && '🤞'}
+            {updateState === 'success' && '👍'}
+            {updateState === 'error' && '👎'}
+          </button>
         </p>
         <p>
-          <button onClick={handleCreatePlaylist}>
-            {' '}
-            save dis to ya spotify
+          <button className="s-submit " onClick={handleCreatePlaylist}>
+            save to spotify
+            {createState === 'loading' && '🤞'}
+            {createState === 'success' && '👍'}
+            {createState === 'error' && '👎'}
           </button>
         </p>
         <PlaylistTable
           loading={loading}
-          tracks={playlist.tracks}
+          tracks={tracks}
           currentTrackId={currentPlayingId}
-          uris={playlist.uris || []}
+          uris={includedUris || []}
           stats={['score']}
           onAllCheck={(checked) => {}}
           onCheckTrack={(id, checked) => {}}

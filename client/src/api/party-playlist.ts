@@ -42,6 +42,30 @@ export const addToPartyPlaylist = async (
     return []
   }
 }
+export const updatePartyPlaylist = async (
+  spotify_user_id: string,
+  topTablePlaylistId: string,
+  topTrackIds: string[],
+  time_range: TopTimeRange | string = ''
+) => {
+  try {
+    const searchParams = new URLSearchParams({ spotify_user_id, time_range })
+    let data = await serverFetch(
+      `playlists/${topTablePlaylistId}/update?${searchParams.toString()}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          tracks: topTrackIds,
+        }),
+      }
+    )
+
+    return data
+  } catch (error) {
+    console.error(error.message)
+    return []
+  }
+}
 
 export const createPartyPlaylist = async (
   spotify_user_id: string,

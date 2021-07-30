@@ -180,7 +180,9 @@ input[type='checkbox'] {
     padding: 0 12px;
   }
 }
-.s-submit {
+
+.s-submit,
+.s-button {
   border: 2px;
   border-width: 2px;
   padding: 0 24px;
@@ -198,10 +200,17 @@ input[type='checkbox'] {
   outline: none;
   text-transform: uppercase;
 
+  &:focus,
   &:hover {
     transform: scale(1.06);
   }
 }
+
+.s-submit {
+  color: $spotify-bg;
+  background-color: $spotify-green;
+}
+
 .grey {
   border-color: $spotify-white;
   background-color: $spotify-grey-menu;

@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
+import { userSchema } from './user.schema'
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 // mongoose.set("useCreateIndex", true);
 
 const trackSchema = new Schema(
@@ -8,6 +9,7 @@ const trackSchema = new Schema(
     id: String,
 
     user_ids: [{ type: String }],
+
     // the position from user top tables
     rank: [
       {
@@ -26,9 +28,11 @@ const trackSchema = new Schema(
       type: Number,
       default: 1,
     },
+    // time-range
+    time_range: [String],
   },
   { _id: false, toJSON: { virtuals: true } }
-);
+)
 // used to determine the position in the playlist,
 // lowest to highest
 // trackSchema.virtual("score").get(function () {
@@ -38,9 +42,10 @@ const trackSchema = new Schema(
 export const topTracksPlaylistSchema = new Schema(
   {
     user_ids: [{ type: String }],
+    users: [userSchema],
     title: String,
     description: String,
     tracks: [trackSchema],
   },
-  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
-);
+  { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
+)

@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import { TrackObjectFull } from '../types/spotify-api'
 import { getAllPlaylistsTracks } from '../api/spotify'
-import { addToPartyPlaylist, createPartyPlaylist } from '../api/party-playlist'
+import {
+  addToPartyPlaylist,
+  updatePartyPlaylist,
+  createPartyPlaylist,
+} from '../api/party-playlist'
 import { top_time_range } from '../constants'
 
 export const useTopTracks = (
@@ -117,7 +121,36 @@ export const addTopTracksToPlaylist = async (
     )
     return data
   } catch (error) {
-    console.log('error creating top table', error)
+    console.log('error adding top table', error)
+  }
+}
+export const updateTopTracksPlaylist = async (
+  spotify_user_id: string,
+  topTablePlaylistId: string,
+  allTopTracksIds: AllTopTracks
+) => {
+  try {
+    await updatePartyPlaylist(
+      spotify_user_id,
+      topTablePlaylistId,
+      allTopTracksIds.short_term,
+      'short_term'
+    )
+    await updatePartyPlaylist(
+      spotify_user_id,
+      topTablePlaylistId,
+      allTopTracksIds.medium_term,
+      'medium_term'
+    )
+    const data = await updatePartyPlaylist(
+      spotify_user_id,
+      topTablePlaylistId,
+      allTopTracksIds.long_term,
+      'long_term'
+    )
+    return data
+  } catch (error) {
+    console.log('error updating top table', error)
   }
 }
 

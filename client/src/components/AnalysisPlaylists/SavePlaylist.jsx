@@ -8,6 +8,8 @@ export const SavePlaylist = ({
   createPlaylist,
   description: _description = '',
   mergedPlaylistNames = [],
+  hideCollaborative = false,
+  hidePublic = false,
 }) => {
   const [{ name, description, isPublic, collaborative }, setValues] = useState({
     name: currentPlaylist ? currentPlaylist.name : '',
@@ -36,7 +38,13 @@ export const SavePlaylist = ({
         name: playlistName,
       }))
     }
-  }, [currentPlaylist, currentPlaylistName, currentSort, mergedPlaylistNames, name])
+  }, [
+    currentPlaylist,
+    currentPlaylistName,
+    currentSort,
+    mergedPlaylistNames,
+    name,
+  ])
 
   const handleChange = ({ target: { name, value, checked } }) => {
     setValues((prev) => ({
@@ -98,18 +106,26 @@ export const SavePlaylist = ({
           placeholder="Add an optional description"
         />
         <div>
-          <label>
-            <span>Public</span>
-            <input name="isPublic" type="checkbox" defaultChecked={isPublic} />
-          </label>
-          <label>
-            <span>Collaborative</span>
-            <input
-              name="collaborative"
-              type="checkbox"
-              defaultChecked={collaborative}
-            />
-          </label>
+          {!hidePublic && (
+            <label>
+              <span>Public</span>
+              <input
+                name="isPublic"
+                type="checkbox"
+                defaultChecked={isPublic}
+              />
+            </label>
+          )}
+          {!hideCollaborative && (
+            <label>
+              <span>Collaborative</span>
+              <input
+                name="collaborative"
+                type="checkbox"
+                defaultChecked={collaborative}
+              />
+            </label>
+          )}
         </div>
 
         <input
