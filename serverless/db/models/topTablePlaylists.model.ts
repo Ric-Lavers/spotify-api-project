@@ -91,6 +91,7 @@ export const addTracksToTopTablePlaylist = async (
 
   if (!list.user_ids.some((id) => id === actualUserId)) {
     list.user_ids.push(actualUserId)
+    list.users.push(user)
   }
   trackIds
     .map((spotify_id, rank) => ({
@@ -110,8 +111,8 @@ export const addTracksToTopTablePlaylist = async (
         list.tracks.push(t)
       }
     })
-  await list.save()
 
+  await list.save()
   const result = await getTopTablePlaylistById(topTablePlaylistId)
   return result
 }
