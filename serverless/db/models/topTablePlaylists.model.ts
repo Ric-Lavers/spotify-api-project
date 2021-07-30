@@ -89,8 +89,11 @@ export const addTracksToTopTablePlaylist = async (
 
   if (list.user_ids.some((u) => u === userId)) return list
 
+  console.log('BEFORE: adding user', user)
   if (!list.user_ids.some((id) => id === actualUserId)) {
     list.user_ids.push(actualUserId)
+    console.log('adding user', user)
+
     list.users.push(user)
   }
   trackIds

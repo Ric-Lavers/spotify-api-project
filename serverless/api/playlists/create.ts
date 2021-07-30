@@ -1,3 +1,4 @@
+import get from 'lodash.get'
 const cors = require('micro-cors')()
 import { createNewTopTablePlaylist } from '../../db/models/topTablePlaylists.model'
 
@@ -11,7 +12,7 @@ module.exports = cors(async function (req, res) {
     const time_range = req.query.time_range ? `-${req.query.time_range}` : ''
 
     let playlist = await createNewTopTablePlaylist(
-      `${req.body?.user?.id}${time_range}`,
+      `${get(req, 'body.user.id')}${time_range}`,
       req.body
     )
 

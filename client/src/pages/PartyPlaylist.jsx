@@ -19,6 +19,7 @@ import { combineArtists } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
 import { getUserPartyPlaylists, getPartyPlaylist } from 'api/party-playlist'
 import { stats as _stats } from '../components/stats/Stats'
+
 import {
   useTopTracks,
   getTopTrackIds,
@@ -139,12 +140,15 @@ const PartyPlaylistGroup = memo(
     })
 
     const isUserContributor = user_ids.includes(spotify_user_id)
-
-    useEffect(() => {
+    function getNsetPlaylist() {
       setData((s) => ({ ...s, loading: true }))
       getPartyPlaylist(playlistId).then((data) =>
         setData({ data, loading: false })
       )
+    }
+
+    useEffect(() => {
+      getNsetPlaylist()
     }, [playlistId])
     const [createState, setCreateState] = useState('')
     const [updateState, setUpdateState] = useState('')
@@ -152,11 +156,13 @@ const PartyPlaylistGroup = memo(
     const handleAddToPartyPlaylist = async () => {
       setUpdateState('loading')
       const data = await addTopTracksToPlaylist(user, playlistId, topTrackIds)
+      getNsetPlaylist()
       setUpdateState(data ? 'success' : 'error')
     }
     const handleUpdateToPartyPlaylist = async () => {
       setUpdateState('loading')
       const data = await updateTopTracksPlaylist(user, playlistId, topTrackIds)
+      getNsetPlaylist()
 
       setUpdateState(data ? 'success' : 'error')
     }
@@ -198,6 +204,9 @@ const PartyPlaylistGroup = memo(
 
     return (
       <div className="analysis-playlists">
+        <h4>{title}</h4>
+        <p>{description}</p>
+
         {!loading && (
           <>
             <p>
@@ -217,7 +226,7 @@ const PartyPlaylistGroup = memo(
             </p>
             <p>
               <button className="s-submit " onClick={handleCreatePlaylist}>
-                save to spotify
+                save to ya spotify
                 {createState === 'loading' && '🤞'}
                 {createState === 'success' && '👍'}
                 {createState === 'error' && '👎'}
