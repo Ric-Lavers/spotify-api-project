@@ -29,6 +29,7 @@ export const UserCircle = ({ user, size = '' }) => {
       {displayName && (
         <div class="tooltiptext">
           <span>{displayName} </span>
+          <br />
           <small> last updated {timeSince(user.updated_at)} ago</small>
         </div>
       )}

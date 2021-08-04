@@ -117,7 +117,13 @@ const PartyPlaylist = React.memo(
 )
 
 const PartyPlaylistGroup = memo(
-  ({ playlistId, currentPlayingId, spotify_user_id, topTrackIds }) => {
+  ({
+    playlistId,
+    currentPlayingId,
+    spotify_user_id,
+    topTrackIds,
+    user: userData,
+  }) => {
     const [
       {
         data: { tracks, user_ids, title, description, users },
@@ -141,7 +147,8 @@ const PartyPlaylistGroup = memo(
 
       return timeSince(u.updated_at)
     })()
-    const user = (users || []).find(({ id }) => id === spotify_user_id)
+    const user =
+      (users || []).find(({ id }) => id === spotify_user_id) || userData
 
     const isUserContributor = user_ids.includes(spotify_user_id)
     function getNsetPlaylist() {
