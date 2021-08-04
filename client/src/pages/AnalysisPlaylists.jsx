@@ -31,6 +31,10 @@ export const tableKeys = [
 ]
 
 const tableKeyToObjectKey = (tableKey, song) => {
+  if (tableKey === 'users') {
+    //shouldn't run
+    return `custom.${tableKey}`
+  }
   if (tableKey === 'artists') {
     return 'artists[0].name'
   }
@@ -53,6 +57,78 @@ const getSongsWithAudioFeatures = async (playlistId) => {
     include: true,
   }))
   return songs
+}
+// TODO clean up the db dummy
+function setFromCustomUserIds(userIds) {
+  function removeTimeRange(str) {
+    return str.replace(/-(short|medium|long)_term/g, '')
+  }
+
+  return new Set(userIds.map((id) => removeTimeRange(id)))
+}
+export const sortPlaylistTracks = (
+  tableKey,
+  direction = 'ASC',
+  songsWithFeatures,
+  setSongWithFeatures,
+  setCurrentSort = () => void {},
+  setMinMax = () => void {}
+) => {
+  if (!(tableKey && direction)) {
+    return
+  }
+
+  const newSort = `${tableKey} - ${direction}`
+  setCurrentSort(newSort)
+  const key = tableKeyToObjectKey(tableKey, songsWithFeatures)
+  const keyType = typeof get(songsWithFeatures[0], key)
+
+  if (tableKey === 'users') {
+    const values = []
+    const sorted = songsWithFeatures
+      .sort((a, b) => a.custom.score - b.custom.score)
+      .sort((a, b) => {
+        values.push(get(b, key))
+        return direction === 'ASC'
+          ? setFromCustomUserIds(b.custom.user_ids).size -
+              setFromCustomUserIds(a.custom.user_ids).size
+          : setFromCustomUserIds(a.custom.user_ids).size -
+              setFromCustomUserIds(b.custom.user_ids).size
+      })
+    setMinMax([0, 0])
+    setSongWithFeatures([...sorted])
+    return
+  }
+  if (get(songsWithFeatures[0], key) === undefined) return
+  if (keyType === 'string') {
+    const sorted =
+      direction === 'ASC'
+        ? songsWithFeatures.sort((a, b) =>
+            get(a, key).localeCompare(get(b, key))
+          )
+        : songsWithFeatures
+            .sort((a, b) =>
+              get(a, key).toUpperCase().localeCompare(get(b, key).toUpperCase())
+            )
+            .reverse()
+    setMinMax([0, 0])
+    setSongWithFeatures([...sorted])
+  }
+
+  if (keyType === 'number') {
+    const values = []
+    const sorted = songsWithFeatures.sort((a, b) => {
+      values.push(get(b, key))
+      return direction === 'ASC'
+        ? get(a, key) - get(b, key)
+        : get(b, key) - get(a, key)
+    })
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+
+    setMinMax([min, max])
+    setSongWithFeatures([...sorted])
+  }
 }
 
 const useSongsWithAudioFeatures = (playlistId) => {
@@ -92,47 +168,14 @@ const useSongsWithAudioFeatures = (playlistId) => {
 
   const sortTracks = useCallback(
     (tableKey, direction = 'ASC') => {
-      if (!(tableKey && direction)) {
-        return
-      }
-      const newSort = `${tableKey} - ${direction}`
-      setCurrentSort(newSort)
-      const key = tableKeyToObjectKey(tableKey, songsWithFeatures)
-
-      const keyType = typeof get(songsWithFeatures[0], key)
-      if (get(songsWithFeatures[0], key) === undefined) return
-
-      if (keyType === 'string') {
-        const sorted =
-          direction === 'ASC'
-            ? songsWithFeatures.sort((a, b) =>
-                get(a, key).localeCompare(get(b, key))
-              )
-            : songsWithFeatures
-                .sort((a, b) =>
-                  get(a, key)
-                    .toUpperCase()
-                    .localeCompare(get(b, key).toUpperCase())
-                )
-                .reverse()
-        setMinMax([0, 0])
-        setSongWithFeatures([...sorted])
-      }
-
-      if (keyType === 'number') {
-        const values = []
-        const sorted = songsWithFeatures.sort((a, b) => {
-          values.push(get(b, key))
-          return direction === 'ASC'
-            ? get(a, key) - get(b, key)
-            : get(b, key) - get(a, key)
-        })
-        const min = Math.min(...values)
-        const max = Math.max(...values)
-
-        setMinMax([min, max])
-        setSongWithFeatures([...sorted])
-      }
+      sortPlaylistTracks(
+        tableKey,
+        direction,
+        songsWithFeatures,
+        setSongWithFeatures,
+        setCurrentSort,
+        setMinMax
+      )
     },
     [songsWithFeatures]
   )

@@ -8,6 +8,7 @@ import {
   SavePlaylist,
   UserPlaylistsSelect,
 } from '../components/AnalysisPlaylists'
+import { sortPlaylistTracks } from './AnalysisPlaylists'
 import { createUserPlaylistWithTracks } from 'api/spotify'
 import { GlobalContext } from 'globalContext'
 import { timeSince } from 'helpers'
@@ -217,6 +218,33 @@ const PartyPlaylistGroup = memo(
       [updateState]
     )
 
+    // TODO clean up the db dummy
+    function setFromCustomUserIds(userIds) {
+      function removeTimeRange(str) {
+        return str.replace(/-(short|medium|long)_term/g, '')
+      }
+
+      return new Set(userIds.map((id) => removeTimeRange(id)))
+    }
+
+    //TODO just pass the value
+    const handleSort = ({ target: { value } }) => {
+      const [key, dir] = value.split('-')
+      sortPlaylistTracks(key, dir, tracks, (sortedTracks) => {
+        setData((prev) => ({
+          ...prev,
+          tracks: sortedTracks,
+        }))
+      })
+    }
+    const initalFetchComplete = React.useRef(false)
+    useEffect(() => {
+      if (tracks.length && !initalFetchComplete.current) {
+        initalFetchComplete.current = true
+        handleSort({ target: { value: 'users-ASC' } })
+      }
+    }, [tracks])
+
     return (
       <div className="analysis-playlists">
         <h4>{title}</h4>
@@ -257,7 +285,7 @@ const PartyPlaylistGroup = memo(
           stats={['score', 'artists', 'users']}
           onAllCheck={(checked) => {}}
           onCheckTrack={(id, checked) => {}}
-          onSort={({ target: { value } }) => {}}
+          onSort={handleSort}
           currentSortValue={'title'}
           users={users}
         />
