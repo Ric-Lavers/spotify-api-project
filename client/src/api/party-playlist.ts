@@ -121,28 +121,26 @@ export const getPartyPlaylist = async (
   uris: string[]
   tracks: PartySong[]
 }> => {
-  try {
-    let data = await serverFetch(`playlists/${playlistId}`)
-    const trackIds = data.tracks.map(({ id }) => id)
-    const [{ tracks }, audioFeatures] = await Promise.all([
-      getHeapsTracks(trackIds),
-      getHeapsAudioFeatures(trackIds),
-    ])
+  let data = await serverFetch(`playlists/${playlistId}`)
+  const trackIds = data.tracks.map(({ id }) => id)
+  const [{ tracks }, audioFeatures] = await Promise.all([
+    getHeapsTracks(trackIds),
+    getHeapsAudioFeatures(trackIds),
+  ])
 
-    return {
-      ...data,
-      uris: tracks.map(({ uri }) => uri),
-      tracks: data.tracks.map((t, i) => ({
-        ...tracks[i],
-        audioFeatures: audioFeatures[i],
-        include: true,
-        custom: (() => {
-          const { count, score, rank, user_ids } = t
-          return { count, score, rank, user_ids }
-        })(),
-      })),
-    }
-  } catch (error) {}
+  return {
+    ...data,
+    uris: tracks.map(({ uri }) => uri),
+    tracks: data.tracks.map((t, i) => ({
+      ...tracks[i],
+      audioFeatures: audioFeatures[i],
+      include: true,
+      custom: (() => {
+        const { count, score, rank, user_ids } = t
+        return { count, score, rank, user_ids }
+      })(),
+    })),
+  }
 }
 
 export const getUserTopTracks = async (user_id: string) => {

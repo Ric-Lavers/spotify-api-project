@@ -153,10 +153,12 @@ const PartyPlaylistGroup = memo(
     const isUserContributor = user_ids.includes(spotify_user_id)
     function getNsetPlaylist() {
       setData((s) => ({ ...s, loading: true }))
-      getPartyPlaylist(playlistId).then((data) => {
-        setData({ data, loading: false })
-        setTracks(data.tracks)
-      })
+      getPartyPlaylist(playlistId)
+        .then((data) => {
+          setData({ data, loading: false })
+          setTracks(data.tracks)
+        })
+        .catch(() => setData((prev) => ({ ...prev, loading: false })))
     }
 
     useEffect(() => {

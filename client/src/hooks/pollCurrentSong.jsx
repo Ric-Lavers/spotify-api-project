@@ -31,7 +31,9 @@ export const usePollCurrentSong = (initialSong = CurrentPlayingInital) => {
       let playingNow = await currentPlaying()
       setSong(playingNow)
       setFetching(false)
-    } catch (error) {}
+    } catch (error) {
+      console.log('logged out', error)
+    }
     setFetching(false)
   }
   useEffect(() => {
