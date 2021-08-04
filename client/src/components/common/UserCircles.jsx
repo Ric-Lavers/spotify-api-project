@@ -23,7 +23,6 @@ export const UserCircle = ({ user, size = '' }) => {
   // percent of a month
   const percentOfaMonth =
     (1 - (new Date() - updatedAt) / (new Date() - aMonthAgo)) * 100
-
   return (
     <div className={`user-circle tooltip`}>
       {displayName && (
@@ -34,7 +33,18 @@ export const UserCircle = ({ user, size = '' }) => {
         </div>
       )}
       {imageUrl ? (
-        <img className={`user-circle__img ${size}`} alt="user" src={imageUrl} />
+        <img
+          className={`user-circle__img ${size}`}
+          alt="user"
+          src={imageUrl}
+          style={{
+            boxShadow: `2px 2px 2px ${mix(
+              '1db954',
+              'ff0000',
+              percentOfaMonth
+            )}`,
+          }}
+        />
       ) : (
         <div
           className={`user-circle__txt ${size}`}

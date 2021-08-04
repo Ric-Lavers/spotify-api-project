@@ -1,5 +1,4 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
-import get from 'lodash.get'
 import { useParams } from 'react-router-dom'
 
 import { withCurrentSong } from '../hooks'
@@ -182,7 +181,6 @@ const PartyPlaylistGroup = memo(
     }
 
     const includedUris = useMemo(() => {
-      console.log('seting includedUris')
       return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
     }, [tracks])
 
@@ -252,7 +250,7 @@ const PartyPlaylistGroup = memo(
                     : handleAddToPartyPlaylist
                 }
               >
-                {isUserContributor ? 'update' : 'add'} ya tracks
+                {isUserContributor ? 'update' : 'add'} your tracks
                 <EmojiLoader status={updateState} />
               </button>
               <span
@@ -261,7 +259,7 @@ const PartyPlaylistGroup = memo(
             </p>
             <p className="action-btn-group">
               <button className="s-submit " onClick={handleCreatePlaylist}>
-                save to ya spotify
+                save to your spotify
                 <EmojiLoader status={createState} />
               </button>
             </p>
