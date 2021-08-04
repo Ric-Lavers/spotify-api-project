@@ -35,7 +35,7 @@ export const getTopTablePlaylistsByUserIds = async (
     user_ids: {
       $in: spotify_user_id,
     },
-  }).select(['_id', 'description', 'title', 'created_at', 'user_ids'])
+  }).select(['_id', 'description', 'title', 'created_at', 'user_ids', 'users'])
 
   return usersLists
 }
@@ -87,15 +87,19 @@ export const addTracksToTopTablePlaylist = async (
     .replace('-long_term', '')
   const list = await getTopTablePlaylistById(topTablePlaylistId)
 
-  if (list.user_ids.some((u) => u === userId)) return list
+  if (list.user_ids.some((u) => u === userId)) {
+    return list
+  }
 
-  console.log('BEFORE: adding user', user)
-  if (!list.user_ids.some((id) => id === actualUserId)) {
+  const user_ = await list.users.find(({ id }) => id === actualUserId)
+
+  if (user_) {
+    user_.updated_at = Date.now()
+  } else {
     list.user_ids.push(actualUserId)
-    console.log('adding user', user)
-
     list.users.push(user)
   }
+
   trackIds
     .map((spotify_id, rank) => ({
       id: spotify_id,
