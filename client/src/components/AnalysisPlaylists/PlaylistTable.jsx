@@ -15,6 +15,7 @@ export const PlaylistTable = ({
   onCheckTrack,
   onSort = () => void {},
   currentSortValue,
+  users = [],
 }) => {
   const [sortValue, setSortValue] = useState('')
   const handleSort = (statKey) => {
@@ -56,9 +57,9 @@ export const PlaylistTable = ({
           <tr>
             <th className="table-average">{averages.checked}</th>
             <th className="table-average">count {tracks.length}</th>
-            {_stats.map((stat) => {
+            {_stats.map((stat, i) => {
               return (
-                <th className="table-average">
+                <th key={`${averages[stat]}-${i}`} className="table-average">
                   {stat === 'popularity'
                     ? `${averages[stat]}%`
                     : averages[stat] === ''
@@ -104,6 +105,9 @@ export const PlaylistTable = ({
               rows.count = custom.count
               rows.rank = custom.rank.join(', ')
               rows.user_ids = custom.user_ids.join(', ')
+              rows.users = users.filter((u) =>
+                custom.user_ids.find((id) => id.includes(u.id))
+              )
             }
             const { checked, isLocalFile } = isChecked(uri, include)
             return (

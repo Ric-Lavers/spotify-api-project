@@ -1,24 +1,21 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
-import Slide from 'react-reveal/Slide'
-import makeCarousel from 'react-reveal/makeCarousel'
-import truncate from 'lodash.truncate'
 import get from 'lodash.get'
 import { useParams } from 'react-router-dom'
 
-import Range from 'components/common/RangeSlider'
 import { withCurrentSong } from '../hooks'
 import {
   PlaylistTable,
   SavePlaylist,
-  CurrentPlaylist,
   UserPlaylistsSelect,
 } from '../components/AnalysisPlaylists'
 import { createUserPlaylistWithTracks } from 'api/spotify'
 import { GlobalContext } from 'globalContext'
-import { combineArtists } from 'helpers'
+import { timeSince } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
 import { getUserPartyPlaylists, getPartyPlaylist } from 'api/party-playlist'
 import { stats as _stats } from '../components/stats/Stats'
+import EmojiLoader from '../components/common/EmojiLoader'
+import UserCircles from '../components/common/UserCircles'
 
 import {
   useTopTracks,
@@ -120,10 +117,10 @@ const PartyPlaylist = React.memo(
 )
 
 const PartyPlaylistGroup = memo(
-  ({ playlistId, currentPlayingId, spotify_user_id, user, topTrackIds }) => {
+  ({ playlistId, currentPlayingId, spotify_user_id, topTrackIds }) => {
     const [
       {
-        data: { tracks, user_ids, title, description },
+        data: { tracks, user_ids, title, description, users },
         loading,
       },
       setData,
@@ -138,6 +135,13 @@ const PartyPlaylistGroup = memo(
       },
       loading: true,
     })
+    const timeSinceUpdate = (() => {
+      const u = (users || []).find(({ id }) => id === spotify_user_id)
+      if (!u) return ''
+
+      return timeSince(u.updated_at)
+    })()
+    const user = (users || []).find(({ id }) => id === spotify_user_id)
 
     const isUserContributor = user_ids.includes(spotify_user_id)
     function getNsetPlaylist() {
@@ -189,27 +193,32 @@ const PartyPlaylistGroup = memo(
       setCreateState(data ? 'success' : 'error')
       return data
     }
-    useEffect(() => {
+    function removeFinalStateEmjoi(currentState, setState) {
+      if (currentState === 'loading') return
       const id = setTimeout(() => {
-        setCreateState('')
+        setState('')
       }, 3000)
       return () => clearTimeout(id)
-    }, [createState])
-    useEffect(() => {
-      const id = setTimeout(() => {
-        setUpdateState('')
-      }, 3000)
-      return () => clearTimeout(id)
-    }, [updateState])
+    }
+
+    useEffect(
+      () => removeFinalStateEmjoi(createState, setCreateState),
+      [createState]
+    )
+    useEffect(
+      () => removeFinalStateEmjoi(updateState, setUpdateState),
+      [updateState]
+    )
 
     return (
       <div className="analysis-playlists">
         <h4>{title}</h4>
-        <p>{description}</p>
+        {description && <p>{description}</p>}
 
-        {!loading && (
+        <UserCircles users={users} />
+        {(!loading || createState || updateState) && (
           <>
-            <p>
+            <p className="action-btn-group">
               <button
                 className="s-button"
                 onClick={
@@ -219,17 +228,16 @@ const PartyPlaylistGroup = memo(
                 }
               >
                 {isUserContributor ? 'update' : 'add'} ya tracks
-                {updateState === 'loading' && '🤞'}
-                {updateState === 'success' && '👍'}
-                {updateState === 'error' && '👎'}
+                <EmojiLoader status={updateState} />
               </button>
+              <span
+                hidden={!timeSinceUpdate}
+              >{`last updated ${timeSinceUpdate} ago`}</span>
             </p>
-            <p>
+            <p className="action-btn-group">
               <button className="s-submit " onClick={handleCreatePlaylist}>
                 save to ya spotify
-                {createState === 'loading' && '🤞'}
-                {createState === 'success' && '👍'}
-                {createState === 'error' && '👎'}
+                <EmojiLoader status={createState} />
               </button>
             </p>
           </>
@@ -239,15 +247,15 @@ const PartyPlaylistGroup = memo(
           tracks={tracks}
           currentTrackId={currentPlayingId}
           uris={includedUris || []}
-          stats={['score']}
+          stats={['score', 'users']}
           onAllCheck={(checked) => {}}
           onCheckTrack={(id, checked) => {}}
           onSort={({ target: { value } }) => {}}
           currentSortValue={'title'}
+          users={users}
         />
       </div>
     )
   }
 )
-
 export default PartyPlaylist

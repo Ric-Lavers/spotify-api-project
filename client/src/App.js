@@ -96,7 +96,6 @@ const Layout = ({ children }) => {
           <></>
         ) : (
           <>
-            <h1>Sup Alison</h1>
             <p>
               hey, so to make this work you need to login into spotify and allow
               all permissions :)
@@ -128,6 +127,9 @@ const MainPage = () => {
       <br />
       <a style={{ color: 'white' }} href="/analysis">
         Analysis your playlists{' '}
+      </a>
+      <a style={{ color: 'white' }} href="/party-playlist">
+        Party Playlists
       </a>
       {state.isSpotifyLoggedIn && (
         <>

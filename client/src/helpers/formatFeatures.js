@@ -1,6 +1,6 @@
 import React from 'react'
 //https://developer.spotify.com/documentation/web-api/reference/#object-audiofeaturesobject
-
+import UserCircles from '../components/common/UserCircles'
 import PopularityMeter from 'images/custom-svgs/PopularityMeter'
 import { millisToMinutesAndSeconds } from './millisToMinutesAndSeconds'
 import { combineArtists } from 'helpers'
@@ -23,7 +23,7 @@ const keys = [
   'B',
 ]
 //audio_features are badly named its a col
-const blockRaw = ['mode', 'key', 'order']
+const blockRaw = ['mode', 'key', 'order', 'users']
 export function formatFeatures(key, audio_features, raw = false) {
   // i'm using this for averages now too which is has removed string types
   if (raw && !blockRaw.includes(key)) {
@@ -42,7 +42,8 @@ export function formatFeatures(key, audio_features, raw = false) {
       return millisToMinutesAndSeconds(audio_features[key])
     case 'popularity':
       return <PopularityMeter popularity={audio_features[key]} />
-
+    case 'users':
+      return <UserCircles users={audio_features['users']} size="small" />
     case 'download':
       return (
         <div className="download-links">
