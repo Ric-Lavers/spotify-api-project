@@ -5,6 +5,9 @@
   }
   .tooltiptext {
     line-height: 14px;
+    span {
+      line-height: normal;
+    }
   }
   display: inline-flex;
   position: relative;
