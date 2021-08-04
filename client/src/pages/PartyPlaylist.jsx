@@ -127,7 +127,7 @@ const PartyPlaylistGroup = memo(
   }) => {
     const [
       {
-        data: { tracks, user_ids, title, description, users },
+        data: { user_ids, title, description, users },
         loading,
       },
       setData,
@@ -136,12 +136,12 @@ const PartyPlaylistGroup = memo(
         created_at: '',
         description: '',
         title: '',
-        tracks: [],
         updated_at: '',
         user_ids: [],
       },
       loading: true,
     })
+    const [tracks, setTracks] = useState([])
     const timeSinceUpdate = (() => {
       const u = (users || []).find(({ id }) => id === spotify_user_id)
       if (!u) return ''
@@ -154,14 +154,16 @@ const PartyPlaylistGroup = memo(
     const isUserContributor = user_ids.includes(spotify_user_id)
     function getNsetPlaylist() {
       setData((s) => ({ ...s, loading: true }))
-      getPartyPlaylist(playlistId).then((data) =>
+      getPartyPlaylist(playlistId).then((data) => {
         setData({ data, loading: false })
-      )
+        setTracks(data.tracks)
+      })
     }
 
     useEffect(() => {
       getNsetPlaylist()
     }, [playlistId])
+
     const [createState, setCreateState] = useState('')
     const [updateState, setUpdateState] = useState('')
 
@@ -179,10 +181,10 @@ const PartyPlaylistGroup = memo(
       setUpdateState(data ? 'success' : 'error')
     }
 
-    const includedUris = useMemo(
-      () => tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri),
-      [tracks]
-    )
+    const includedUris = useMemo(() => {
+      console.log('seting includedUris')
+      return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
+    }, [tracks])
 
     const handleCreatePlaylist = async () => {
       if (!includedUris.length) return
@@ -218,23 +220,11 @@ const PartyPlaylistGroup = memo(
       [updateState]
     )
 
-    // TODO clean up the db dummy
-    function setFromCustomUserIds(userIds) {
-      function removeTimeRange(str) {
-        return str.replace(/-(short|medium|long)_term/g, '')
-      }
-
-      return new Set(userIds.map((id) => removeTimeRange(id)))
-    }
-
     //TODO just pass the value
     const handleSort = ({ target: { value } }) => {
       const [key, dir] = value.split('-')
       sortPlaylistTracks(key, dir, tracks, (sortedTracks) => {
-        setData((prev) => ({
-          ...prev,
-          tracks: sortedTracks,
-        }))
+        setTracks(sortedTracks)
       })
     }
     const initalFetchComplete = React.useRef(false)
