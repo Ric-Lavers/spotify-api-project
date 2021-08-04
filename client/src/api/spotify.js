@@ -89,6 +89,15 @@ export const getMe = async () => {
     console.error(error.message)
   }
 }
+export const getUser = async (user_id) => {
+  try {
+    let res = await fetch(baseUrl + `/users/${user_id}`, headers)
+    isOk(res)
+    return res.json()
+  } catch (error) {
+    console.error(error.message)
+  }
+}
 
 export const checkToken = async (
   spotifyToken = sessionStorage.spotifyToken,

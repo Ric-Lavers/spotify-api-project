@@ -10,6 +10,7 @@ export const SavePlaylist = ({
   mergedPlaylistNames = [],
   hideCollaborative = false,
   hidePublic = false,
+  children,
 }) => {
   const [{ name, description, isPublic, collaborative }, setValues] = useState({
     name: currentPlaylist ? currentPlaylist.name : '',
@@ -127,6 +128,7 @@ export const SavePlaylist = ({
             </label>
           )}
         </div>
+        {children}
 
         <input
           className="s-submit right"

@@ -1,6 +1,7 @@
 import React, { createContext, useReducer } from 'react'
+import get from 'lodash.get'
 
-import { getMe, getDevices } from './api/spotify'
+import { getMe, getUser, getDevices } from './api/spotify'
 
 /* an object dictating the state of the app such as whats open, minimized, etc*/
 const initalState = {
@@ -172,6 +173,16 @@ export const GlobalUiState = ({ children }) => {
 
   const fetchMe = async () => {
     const payload = await getMe()
+
+    if (
+      get(payload, 'display_name') &&
+      !payload.display_name.match(/[a-zA-Z]/)
+    ) {
+      const user = await getUser(payload.id)
+      payload.display_name = user.display_name
+      payload.images = user.images
+    }
+
     payload &&
       dispatch({
         payload,

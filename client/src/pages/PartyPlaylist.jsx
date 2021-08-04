@@ -41,7 +41,7 @@ const PartyPlaylist = React.memo(
     const [
       {
         userData,
-        userData: { id: userId },
+        userData: { id: userId, display_name },
       },
     ] = useContext(GlobalContext)
 
@@ -254,7 +254,7 @@ const PartyPlaylistGroup = memo(
           tracks={tracks}
           currentTrackId={currentPlayingId}
           uris={includedUris || []}
-          stats={['score', 'users']}
+          stats={['score', 'artists', 'users']}
           onAllCheck={(checked) => {}}
           onCheckTrack={(id, checked) => {}}
           onSort={({ target: { value } }) => {}}

@@ -125,10 +125,18 @@ const MainPage = () => {
       />
      */}
       <br />
-      <a style={{ color: 'white' }} href="/analysis">
+      <a
+        className="user-playlists"
+        style={{ color: 'white', marginBottom: 16, textDecoration: 'none' }}
+        href="/analysis"
+      >
         Analysis your playlists{' '}
       </a>
-      <a style={{ color: 'white' }} href="/party-playlist">
+      <a
+        className="user-playlists"
+        style={{ color: 'white', textDecoration: 'none' }}
+        href="/party-playlist"
+      >
         Party Playlists
       </a>
       {state.isSpotifyLoggedIn && (
