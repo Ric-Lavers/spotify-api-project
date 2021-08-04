@@ -72,7 +72,7 @@ export const createNewTopTablePlaylist = async (userId: string, body) => {
 }
 
 const calculateScore = (rank: number[], count) =>
-  Math.round((rank.reduce((a, c) => a + c, 0) / count) * 1000) / 1000
+  Math.round((rank.reduce((a, c) => a + c, 0) / count) * 10) / 10
 
 export const addTracksToTopTablePlaylist = async (
   topTablePlaylistId,
