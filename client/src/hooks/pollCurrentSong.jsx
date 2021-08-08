@@ -32,7 +32,6 @@ export const usePollCurrentSong = (initialSong = CurrentPlayingInital) => {
       setSong(playingNow)
       setFetching(false)
     } catch (error) {
-      console.log('no current song', error.message)
       if (error.message === 'Unauthorized') {
         window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
       }
