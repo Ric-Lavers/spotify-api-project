@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import get from 'lodash.get'
-
+import { LOGIN_URL } from 'helpers'
 import { currentPlaying } from '../api/spotify'
 import { useAudioControls } from 'components/AudioControls'
 import CurrentPlayingInital from '../mocks/currentlyPlaying_empty.json'
@@ -31,7 +31,12 @@ export const usePollCurrentSong = (initialSong = CurrentPlayingInital) => {
       let playingNow = await currentPlaying()
       setSong(playingNow)
       setFetching(false)
-    } catch (error) {}
+    } catch (error) {
+      console.log('no current song', error.message)
+      if (error.message === 'Unauthorized') {
+        window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
+      }
+    }
     setFetching(false)
   }
   useEffect(() => {
