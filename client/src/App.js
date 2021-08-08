@@ -33,7 +33,7 @@ const App = () => {
         <GlobalUiState>
           <Layout>
             <Route exact path="/" render={() => <MainPage />} />
-            <Route exact path="/scratch" render={() => <Scratch />} />
+            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
             <Route
               path={['/party-playlist/:playlistId', '/party-playlist']}
               component={PartyPlaylistPage}
