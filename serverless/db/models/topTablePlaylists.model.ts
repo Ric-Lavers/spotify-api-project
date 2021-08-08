@@ -1,6 +1,8 @@
 import { connectToDatabase } from '../connectToDB'
 import { TrackObjectFull, UserObjectPrivate } from '../../types/spotify-api'
 
+const USER_LIMIT = 25
+type spotify_id = string
 interface ListTrack {
   //spotify track id
   id: string
@@ -11,7 +13,7 @@ interface ListTrack {
   // rank divided by count
   score: number
   // list of user ids
-  user_ids: string[]
+  user_ids: spotify_id[]
 }
 
 export const getTopTablePlaylistById = async (topTablePlaylistId: string) => {
@@ -86,10 +88,14 @@ export const addTracksToTopTablePlaylist = async (
     .replace('-medium_term', '')
     .replace('-long_term', '')
   const list = await getTopTablePlaylistById(topTablePlaylistId)
+  // console.log('enforcing UserLimit of ', USER_LIMIT)
 
-  if (list.user_ids.some((u) => u === userId)) {
-    return list
-  }
+  // enforceUserLimit(list.users, list.user_ids)
+  // if (list.user_ids.some((u: spotify_id) => u === userId)) {
+  //   //! THIS will never hit as user is concated values   `{spotify_id}-{time_range}`
+  //   return list
+  // }
+  // //TODO we dont want to add users more than once.
 
   const user_ = await list.users.find(({ id }) => id === actualUserId)
 
@@ -133,8 +139,8 @@ export const updateTracksToTopTablePlaylist = async (
   const list = await getTopTablePlaylistById(topTablePlaylistId)
 
   const listWithoutUserTracks = removeUserTracks(list, trackIds, userId)
-
   await listWithoutUserTracks.save()
+
   const result = await addTracksToTopTablePlaylist(
     topTablePlaylistId,
     userId,
@@ -145,6 +151,12 @@ export const updateTracksToTopTablePlaylist = async (
   return result
 }
 
+/**
+ * removes user_id from the track, resets rank score and count,
+ * then removes any tracks without any users.
+ *
+ * @returns DbPartyPlaylist
+ */
 function removeUserTracks(list, trackIds, userId) {
   list.tracks = list.tracks
     .map((listTrack) => {
@@ -165,4 +177,22 @@ function removeUserTracks(list, trackIds, userId) {
     .filter(({ user_ids }) => user_ids.length)
 
   return list
+}
+
+/**
+ * with so much happening on the front end we want to prevent large parties,
+ * as it will crash their browser.
+ *
+ */
+export function enforceUserLimit(
+  users: UserObjectPrivate[] = [],
+  users_ids: string[] = []
+) {
+  if ((users.length >= USER_LIMIT && users_ids.length) >= USER_LIMIT) {
+    console.log('enforceUserLimit')
+    console.log('users_ids.: ', users_ids)
+    console.log('users.: ', users)
+    console.log('__________')
+    throw new Error(`party is at user capacity limit: ${USER_LIMIT}`)
+  }
 }

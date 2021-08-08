@@ -3,9 +3,10 @@ import get from 'lodash.get'
 import {
   addTracksToTopTablePlaylist,
   getTopTablePlaylistById,
+  enforceUserLimit,
 } from '../../../db/models/topTablePlaylists.model'
 
-module.exports = cors(async function (req, res) {
+module.exports = cors(async function (req, res, next) {
   try {
     if (req.method === 'OPTIONS') {
       res.status(200)
@@ -20,14 +21,15 @@ module.exports = cors(async function (req, res) {
       req.query['top-table-playlist-id']
     )
 
-    if (
-      get(currentPlaylist, 'tracks[0].user_id', []).includes(
-        `${req.query.spotify_user_id}${time_range}`
-      )
-    ) {
-      res.status(200).json(currentPlaylist)
-      return
-    }
+    enforceUserLimit(currentPlaylist.users, currentPlaylist.user_ids)
+    // if (
+    //   get(currentPlaylist, 'tracks[0].user_id', []).includes(
+    //     `${req.query.spotify_user_id}${time_range}`
+    //   )
+    // ) {
+    //   res.status(200).json(currentPlaylist)
+    //   return
+    // }
 
     let playlist = await addTracksToTopTablePlaylist(
       req.query['top-table-playlist-id'],
@@ -38,6 +40,8 @@ module.exports = cors(async function (req, res) {
 
     res.status(200).json(playlist)
   } catch (error) {
-    res.status(400).send(error)
+    console.log(123, error)
+    res.status(507)
+    res.send({ message: error.message })
   }
 })
