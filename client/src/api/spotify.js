@@ -509,8 +509,8 @@ export const currentPlaying = async () => {
       'Content-Type': 'application/json',
     }),
   })
-  isOk(res)
   is204(res)
+  isOk(res)
 
   const data = res.json()
   return data

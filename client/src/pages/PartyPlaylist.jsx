@@ -36,6 +36,34 @@ const Dev = ({ data }) => (
   </>
 )
 
+const useWait = (ms = 8000) => {
+  let [__, set__] = useState(true)
+  useEffect(() => {
+    Promise.all([new Promise((res) => setTimeout(res, ms))]).then(() =>
+      set__(false)
+    )
+  }, [])
+  return __
+}
+
+const Survay_01 = () => {
+  const __ = useWait()
+  if (__) return null
+
+  return (
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLSeWAyEF_ToiQwQPDFrExodO-NZDVRQ2eDnr2DIZq3fAjdp8Uw/viewform?embedded=true"
+      width="640"
+      height="752"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0"
+    >
+      Loading…
+    </iframe>
+  )
+}
+
 const PartyPlaylist = React.memo(
   withCurrentSong(({ currentSong }) => {
     const [
@@ -78,13 +106,18 @@ const PartyPlaylist = React.memo(
 
     if (playlistId) {
       return (
-        <PartyPlaylistGroup
-          playlistId={playlistId}
-          currentPlayingId={currentSong ? currentSong.item.id : ''}
-          spotify_user_id={userId}
-          user={userData}
-          topTrackIds={getTopTrackIds(topTracks)}
-        />
+        <>
+          <PartyPlaylistGroup
+            playlistId={playlistId}
+            currentPlayingId={currentSong ? currentSong.item.id : ''}
+            spotify_user_id={userId}
+            user={userData}
+            topTrackIds={getTopTrackIds(topTracks)}
+          />
+          <section>
+            <Survay_01 />
+          </section>
+        </>
       )
     }
     if (!userId || loading) {
@@ -251,18 +284,27 @@ const PartyPlaylistGroup = memo(
                     ? handleUpdateToPartyPlaylist
                     : handleAddToPartyPlaylist
                 }
+                disabled={updateState === 'loading'}
               >
                 {isUserContributor ? 'update' : 'add'} your tracks
-                <EmojiLoader status={updateState} />
+                <span>
+                  <EmojiLoader status={updateState} />
+                </span>
               </button>
               <span
                 hidden={!timeSinceUpdate}
               >{`last updated ${timeSinceUpdate} ago`}</span>
             </p>
             <p className="action-btn-group">
-              <button className="s-submit " onClick={handleCreatePlaylist}>
+              <button
+                className="s-submit "
+                onClick={handleCreatePlaylist}
+                disabled={createState === 'loading'}
+              >
                 save to your spotify
-                <EmojiLoader status={createState} />
+                <span>
+                  <EmojiLoader status={createState} />
+                </span>
               </button>
             </p>
           </>

@@ -205,11 +205,18 @@ input[type='checkbox'] {
   &:hover {
     transform: scale(1.06);
   }
+  &:disabled {
+    color: lighten(black, 50%);
+  }
 }
 
 .s-submit {
   color: $spotify-bg;
   background-color: $spotify-green;
+  &:disabled {
+    color: lighten($spotify-bg, 50%);
+    background-color: lighten($spotify-green, 20%);
+  }
 }
 .action-btn-group {
   display: grid;
