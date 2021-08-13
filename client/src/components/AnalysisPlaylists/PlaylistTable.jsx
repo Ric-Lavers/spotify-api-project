@@ -16,6 +16,7 @@ export const PlaylistTable = ({
   onSort = () => void {},
   currentSortValue,
   users = [],
+  loadingMessage = 'Loading...',
 }) => {
   const [sortValue, setSortValue] = useState('')
   const handleSort = (statKey) => {
@@ -36,15 +37,17 @@ export const PlaylistTable = ({
   }, [tracks, stats])
 
   let tracksUnavailableMsg = loading
-    ? 'Loading...'
+    ? loadingMessage
     : !tracks.length
     ? 'No tracks'
     : ''
   if (tracksUnavailableMsg) {
     return (
-      <table>
+      <table key="loading">
         <thead>
-          <th>{tracksUnavailableMsg}</th>
+          <th key={tracksUnavailableMsg} className="highlight">
+            {tracksUnavailableMsg}
+          </th>
         </thead>
       </table>
     )

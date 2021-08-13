@@ -18,7 +18,7 @@ export const useTopTracks = (
   }
   loading: boolean
 } => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [topTracks, setTopTracks] = useState({
     short_term: [],
     medium_term: [],
