@@ -89,7 +89,7 @@ const PartyPlaylist = React.memo(
     ] = useContext(GlobalContext)
 
     const { playlistId } = useParams()
-    const { topTracks, loading } = useTopTracks(userId)
+    const { topTracks, loading: loadingTopTracks } = useTopTracks(userId)
     const [playlists, setPlaylists] = useState([])
 
     const createPartyPlaylist = async ({
@@ -111,6 +111,7 @@ const PartyPlaylist = React.memo(
     useEffect(() => {
       if (userId) {
         getUserPartyPlaylists(userId).then((playlists) => {
+          console.log(playlists)
           setPlaylists(formatUserPlaylists(playlists))
         })
       }
@@ -120,6 +121,7 @@ const PartyPlaylist = React.memo(
     }
 
     if (playlistId) {
+      //TODO move this into its own page, fo realz
       return (
         <>
           <PartyPlaylistGroup
@@ -127,7 +129,7 @@ const PartyPlaylist = React.memo(
             currentPlayingId={currentSong ? currentSong.item.id : ''}
             spotify_user_id={userId}
             user={userData}
-            topTrackIds={getTopTrackIds(topTracks)}
+            topTrackIds={!loadingTopTracks && getTopTrackIds(topTracks)}
           />
           <section>
             <Survay_01 />
@@ -135,7 +137,7 @@ const PartyPlaylist = React.memo(
         </>
       )
     }
-    if (!userId || loading) {
+    if (!userId || loadingTopTracks) {
       return <div>loading...</div>
     }
 
@@ -164,6 +166,55 @@ const PartyPlaylist = React.memo(
   })
 )
 
+const useSpotifyPlaylist = (user, playlistId) => {
+  const [createState, setCreateState] = useState('')
+
+  const includedUris = (tracks) => {
+    return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
+  }
+
+  const createSpotifyPlaylist = async (tracks, { title, description }) => {
+    const uris = includedUris(tracks)
+    if (!uris.length) return
+    setCreateState('loading')
+    const data = await createUserPlaylistWithTracks(
+      user.id,
+      {
+        name: title,
+        description: `${description}  -  ${window.location.href}`,
+        isPublic: false,
+        collaborative: true,
+      },
+      uris
+    )
+
+    await saveSpotifyPlaylistId(user.id, playlistId, data.id)
+
+    setCreateState(data ? 'success' : 'error')
+    return data
+  }
+
+  const updateSpotifyPlaylist = async (tracks, spotify_playlist_id) => {
+    const uris = includedUris(tracks)
+    if (!uris.length || !spotify_playlist_id) {
+      setCreateState('error')
+      return
+    }
+    setCreateState('loading')
+
+    const data = await updateUserPlaylistTracks(spotify_playlist_id, uris)
+
+    setCreateState(data ? 'success' : 'error')
+    return data
+  }
+
+  return {
+    createState,
+    createSpotifyPlaylist,
+    updateSpotifyPlaylist,
+  }
+}
+
 const PartyPlaylistGroup = memo(
   ({
     playlistId,
@@ -174,6 +225,7 @@ const PartyPlaylistGroup = memo(
   }) => {
     const [
       {
+        data,
         data: { user_ids, title, description, users },
         loading,
       },
@@ -185,6 +237,7 @@ const PartyPlaylistGroup = memo(
         title: '',
         updated_at: '',
         user_ids: [],
+        users: [],
       },
       loading: true,
     })
@@ -198,24 +251,75 @@ const PartyPlaylistGroup = memo(
     const user =
       (users || []).find(({ id }) => id === spotify_user_id) || userData
 
+    const { createSpotifyPlaylist, updateSpotifyPlaylist } = useSpotifyPlaylist(
+      user,
+      playlistId
+    )
+    const [doing, setDoing] = useState('')
     const isUserContributor = user_ids.includes(spotify_user_id)
     function getNsetPlaylist() {
       setData((s) => ({ ...s, loading: true }))
+      setDoing('initialising')
       getPartyPlaylist(playlistId)
-        .then((data) => {
-          setData({ data, loading: false })
+        .then(async (data) => {
+          setDoing('syncing your tracks')
+          const isUserContributor = data.user_ids.includes(spotify_user_id)
+          await (isUserContributor
+            ? updateTopTracksPlaylist(userData, playlistId, topTrackIds)
+            : addTopTracksToPlaylist(userData, playlistId, topTrackIds))
+          return data
+        })
+        .then(async () => {
+          setDoing('saving to spotify')
+          const data = await getPartyPlaylist(playlistId)
           setTracks(data.tracks)
+          setData({ data, loading: true })
+          return data
+        })
+        .then(async (data) => {
+          const u = (data.users || []).find(({ id }) => id === spotify_user_id)
+          await (u.spotify_playlist_id
+            ? updateSpotifyPlaylist(data.tracks, u.spotify_playlist_id)
+            : createSpotifyPlaylist(data.tracks, {
+                title: data.title,
+                description: data.description,
+              }).then((playlist) => {
+                setData((prev) => {
+                  const u = prev.data.users.find(
+                    (u) => u.id === spotify_user_id
+                  )
+                  if (u) {
+                    u.spotify_playlist_id = playlist.id
+                  }
+
+                  return prev
+                })
+              }))
         })
         .catch(() => setData((prev) => ({ ...prev, loading: false })))
+        .finally(() => {
+          setDoing('')
+          setData((prev) => {
+            prev.loading = false
+            return prev
+          })
+        })
     }
 
+    const initialising = React.useRef(true)
     useEffect(() => {
-      getNsetPlaylist()
-    }, [playlistId])
+      if (spotify_user_id && topTrackIds && initialising.current) {
+        getNsetPlaylist()
+        initialising.current = false
+      }
+    }, [playlistId, spotify_user_id, topTrackIds])
 
     const [createState, setCreateState] = useState('')
     const [updateState, setUpdateState] = useState('')
-
+    const includedUris = useMemo(() => {
+      return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
+    }, [tracks])
+    /* 
     const handleAddToPartyPlaylist = async () => {
       setUpdateState('loading')
       const data = await addTopTracksToPlaylist(
@@ -239,10 +343,8 @@ const PartyPlaylistGroup = memo(
       setUpdateState(data ? 'success' : 'error')
     }
 
-    const includedUris = useMemo(() => {
-      return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
-    }, [tracks])
-
+   
+    
     const handleCreateSpotifyPlaylist = async () => {
       if (!includedUris.length) return
       setCreateState('loading')
@@ -250,7 +352,7 @@ const PartyPlaylistGroup = memo(
         spotify_user_id,
         {
           name: title,
-          description: description,
+          description: `${description}  -  ${window.location.href}`,
           isPublic: false,
           collaborative: true,
         },
@@ -277,7 +379,7 @@ const PartyPlaylistGroup = memo(
       setCreateState(data ? 'success' : 'error')
       return data
     }
-
+ */
     function removeFinalStateEmjoi(currentState, setState) {
       if (currentState === 'loading') return
       const id = setTimeout(() => {
@@ -318,7 +420,7 @@ const PartyPlaylistGroup = memo(
         <UserCircles users={users} />
         {(!loading || createState || updateState) && (
           <>
-            <p className="action-btn-group">
+            {/*    <p className="action-btn-group">
               <button
                 className="s-button"
                 onClick={
@@ -354,7 +456,7 @@ const PartyPlaylistGroup = memo(
                   <EmojiLoader status={createState} />
                 </span>
               </button>
-            </p>
+            </p> */}
             {user.spotify_playlist_id && (
               <p className="action-btn-group">
                 <a
@@ -376,6 +478,7 @@ const PartyPlaylistGroup = memo(
         )}
         <PlaylistTable
           loading={loading}
+          loadingMessage={doing}
           tracks={tracks}
           currentTrackId={currentPlayingId}
           uris={includedUris || []}
