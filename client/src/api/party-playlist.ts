@@ -154,3 +154,19 @@ export const getUserTopTracks = async (user_id: string) => {
     return []
   }
 }
+
+export const saveSpotifyPlaylistId = async (
+  user_id: string,
+  playlist_id: string,
+  spotify_playlist_id: string
+) => {
+  const data = await serverFetch(`playlists/user/spotifyplaylist/update`, {
+    method: 'POST',
+    body: JSON.stringify({
+      user_id,
+      playlist_id,
+      spotify_playlist_id,
+    }),
+  })
+  return data
+}

@@ -12,7 +12,11 @@ import { createUserPlaylistWithTracks } from 'api/spotify'
 import { GlobalContext } from 'globalContext'
 import { timeSince } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
-import { getUserPartyPlaylists, getPartyPlaylist } from 'api/party-playlist'
+import {
+  getUserPartyPlaylists,
+  getPartyPlaylist,
+  saveSpotifyPlaylistId,
+} from 'api/party-playlist'
 import { stats as _stats } from '../components/stats/Stats'
 import EmojiLoader from '../components/common/EmojiLoader'
 import UserCircles from '../components/common/UserCircles'
@@ -50,6 +54,14 @@ const Survay_01 = () => {
   const __ = useWait()
   if (__) return null
 
+  return (
+    <a
+      style={{ color: 'white' }}
+      href="https://docs.google.com/forms/d/e/1FAIpQLSeWAyEF_ToiQwQPDFrExodO-NZDVRQ2eDnr2DIZq3fAjdp8Uw/viewform"
+    >
+      Give Ric some feedback!
+    </a>
+  )
   return (
     <iframe
       src="https://docs.google.com/forms/d/e/1FAIpQLSeWAyEF_ToiQwQPDFrExodO-NZDVRQ2eDnr2DIZq3fAjdp8Uw/viewform?embedded=true"
@@ -203,13 +215,22 @@ const PartyPlaylistGroup = memo(
 
     const handleAddToPartyPlaylist = async () => {
       setUpdateState('loading')
-      const data = await addTopTracksToPlaylist(user, playlistId, topTrackIds)
+      const data = await addTopTracksToPlaylist(
+        userData,
+        playlistId,
+        topTrackIds
+      )
       getNsetPlaylist()
       setUpdateState(data ? 'success' : 'error')
     }
+
     const handleUpdateToPartyPlaylist = async () => {
       setUpdateState('loading')
-      const data = await updateTopTracksPlaylist(user, playlistId, topTrackIds)
+      const data = await updateTopTracksPlaylist(
+        userData,
+        playlistId,
+        topTrackIds
+      )
       getNsetPlaylist()
 
       setUpdateState(data ? 'success' : 'error')
@@ -232,6 +253,8 @@ const PartyPlaylistGroup = memo(
         },
         includedUris
       )
+
+      await saveSpotifyPlaylistId(spotify_user_id, playlistId, data.id)
 
       setCreateState(data ? 'success' : 'error')
       return data
@@ -287,7 +310,7 @@ const PartyPlaylistGroup = memo(
                 disabled={updateState === 'loading'}
               >
                 {isUserContributor ? 'update' : 'add'} your tracks
-                <span>
+                <span style={{ fontSize: 12 }}>
                   <EmojiLoader status={updateState} />
                 </span>
               </button>
@@ -302,7 +325,7 @@ const PartyPlaylistGroup = memo(
                 disabled={createState === 'loading'}
               >
                 save to your spotify
-                <span>
+                <span style={{ fontSize: 12 }}>
                   <EmojiLoader status={createState} />
                 </span>
               </button>
