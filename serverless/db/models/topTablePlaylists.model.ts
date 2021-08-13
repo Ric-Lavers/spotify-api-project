@@ -23,6 +23,28 @@ export const getTopTablePlaylistById = async (topTablePlaylistId: string) => {
     data = playlist
   })
 
+  data.users.filter(Boolean).forEach((user, j) => {
+    const {
+      created_at,
+      updated_at,
+      display_name,
+      id,
+      images,
+      _id,
+      spotify_playlist_id,
+    } = user
+
+    data.users[j] = {
+      created_at,
+      updated_at,
+      display_name,
+      id,
+      images,
+      _id,
+      spotify_playlist_id,
+    }
+  })
+
   return data
 }
 
@@ -36,6 +58,30 @@ export const getTopTablePlaylistsByUserIds = async (
       $in: spotify_user_id,
     },
   }).select(['_id', 'description', 'title', 'created_at', 'user_ids', 'users'])
+
+  usersLists.forEach((list, i) => {
+    list.users.filter(Boolean).forEach((user, j) => {
+      const {
+        created_at,
+        updated_at,
+        display_name,
+        id,
+        images,
+        _id,
+        spotify_playlist_id,
+      } = user
+
+      usersLists[i].users[j] = {
+        created_at,
+        updated_at,
+        display_name,
+        id,
+        images,
+        _id,
+        spotify_playlist_id,
+      }
+    })
+  })
 
   return usersLists
 }
