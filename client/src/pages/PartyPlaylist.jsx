@@ -8,7 +8,10 @@ import {
   UserPlaylistsSelect,
 } from '../components/AnalysisPlaylists'
 import { sortPlaylistTracks } from './AnalysisPlaylists'
-import { createUserPlaylistWithTracks } from 'api/spotify'
+import {
+  createUserPlaylistWithTracks,
+  updateUserPlaylistTracks,
+} from 'api/spotify'
 import { GlobalContext } from 'globalContext'
 import { timeSince } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
@@ -240,7 +243,7 @@ const PartyPlaylistGroup = memo(
       return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
     }, [tracks])
 
-    const handleCreatePlaylist = async () => {
+    const handleCreateSpotifyPlaylist = async () => {
       if (!includedUris.length) return
       setCreateState('loading')
       const data = await createUserPlaylistWithTracks(
@@ -259,6 +262,22 @@ const PartyPlaylistGroup = memo(
       setCreateState(data ? 'success' : 'error')
       return data
     }
+    const handleUpdateSpotifyPlaylist = async () => {
+      if (!includedUris.length || !user.spotify_playlist_id) {
+        setCreateState('error')
+        return
+      }
+      setCreateState('loading')
+
+      const data = await updateUserPlaylistTracks(
+        user.spotify_playlist_id,
+        includedUris
+      )
+
+      setCreateState(data ? 'success' : 'error')
+      return data
+    }
+
     function removeFinalStateEmjoi(currentState, setState) {
       if (currentState === 'loading') return
       const id = setTimeout(() => {
@@ -321,15 +340,38 @@ const PartyPlaylistGroup = memo(
             <p className="action-btn-group">
               <button
                 className="s-submit "
-                onClick={handleCreatePlaylist}
+                onClick={
+                  user.spotify_playlist_id
+                    ? handleUpdateSpotifyPlaylist
+                    : handleCreateSpotifyPlaylist
+                }
                 disabled={createState === 'loading'}
               >
-                save to your spotify
+                {`${
+                  user.spotify_playlist_id ? 'update' : 'save to'
+                } your spotify`}
                 <span style={{ fontSize: 12 }}>
                   <EmojiLoader status={createState} />
                 </span>
               </button>
             </p>
+            {user.spotify_playlist_id && (
+              <p className="action-btn-group">
+                <a
+                  style={{
+                    textDecoration: 'none',
+                    height: 'inherit',
+                    lineHeight: '32px',
+                  }}
+                  className="s-submit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
+                >
+                  Open in Spotify
+                </a>
+              </p>
+            )}
           </>
         )}
         <PlaylistTable
