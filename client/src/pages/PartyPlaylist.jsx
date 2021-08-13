@@ -111,7 +111,6 @@ const PartyPlaylist = React.memo(
     useEffect(() => {
       if (userId) {
         getUserPartyPlaylists(userId).then((playlists) => {
-          console.log(playlists)
           setPlaylists(formatUserPlaylists(playlists))
         })
       }
@@ -319,67 +318,7 @@ const PartyPlaylistGroup = memo(
     const includedUris = useMemo(() => {
       return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
     }, [tracks])
-    /* 
-    const handleAddToPartyPlaylist = async () => {
-      setUpdateState('loading')
-      const data = await addTopTracksToPlaylist(
-        userData,
-        playlistId,
-        topTrackIds
-      )
-      getNsetPlaylist()
-      setUpdateState(data ? 'success' : 'error')
-    }
 
-    const handleUpdateToPartyPlaylist = async () => {
-      setUpdateState('loading')
-      const data = await updateTopTracksPlaylist(
-        userData,
-        playlistId,
-        topTrackIds
-      )
-      getNsetPlaylist()
-
-      setUpdateState(data ? 'success' : 'error')
-    }
-
-   
-    
-    const handleCreateSpotifyPlaylist = async () => {
-      if (!includedUris.length) return
-      setCreateState('loading')
-      const data = await createUserPlaylistWithTracks(
-        spotify_user_id,
-        {
-          name: title,
-          description: `${description}  -  ${window.location.href}`,
-          isPublic: false,
-          collaborative: true,
-        },
-        includedUris
-      )
-
-      await saveSpotifyPlaylistId(spotify_user_id, playlistId, data.id)
-
-      setCreateState(data ? 'success' : 'error')
-      return data
-    }
-    const handleUpdateSpotifyPlaylist = async () => {
-      if (!includedUris.length || !user.spotify_playlist_id) {
-        setCreateState('error')
-        return
-      }
-      setCreateState('loading')
-
-      const data = await updateUserPlaylistTracks(
-        user.spotify_playlist_id,
-        includedUris
-      )
-
-      setCreateState(data ? 'success' : 'error')
-      return data
-    }
- */
     function removeFinalStateEmjoi(currentState, setState) {
       if (currentState === 'loading') return
       const id = setTimeout(() => {
@@ -420,43 +359,6 @@ const PartyPlaylistGroup = memo(
         <UserCircles users={users} />
         {(!loading || createState || updateState) && (
           <>
-            {/*    <p className="action-btn-group">
-              <button
-                className="s-button"
-                onClick={
-                  isUserContributor
-                    ? handleUpdateToPartyPlaylist
-                    : handleAddToPartyPlaylist
-                }
-                disabled={updateState === 'loading'}
-              >
-                {isUserContributor ? 'update' : 'add'} your tracks
-                <span style={{ fontSize: 12 }}>
-                  <EmojiLoader status={updateState} />
-                </span>
-              </button>
-              <span
-                hidden={!timeSinceUpdate}
-              >{`last updated ${timeSinceUpdate} ago`}</span>
-            </p>
-            <p className="action-btn-group">
-              <button
-                className="s-submit "
-                onClick={
-                  user.spotify_playlist_id
-                    ? handleUpdateSpotifyPlaylist
-                    : handleCreateSpotifyPlaylist
-                }
-                disabled={createState === 'loading'}
-              >
-                {`${
-                  user.spotify_playlist_id ? 'update' : 'save to'
-                } your spotify`}
-                <span style={{ fontSize: 12 }}>
-                  <EmojiLoader status={createState} />
-                </span>
-              </button>
-            </p> */}
             {user.spotify_playlist_id && (
               <p className="action-btn-group">
                 <a

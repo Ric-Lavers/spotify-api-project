@@ -43,9 +43,11 @@ export const PlaylistTable = ({
     : ''
   if (tracksUnavailableMsg) {
     return (
-      <table>
+      <table key="loading">
         <thead>
-          <th className="highlight">{tracksUnavailableMsg}</th>
+          <th key={tracksUnavailableMsg} className="highlight">
+            {tracksUnavailableMsg}
+          </th>
         </thead>
       </table>
     )
