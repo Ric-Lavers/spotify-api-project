@@ -53,7 +53,7 @@ const useWait = (ms = 8000) => {
   return __
 }
 
-const Survay_01 = () => {
+export const Survay_01 = () => {
   const __ = useWait()
   if (__) return null
 
@@ -379,9 +379,7 @@ const PartyPlaylistGroup = memo(
             )}
           </>
         )}
-        <br />
-        <Survay_01 />
-        <br />
+
         <PlaylistTable
           loading={loading}
           loadingMessage={doing}
