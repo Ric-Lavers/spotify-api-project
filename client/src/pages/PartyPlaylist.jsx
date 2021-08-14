@@ -130,9 +130,9 @@ const PartyPlaylist = React.memo(
             user={userData}
             topTrackIds={!loadingTopTracks && getTopTrackIds(topTracks)}
           />
-          <section>
+          {/* <section>
             <Survay_01 />
-          </section>
+          </section> */}
         </>
       )
     }
@@ -378,6 +378,9 @@ const PartyPlaylistGroup = memo(
             )}
           </>
         )}
+        <br />
+        <Survay_01 />
+        <br />
         <PlaylistTable
           loading={loading}
           loadingMessage={doing}

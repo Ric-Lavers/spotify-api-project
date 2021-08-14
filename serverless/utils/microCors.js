@@ -53,7 +53,6 @@ const cors =
       res.setHeader('Access-Control-Allow-Headers', allowHeaders.join(','))
       res.setHeader('Access-Control-Max-Age', String(maxAge))
     }
-
     return handler(req, res, ...restArgs)
   }
 

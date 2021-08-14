@@ -4,6 +4,12 @@ import { saveSpotifyPlaylistId } from '../../../../db/models/topTablePlaylists.m
 
 module.exports = cors(async function (req, res) {
   try {
+    if (req.method === 'OPTIONS') {
+      res.status(200)
+      res.send()
+      return
+    }
+
     const userId = req.body['user_id']
     const playlistId = req.body['playlist_id']
     const spotifyPlaylistId = req.body['spotify_playlist_id']
