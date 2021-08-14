@@ -402,7 +402,7 @@ const PartyPlaylistGroup = memo(
           tracks={tracks}
           currentTrackId={currentPlayingId}
           uris={includedUris || []}
-          stats={['score', 'artists', 'users']}
+          stats={['score', 'artists', 'popularity', 'danceability', 'users']}
           onAllCheck={(checked) => {}}
           onCheckTrack={(id, checked) => {}}
           onSort={handleSort}
