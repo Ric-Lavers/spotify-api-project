@@ -1,4 +1,5 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 
 import { withCurrentSong } from '../hooks'
@@ -361,21 +362,36 @@ const PartyPlaylistGroup = memo(
         {(!loading || createState || updateState) && (
           <>
             {user.spotify_playlist_id && (
-              <p className="action-btn-group">
-                <a
-                  style={{
-                    textDecoration: 'none',
-                    height: 'inherit',
-                    lineHeight: '32px',
-                  }}
-                  className="s-submit"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
-                >
-                  Open in Spotify
-                </a>
-              </p>
+              <>
+                <p className="action-btn-group">
+                  <a
+                    style={{
+                      textDecoration: 'none',
+                      height: 'inherit',
+                      lineHeight: '32px',
+                    }}
+                    className="s-submit"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
+                  >
+                    Open in Spotify
+                  </a>
+                </p>
+                <p className="action-btn-group">
+                  <a
+                    style={{
+                      textDecoration: 'none',
+                      height: 'inherit',
+                      lineHeight: '32px',
+                    }}
+                    className="s-button"
+                    href={`/analysis/${user.spotify_playlist_id}`}
+                  >
+                    Filter this Playlist
+                  </a>
+                </p>
+              </>
             )}
           </>
         )}
