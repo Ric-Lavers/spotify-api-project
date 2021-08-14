@@ -59,6 +59,7 @@ const Survay_01 = () => {
 
   return (
     <a
+      target="_blank"
       style={{ color: 'white' }}
       href="https://docs.google.com/forms/d/e/1FAIpQLSeWAyEF_ToiQwQPDFrExodO-NZDVRQ2eDnr2DIZq3fAjdp8Uw/viewform"
     >
