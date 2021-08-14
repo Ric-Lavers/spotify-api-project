@@ -263,7 +263,7 @@ const PartyPlaylistGroup = memo(
       setDoing('initialising')
       getPartyPlaylist(playlistId)
         .then(async (data) => {
-          setDoing('syncing your tracks')
+          setDoing('syncing your favourite tracks')
           const isUserContributor = data.user_ids.includes(spotify_user_id)
           await (isUserContributor
             ? updateTopTracksPlaylist(userData, playlistId, topTrackIds)
