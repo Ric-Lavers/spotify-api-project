@@ -85,6 +85,22 @@ export const getTopTablePlaylistsByUserIds = async (
 
   return usersLists
 }
+export const saveSpotifyPlaylistId = async (
+  spotify_user_id: string,
+  playlist_id: string,
+  spotify_playlist_id: string
+) => {
+  const { TopTracksPlaylist } = connectToDatabase()
+
+  let playlist = await TopTracksPlaylist.findOne({
+    _id: playlist_id,
+  })
+  const currentUser = playlist.users.find((u) => u.id === spotify_user_id)
+  currentUser.spotify_playlist_id = spotify_playlist_id
+  await playlist.save()
+
+  return playlist
+}
 
 /**
  * This are just playlists that are created using top track data.

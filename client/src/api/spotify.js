@@ -378,6 +378,53 @@ export const createUserPlaylist = async (
     return data
   } catch (error) {}
 }
+
+export const updateUserPlaylistTracks = async (playlistId, uris) => {
+  try {
+    const arrayOfUris = []
+    for (let i = 0; i < uris.length; i += 100) {
+      arrayOfUris.push(uris.slice(i, i + 100))
+    }
+    let i = 0
+    for (const uris of arrayOfUris) {
+      let res = await fetch(`${baseUrl}/playlists/${playlistId}/tracks`, {
+        ...headers,
+        // Put in this case replaces the list, then post in batches of 100 after
+        method: i++ ? 'POST' : 'PUT',
+        body: JSON.stringify({
+          uris,
+        }),
+      })
+
+      isOk(res)
+    }
+    return true
+  } catch (error) {
+    return false
+  }
+}
+/**
+ *
+ * @param {string} playlist_id
+ * @returns {snapshot_id: string}
+ */
+export const addTracksToPlaylist = async (playlist_id, uris) => {
+  try {
+    let res = await fetch(`${baseUrl}/playlists/${playlist_id}/tracks`, {
+      ...headers,
+      method: 'POST',
+      body: JSON.stringify({
+        uris,
+      }),
+    })
+
+    isOk(res)
+    const data = await res.json()
+
+    return data
+  } catch (error) {}
+}
+
 export const createUserPlaylistWithTracks = async (
   user_id,
   playlistData,
@@ -403,9 +450,9 @@ export const createUserPlaylistWithTracks = async (
       isOk(res)
     }
 
-    const playlist = await getAllPlaylistsTracks(playlist_id)
+    const playlistTracks = await getAllPlaylistsTracks(playlist_id)
 
-    return playlist
+    return newPlaylist
   } catch (error) {}
 }
 

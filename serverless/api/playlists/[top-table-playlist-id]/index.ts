@@ -1,4 +1,5 @@
 const cors = require('micro-cors')()
+
 import { getTopTablePlaylistById } from '../../../db/models/topTablePlaylists.model'
 
 module.exports = cors(async function (req, res) {
