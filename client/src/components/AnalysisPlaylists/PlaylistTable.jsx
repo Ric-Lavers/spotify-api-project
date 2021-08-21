@@ -118,7 +118,7 @@ export const PlaylistTable = ({
               }
               const { checked, isLocalFile } = isChecked(uri, include)
               return (
-                <tr>
+                <tr id={id}>
                   <td style={{ textAlign: 'center' }}>
                     <input
                       onChange={({ target: { checked } }) =>

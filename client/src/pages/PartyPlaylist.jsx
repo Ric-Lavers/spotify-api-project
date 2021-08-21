@@ -1,4 +1,5 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
+import get from 'lodash.get'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 
@@ -243,6 +244,9 @@ const PartyPlaylistGroup = memo(
       loading: true,
     })
     const [tracks, setTracks] = useState([])
+    const currentTrack = React.useMemo(() => {
+      return tracks.find((t) => t.id === currentPlayingId)
+    }, [tracks, currentPlayingId])
     const timeSinceUpdate = (() => {
       const u = (users || []).find(({ id }) => id === spotify_user_id)
       if (!u) return ''
@@ -359,6 +363,8 @@ const PartyPlaylistGroup = memo(
         {description && <p>{description}</p>}
 
         <UserCircles users={users} />
+        <CurrentlyPLaying currentTrack={currentTrack} users={users} />
+
         {(!loading || createState || updateState) && (
           <>
             {user.spotify_playlist_id && (
@@ -413,4 +419,39 @@ const PartyPlaylistGroup = memo(
     )
   }
 )
+
+const CurrentlyPLaying = ({ currentTrack, users = [] }) => {
+  if (!currentTrack) {
+    return null
+  }
+  return (
+    <>
+      <br />
+      <fieldset className="currently-playing party-playlist">
+        <legend>Currently playing</legend>
+        <a
+          href={`#${currentTrack.id}`}
+          className="currently-playing party-playlist"
+        >
+          <div>
+            {currentTrack.name} ({currentTrack.custom.score})
+          </div>
+          <UserCircles
+            size="small"
+            users={(users || []).filter((u) =>
+              (currentTrack.custom.user_ids || []).find((id) => {
+                const actualUserId = id
+                  .replace('-short_term', '')
+                  .replace('-medium_term', '')
+                  .replace('-long_term', '')
+
+                return u.id === actualUserId
+              })
+            )}
+          />
+        </a>
+      </fieldset>
+    </>
+  )
+}
 export default PartyPlaylist

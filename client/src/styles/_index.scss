@@ -17,6 +17,9 @@
 @import './components/SkipList';
 @import './components/UserCircles';
 
+body {
+  scroll-behavior: smooth;
+}
 .dev {
   border: 1px solid lime;
 }

@@ -1,4 +1,5 @@
 .analysis-playlists {
+  scroll-behavior: smooth;
   .stat-check-list {
     // display: grid;
     // grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -78,4 +79,23 @@
 
 input[type='checkbox'] {
   cursor: pointer;
+}
+.currently-playing {
+  display: inline-flex;
+  justify-content: center;
+  border-radius: $sm;
+  text-align: left;
+  legend {
+    font-size: medium;
+  }
+  a {
+    text-decoration: none;
+    color: $spotify-green;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .user-circles {
+    margin-left: 32px;
+  }
 }
