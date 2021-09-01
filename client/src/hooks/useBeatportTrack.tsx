@@ -59,7 +59,7 @@ export const BeatportLink = ({
       target="_blank"
       href={trackInfo.trackUrl}
     >
-      {price && <span className="price"> {price} </span>}
+      {false && price && <span className="price"> {price} </span>}
       <img src={BeatportLogo} alt="beatport download" />
     </a>
   )
