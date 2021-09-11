@@ -52,7 +52,8 @@ export const PlaylistTable = ({
       </table>
     )
   }
-  const _stats = stats.filter((s) => s !== 'score')
+  const enableSelecting = onAllCheck && onCheckTrack
+  const _stats = stats.filter((s) => !s.match('score|artists'))
   return !tracks.length ? null : (
     <>
       <section>
@@ -62,8 +63,14 @@ export const PlaylistTable = ({
         <table className="playlist-table">
           <thead>
             <tr>
-              <th className="table-average">{averages.checked}</th>
-              <th className="table-average">count {tracks.length}</th>
+              {enableSelecting ? (
+                <th className="table-average">{averages.checked}</th>
+              ) : (
+                <th />
+              )}
+              <th style={{ overflow: 'visible' }} className="table-average">
+                {tracks.length} tracks
+              </th>
               {_stats.map((stat, i) => {
                 return (
                   <th key={`${averages[stat]}-${i}`} className="table-average">
@@ -77,14 +84,16 @@ export const PlaylistTable = ({
               })}
             </tr>
             <tr>
-              <th style={{ textAlign: 'center' }}>
-                <input
-                  onChange={({ target: { checked } }) => onAllCheck(checked)}
-                  type="checkbox"
-                  name="include"
-                  defaultChecked={true}
-                />
-              </th>
+              {enableSelecting && (
+                <th style={{ textAlign: 'center' }}>
+                  <input
+                    onChange={({ target: { checked } }) => onAllCheck(checked)}
+                    type="checkbox"
+                    name="include"
+                    defaultChecked={true}
+                  />
+                </th>
+              )}
               {get(tracks[0], 'custom.score') && <th>score</th>}
               <th>title</th>
 
@@ -116,24 +125,39 @@ export const PlaylistTable = ({
                   custom.user_ids.find((id) => id.includes(u.id))
                 )
               }
+              const images = track.album.images || []
+              const smallestImage = images[images.length - 1]
               const { checked, isLocalFile } = isChecked(uri, include)
               return (
                 <tr id={id}>
-                  <td style={{ textAlign: 'center' }}>
-                    <input
-                      onChange={({ target: { checked } }) =>
-                        onCheckTrack(id, checked)
-                      }
-                      type="checkbox"
-                      name="include"
-                      checked={checked}
-                      disabled={isLocalFile}
-                    />
-                  </td>
+                  {enableSelecting && (
+                    <td style={{ textAlign: 'center' }}>
+                      <input
+                        onChange={({ target: { checked } }) =>
+                          onCheckTrack(id, checked)
+                        }
+                        type="checkbox"
+                        name="include"
+                        checked={checked}
+                        disabled={isLocalFile}
+                      />
+                    </td>
+                  )}
                   {rows.score && stats.includes('score') && (
                     <td>{rows.score}</td>
                   )}
-                  <td
+                  <td>
+                    <SpotifyTrackGrid
+                      name={name}
+                      artists={formatFeatures('artists', rows)}
+                      imageUrl={smallestImage.url}
+                      currentlyPlaying={currentTrackId === id}
+                      onClick={() =>
+                        uris && play({ uris: uris, offset: { position: i } })
+                      }
+                    />
+                  </td>
+                  {/* <td
                     className={`playlist__song ${
                       currentTrackId === id ? 'green' : ''
                     }`}
@@ -142,7 +166,7 @@ export const PlaylistTable = ({
                     }
                   >
                     {name}
-                  </td>
+                  </td> */}
 
                   {_stats.map((statKey) => (
                     <td>{formatFeatures(statKey, rows)}</td>
@@ -154,5 +178,31 @@ export const PlaylistTable = ({
         </table>
       </div>
     </>
+  )
+}
+
+const SpotifyTrackGrid = ({
+  name,
+  artists,
+  imageUrl,
+  currentlyPlaying,
+  onClick,
+}) => {
+  return (
+    <div className="spotify-track">
+      <img src={imageUrl} height="40" width="40" alt="" loading="lazy" />
+
+      <div className="track-grid">
+        <div
+          className={`${
+            currentlyPlaying ? 'green' : ''
+          } title ellipsis pointer`}
+          onClick={onClick}
+        >
+          {name}
+        </div>
+        <span className="sub-title ellipsis">{artists}</span>
+      </div>
+    </div>
   )
 }

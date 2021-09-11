@@ -1,7 +1,7 @@
 const spotifyClientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID
+const baseUrl = 'https://api.spotify.com/v1'
 const baseServerUrl = process.env.REACT_APP_BASE_SERVER_URL
 const spotifyToken = sessionStorage.spotifyToken
-const baseUrl = 'https://api.spotify.com/v1'
 const headers = new Headers({
   Authorization: `Bearer ${spotifyToken}`,
   'Content-Type': 'application/json',

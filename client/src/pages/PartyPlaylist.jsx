@@ -360,6 +360,7 @@ const PartyPlaylistGroup = memo(
     return (
       <div className="analysis-playlists">
         <h4>{title}</h4>
+
         {description && <p>{description}</p>}
 
         <UserCircles users={users} />
@@ -408,9 +409,7 @@ const PartyPlaylistGroup = memo(
           tracks={tracks}
           currentTrackId={currentPlayingId}
           uris={includedUris || []}
-          stats={['score', 'artists', 'popularity', 'danceability', 'users']}
-          onAllCheck={(checked) => {}}
-          onCheckTrack={(id, checked) => {}}
+          stats={['score', 'users', 'popularity', 'danceability']}
           onSort={handleSort}
           currentSortValue={'title'}
           users={users}

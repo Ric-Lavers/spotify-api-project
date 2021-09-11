@@ -17,6 +17,12 @@
       white-space: nowrap;
       &:not(.table-average) {
         cursor: pointer;
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        line-height: 18px; //16px;
+        text-transform: uppercase;
+        color: rgb(179, 179, 179);
       }
       .ASC::after {
         height: 16px;
@@ -32,5 +38,49 @@
   }
   td {
     font-size: 0.8em;
+  }
+}
+
+.spotify-track {
+  min-width: 220px;
+  display: flex;
+  img {
+    margin-right: 16px;
+  }
+
+  .track-grid {
+    text-align: left;
+    align-items: center;
+    column-gap: 8px;
+    display: grid;
+    grid-template:
+      'title title'
+      'badges subtitle' / auto 1fr;
+    .title {
+      color: #fff;
+      grid-area: title;
+
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: normal;
+      line-height: 24px;
+      text-transform: none;
+    }
+    .sub-title {
+      grid-area: subtitle;
+      grid-column-start: badges;
+      color: rgb(179, 179, 179);
+
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: normal;
+      line-height: 16px;
+      text-transform: none;
+    }
+    .ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
