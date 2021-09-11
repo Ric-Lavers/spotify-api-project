@@ -2,6 +2,7 @@ import { UserObjectPrivate } from '../types/spotify-api'
 import { serverFetch } from './utils'
 import { getHeapsTracks, getHeapsAudioFeatures } from './spotify'
 import { TrackObjectFull, AudioFeaturesObject } from '../types/spotify-api'
+import { TrackObjectWithFeatures } from 'pages/PartyPlaylist.utils'
 
 export enum TopTimeRange {
   SHORT_TERM = 'short_term',
@@ -22,7 +23,7 @@ export const getUserPartyPlaylists = async (user_id: string) => {
 export const addToPartyPlaylist = async (
   user: UserObjectPrivate,
   topTablePlaylistId: string,
-  topTrackIds: string[],
+  topTracks: TrackObjectWithFeatures[],
   time_range: TopTimeRange | string = ''
 ) => {
   try {
@@ -35,7 +36,7 @@ export const addToPartyPlaylist = async (
       {
         method: 'POST',
         body: JSON.stringify({
-          tracks: topTrackIds,
+          tracks: topTracks,
           user,
         }),
       }
@@ -47,10 +48,11 @@ export const addToPartyPlaylist = async (
     return []
   }
 }
+
 export const updatePartyPlaylist = async (
   user: UserObjectPrivate,
   topTablePlaylistId: string,
-  topTrackIds: string[],
+  topTracks: TrackObjectWithFeatures[],
   time_range: TopTimeRange | string = ''
 ) => {
   try {
@@ -63,7 +65,7 @@ export const updatePartyPlaylist = async (
       {
         method: 'POST',
         body: JSON.stringify({
-          tracks: topTrackIds,
+          tracks: topTracks,
           user,
         }),
       }
@@ -84,9 +86,11 @@ export const createPartyPlaylist = async (
     isPublic?: boolean
     collaborative?: boolean
   },
-  topTrackIds: string[],
+  topTracks: TrackObjectWithFeatures[],
   time_range: TopTimeRange | string = ''
 ) => {
+  console.log({ topTracks })
+
   const searchParams = new URLSearchParams({
     spotify_user_id: user.id,
     time_range,
@@ -95,7 +99,7 @@ export const createPartyPlaylist = async (
     method: 'POST',
     body: JSON.stringify({
       ...body,
-      tracks: topTrackIds,
+      tracks: topTracks,
       user,
     }),
   })

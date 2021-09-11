@@ -318,7 +318,8 @@ const fetchNextItems = async (next, items = []) => {
 
 export const getAllPlaylistsTracks = async (
   playlistId,
-  removeIsLocal = true
+  removeIsLocal = true,
+  withAudioFeatures = false
 ) => {
   try {
     const isTopTrack = top_time_range
@@ -339,16 +340,32 @@ export const getAllPlaylistsTracks = async (
     if (removeIsLocal) {
       data.items = data.items.filter(({ is_local }) => !is_local)
     }
+
+    let audioFeatures
+    if (withAudioFeatures) {
+      audioFeatures = await getHeapsAudioFeatures(
+        data.items.map(({ id }) => id)
+      )
+    }
+
     if (isTopTrack) {
       return {
         ...data,
         items: data.items.map((track, i) => ({
-          track: { ...track, order: i + 1 },
+          track: {
+            ...track,
+            order: i + 1,
+            ...(audioFeatures ? { audioFeatures: audioFeatures[i] } : {}),
+          },
         })),
       }
     }
+
     data.items.forEach(({ track }, i) => {
       track.order = i + 1
+      if (audioFeatures) {
+        track.audioFeatures = audioFeatures[i]
+      }
     })
     return data
   } catch (error) {
