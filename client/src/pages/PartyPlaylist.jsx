@@ -1,7 +1,5 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
-import get from 'lodash.get'
-import { Link } from 'react-router-dom'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 
 import { withCurrentSong } from '../hooks'
 import {
@@ -90,11 +88,10 @@ const PartyPlaylist = React.memo(
         userData: { id: userId, display_name },
       },
     ] = useContext(GlobalContext)
-
+    const history = useHistory()
     const { playlistId } = useParams()
     const { topTracks, loading: loadingTopTracks } = useTopTracks(userId)
     const [playlists, setPlaylists] = useState([])
-
     const createPartyPlaylist = async ({
       name: title,
       description,
@@ -103,7 +100,7 @@ const PartyPlaylist = React.memo(
       const data = await createTopTracksPlaylist(
         userData,
         { title, description, isPublic, collaborative: true },
-        getTopTrackIds(topTracks)
+        topTracks
       )
       if (data && data._id) {
         handleChangePlaylist(data._id)
@@ -119,7 +116,7 @@ const PartyPlaylist = React.memo(
       }
     }, [userId])
     const handleChangePlaylist = (partyPlaylistId) => {
-      window.location.replace(`/party-playlist/${partyPlaylistId}`)
+      history.push(`/party-playlist/${partyPlaylistId}`)
     }
 
     if (playlistId) {
@@ -132,10 +129,8 @@ const PartyPlaylist = React.memo(
             spotify_user_id={userId}
             user={userData}
             topTrackIds={!loadingTopTracks && getTopTrackIds(topTracks)}
+            topTracks={topTracks}
           />
-          {/* <section>
-            <Survay_01 />
-          </section> */}
         </>
       )
     }
@@ -224,6 +219,7 @@ const PartyPlaylistGroup = memo(
     spotify_user_id,
     topTrackIds,
     user: userData,
+    topTracks,
   }) => {
     const [
       {
@@ -270,8 +266,8 @@ const PartyPlaylistGroup = memo(
           setDoing('syncing your favourite tracks')
           const isUserContributor = data.user_ids.includes(spotify_user_id)
           await (isUserContributor
-            ? updateTopTracksPlaylist(userData, playlistId, topTrackIds)
-            : addTopTracksToPlaylist(userData, playlistId, topTrackIds))
+            ? updateTopTracksPlaylist(userData, playlistId, topTracks)
+            : addTopTracksToPlaylist(userData, playlistId, topTracks))
           return data
         })
         .then(async () => {

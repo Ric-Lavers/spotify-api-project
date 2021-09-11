@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import { TrackObjectFull, UserObjectPrivate } from '../types/spotify-api'
+import {
+  TrackObjectFull,
+  UserObjectPrivate,
+  MultipleAudioFeaturesResponse,
+} from '../types/spotify-api'
 import { getAllPlaylistsTracks } from '../api/spotify'
 import {
   addToPartyPlaylist,
@@ -33,7 +37,7 @@ export const useTopTracks = (
       { items: long_term },
     ] = await Promise.all(
       top_time_range.map(({ value: timeRange }) =>
-        getAllPlaylistsTracks(timeRange)
+        getAllPlaylistsTracks(timeRange, true, true)
       )
     )
     const flattenTrack = (track: { track: TrackObjectFull }) => track.track
@@ -54,7 +58,16 @@ export const useTopTracks = (
   return { topTracks, loading }
 }
 
+export interface TrackObjectWithFeatures
+  extends TrackObjectFull,
+    MultipleAudioFeaturesResponse {}
+
 interface AllTopTracks {
+  short_term: TrackObjectWithFeatures[]
+  medium_term: TrackObjectWithFeatures[]
+  long_term: TrackObjectWithFeatures[]
+}
+interface AllTopTracksId {
   short_term: string[]
   medium_term: string[]
   long_term: string[]
@@ -68,25 +81,25 @@ export const createTopTracksPlaylist = async (
     isPublic?: boolean
     collaborative?: boolean
   },
-  allTopTracksIds: AllTopTracks
+  allTopTracks: AllTopTracks
 ) => {
   try {
     const { _id: topTablePlaylistId } = await createPartyPlaylist(
       user,
       body,
-      allTopTracksIds.short_term,
+      allTopTracks.short_term,
       'short_term'
     )
-    await addToPartyPlaylist(
-      user,
-      topTablePlaylistId,
-      allTopTracksIds.medium_term,
-      'medium_term'
-    )
+    // await addToPartyPlaylist(
+    //   user,
+    //   topTablePlaylistId,
+    //   allTopTracks.medium_term,
+    //   'medium_term'
+    // )
     const data = await addToPartyPlaylist(
       user,
       topTablePlaylistId,
-      allTopTracksIds.long_term,
+      allTopTracks.long_term,
       'long_term'
     )
     return data
@@ -98,25 +111,25 @@ export const createTopTracksPlaylist = async (
 export const addTopTracksToPlaylist = async (
   user: UserObjectPrivate,
   topTablePlaylistId: string,
-  allTopTracksIds: AllTopTracks
+  allTopTracks: AllTopTracks
 ) => {
   try {
     await addToPartyPlaylist(
       user,
       topTablePlaylistId,
-      allTopTracksIds.short_term,
+      allTopTracks.short_term,
       'short_term'
     )
-    await addToPartyPlaylist(
-      user,
-      topTablePlaylistId,
-      allTopTracksIds.medium_term,
-      'medium_term'
-    )
+    // await addToPartyPlaylist(
+    //   user,
+    //   topTablePlaylistId,
+    //   allTopTracks.medium_term,
+    //   'medium_term'
+    // )
     const data = await addToPartyPlaylist(
       user,
       topTablePlaylistId,
-      allTopTracksIds.long_term,
+      allTopTracks.long_term,
       'long_term'
     )
     return data
@@ -127,25 +140,25 @@ export const addTopTracksToPlaylist = async (
 export const updateTopTracksPlaylist = async (
   user: UserObjectPrivate,
   topTablePlaylistId: string,
-  allTopTracksIds: AllTopTracks
+  allTopTracks: AllTopTracks
 ) => {
   try {
     await updatePartyPlaylist(
       user,
       topTablePlaylistId,
-      allTopTracksIds.short_term,
+      allTopTracks.short_term,
       'short_term'
     )
-    await updatePartyPlaylist(
-      user,
-      topTablePlaylistId,
-      allTopTracksIds.medium_term,
-      'medium_term'
-    )
+    // await updatePartyPlaylist(
+    //   user,
+    //   topTablePlaylistId,
+    //   allTopTracks.medium_term,
+    //   'medium_term'
+    // )
     const data = await updatePartyPlaylist(
       user,
       topTablePlaylistId,
-      allTopTracksIds.long_term,
+      allTopTracks.long_term,
       'long_term'
     )
     return data
@@ -154,16 +167,9 @@ export const updateTopTracksPlaylist = async (
   }
 }
 
-export const getTopTrackIds = (tracks: {
-  short_term: TrackObjectFull[]
-  medium_term: TrackObjectFull[]
-  long_term: TrackObjectFull[]
-}): {
-  short_term: string[]
-  medium_term: string[]
-  long_term: string[]
-} => {
+export const getTopTrackIds = (tracks: AllTopTracks): AllTopTracksId => {
   const getId = (track: TrackObjectFull) => track.id
+
   return {
     short_term: tracks.short_term.map(getId),
     medium_term: tracks.medium_term.map(getId),
@@ -174,7 +180,7 @@ export const getTopTrackIds = (tracks: {
 export const formatUserPlaylists = (
   playlists: {
     _id: string
-    created_at: string
+    created_at: Date
     description: string
     title: string
     user_ids: string[]
@@ -182,4 +188,8 @@ export const formatUserPlaylists = (
 ): {
   value: string
   label: string
-}[] => playlists.map(({ _id, title }) => ({ value: _id, label: title }))
+}[] =>
+  playlists
+    //@ts-ignore
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .map(({ _id, title }) => ({ value: _id, label: title }))
