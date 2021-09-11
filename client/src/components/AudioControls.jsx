@@ -158,7 +158,6 @@ const AudioControls = () => {
 }
 
 const SongDetails = ({ details }) => {
-  // console.log('SongDetails', details)
   return details ? (
     <>
       <h3>
