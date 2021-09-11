@@ -165,7 +165,7 @@ export const addTracksToTopTablePlaylist = async (
   const user_ = await list.users.find(({ id }) => id === actualUserId)
 
   if (user_) {
-    const now = Date.now()
+    const now = new Date()
     user_.updated_at = now
     list.updated_at = now
   } else {
