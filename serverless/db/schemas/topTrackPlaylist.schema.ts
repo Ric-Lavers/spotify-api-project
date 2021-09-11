@@ -30,6 +30,7 @@ const trackSchema = new Schema(
     },
     // time-range
     time_range: [String],
+    audioFeatures: Object,
   },
   { _id: false, toJSON: { virtuals: true } }
 )
