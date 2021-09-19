@@ -4,6 +4,7 @@ import remove from 'lodash.remove'
 import { play } from 'api/spotify'
 import { formatFeatures } from 'helpers'
 import { isChecked, getAverages, getRows } from './PlaylistTable.utils'
+import { SpotifyTrackGrid } from './SpotifyTrackGrid'
 import { Survay_01 } from '../../pages/PartyPlaylist'
 export const PlaylistTable = ({
   loading,
@@ -43,7 +44,10 @@ export const PlaylistTable = ({
     : ''
   if (tracksUnavailableMsg) {
     return (
-      <table key="loading">
+      <table
+        style={{ display: 'flex', justifyContent: 'center' }}
+        key="loading"
+      >
         <thead>
           <th key={tracksUnavailableMsg} className="highlight">
             {tracksUnavailableMsg}
@@ -178,31 +182,5 @@ export const PlaylistTable = ({
         </table>
       </div>
     </>
-  )
-}
-
-const SpotifyTrackGrid = ({
-  name,
-  artists,
-  imageUrl,
-  currentlyPlaying,
-  onClick,
-}) => {
-  return (
-    <div className="spotify-track">
-      <img src={imageUrl} height="40" width="40" alt="" loading="lazy" />
-
-      <div className="track-grid">
-        <div
-          className={`${
-            currentlyPlaying ? 'green' : ''
-          } title ellipsis pointer`}
-          onClick={onClick}
-        >
-          {name}
-        </div>
-        <span className="sub-title ellipsis">{artists}</span>
-      </div>
-    </div>
   )
 }

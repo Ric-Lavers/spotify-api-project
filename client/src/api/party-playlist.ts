@@ -89,8 +89,6 @@ export const createPartyPlaylist = async (
   topTracks: TrackObjectWithFeatures[],
   time_range: TopTimeRange | string = ''
 ) => {
-  console.log({ topTracks })
-
   const searchParams = new URLSearchParams({
     spotify_user_id: user.id,
     time_range,

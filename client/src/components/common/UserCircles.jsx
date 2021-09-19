@@ -10,6 +10,9 @@ const UserCircles = memo(({ users, size }) => (
   </div>
 ))
 export const UserCircle = ({ user, size = '' }) => {
+  const [timeSinceUpdate, setTimeSinceUpdate] = React.useState(
+    timeSince(user.updated_at)
+  )
   const imageUrl = get(user, 'images[0].url', null)
   const displayName = get(user, 'display_name', null)
 
@@ -20,16 +23,20 @@ export const UserCircle = ({ user, size = '' }) => {
   })()
   updatedAt = new Date(user.updated_at)
 
+  const handleTimeSinceUpdate = () => {
+    setTimeSinceUpdate(timeSince(user.updated_at))
+  }
+
   // percent of a month
   const percentOfaMonth =
     (1 - (new Date() - updatedAt) / (new Date() - aMonthAgo)) * 100
   return (
-    <div className={`user-circle tooltip`}>
+    <div onMouseEnter={handleTimeSinceUpdate} className={`user-circle tooltip`}>
       {displayName && (
         <div class="tooltiptext">
           <span>{displayName} </span>
           <br />
-          <small> last updated {timeSince(user.updated_at)} ago</small>
+          <small> last updated {timeSinceUpdate} ago</small>
         </div>
       )}
       {imageUrl ? (
@@ -58,4 +65,5 @@ export const UserCircle = ({ user, size = '' }) => {
     </div>
   )
 }
+
 export default UserCircles

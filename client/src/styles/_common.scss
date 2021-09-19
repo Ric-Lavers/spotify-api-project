@@ -354,3 +354,24 @@ button {
     // left: $sm - 1;
   }
 }
+.back-button {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  position: relative;
+  width: 32px;
+  svg {
+    stroke: $spotify-white;
+    stroke-width: 1pt;
+    height: 22px;
+    opacity: 1;
+    width: 22px;
+  }
+}
