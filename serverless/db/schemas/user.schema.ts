@@ -18,6 +18,7 @@ export const userSchema = new Schema(
     product: String,
     type: String,
     uri: String,
+    explicit_content: Object,
 
     spotify_playlist_id: String,
 

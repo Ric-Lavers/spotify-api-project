@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import { connectToDatabase } from '../connectToDB'
 import {
   TrackObjectFull,
@@ -22,14 +23,22 @@ interface ListTrack {
 }
 
 export const getTopTablePlaylistById = async (topTablePlaylistId: string) => {
-  const { TopTracksPlaylist } = connectToDatabase()
+  const { TopTracksPlaylist, Update } = connectToDatabase()
   let data
-  await TopTracksPlaylist.findById(topTablePlaylistId).then((playlist) => {
-    playlist.tracks.sort((a, b) => a.score - b.score)
 
-    data = playlist
-  })
+  await TopTracksPlaylist.findById(topTablePlaylistId)
+    .populate('users')
+    .then((playlist) => {
+      playlist.tracks.sort((a, b) => a.score - b.score)
 
+      data = playlist
+    })
+  const lastUpdates = await Update.find({ playlist: data }).then((updates) =>
+    (updates || []).reduce((a, { user, updated_at }) => {
+      a[user] = updated_at
+      return a
+    }, {})
+  )
   data.users.filter(Boolean).forEach((user, j) => {
     const {
       created_at,
@@ -43,7 +52,7 @@ export const getTopTablePlaylistById = async (topTablePlaylistId: string) => {
 
     data.users[j] = {
       created_at,
-      updated_at,
+      updated_at: lastUpdates[_id] || updated_at,
       display_name,
       id,
       images,
@@ -97,14 +106,15 @@ export const saveSpotifyPlaylistId = async (
   playlist_id: string,
   spotify_playlist_id: string
 ) => {
-  const { TopTracksPlaylist } = connectToDatabase()
+  const { TopTracksPlaylist, User } = connectToDatabase()
 
   let playlist = await TopTracksPlaylist.findOne({
     _id: playlist_id,
   })
-  const currentUser = playlist.users.find((u) => u.id === spotify_user_id)
+  const currentUser = await User.findOne({ id: spotify_user_id })
   currentUser.spotify_playlist_id = spotify_playlist_id
-  await playlist.save()
+  //TODO this needs to be something else
+  await currentUser.save()
 
   return playlist
 }
@@ -113,7 +123,7 @@ export const saveSpotifyPlaylistId = async (
  * This are just playlists that are created using top track data.
  */
 export const createNewTopTablePlaylist = async (userId: string, body) => {
-  const { TopTracksPlaylist } = connectToDatabase()
+  const { TopTracksPlaylist, User, Update } = connectToDatabase()
   //TODO
   const actualUserId = userId
     .replace('-short_term', '')
@@ -121,7 +131,9 @@ export const createNewTopTablePlaylist = async (userId: string, body) => {
     .replace('-long_term', '')
 
   const tracks: TrackObjectWithFeatures[] = body.tracks
-  const user: TrackObjectFull[] = body.user
+
+  const existingUser = await User.findOne({ id: body.user.id })
+  const user = existingUser ? existingUser : new User(body.user)
 
   // create top table instance
   const newTopTablePlaylist = new TopTracksPlaylist({
@@ -137,8 +149,14 @@ export const createNewTopTablePlaylist = async (userId: string, body) => {
     })),
   })
 
-  const result = await newTopTablePlaylist.save()
+  const update = await Update.create({
+    user,
+    playlist: newTopTablePlaylist,
+  })
 
+  const result = await newTopTablePlaylist.save()
+  await user.save()
+  await update.save()
   return result
 }
 
@@ -151,26 +169,33 @@ export const addTracksToTopTablePlaylist = async (
   tracks: TrackObjectWithFeatures[],
   user: UserObjectPrivate
 ) => {
-  //TODO
-  const actualUserId = userId
-    .replace('-short_term', '')
-    .replace('-medium_term', '')
-    .replace('-long_term', '')
+  const { User, Update } = connectToDatabase()
   const list = await getTopTablePlaylistById(topTablePlaylistId)
 
   if (list.user_ids.some((u) => u === userId)) {
     return list
   }
 
-  const user_ = await list.users.find(({ id }) => id === actualUserId)
+  const u = await User.findOneAndUpdate({ id: user.id }, user, { upsert: true })
+  const userExists = !!list.users.find(({ id }) => id === user.id)
 
-  if (user_) {
-    const now = new Date()
-    user_.updated_at = now
-    list.updated_at = now
+  if (userExists) {
+    await Update.updateOne(
+      {
+        user: Types.ObjectId(u._id),
+        playlist: list,
+      },
+      {
+        updated_at: new Date(),
+      }
+    )
   } else {
-    list.user_ids.push(actualUserId)
-    list.users.push(user)
+    list.user_ids.push(user.id)
+    list.users.push(u)
+    await Update.create({
+      user: u,
+      playlist: list,
+    })
   }
 
   tracks

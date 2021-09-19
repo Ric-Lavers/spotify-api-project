@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import { userSchema } from './user.schema'
 
 const Schema = mongoose.Schema
-// mongoose.set("useCreateIndex", true);
+mongoose.set('useCreateIndex', true)
 
 const trackSchema = new Schema(
   {
@@ -43,7 +43,14 @@ const trackSchema = new Schema(
 export const topTracksPlaylistSchema = new Schema(
   {
     user_ids: [{ type: String }],
-    users: [userSchema],
+    users: [
+      {
+        //@ts-ignore
+        type: mongoose.ObjectId,
+        ref: 'user',
+        index: true,
+      },
+    ],
     title: String,
     description: String,
     tracks: [trackSchema],
