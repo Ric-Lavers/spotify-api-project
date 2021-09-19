@@ -1,4 +1,8 @@
 .analysis-playlists {
+  & .PartyPlaylistGroup {
+    width: 100%;
+    text-align: center;
+  }
   scroll-behavior: smooth;
   .stat-check-list {
     // display: grid;
@@ -97,5 +101,14 @@ input[type='checkbox'] {
   }
   .user-circles {
     margin-left: 32px;
+  }
+}
+.title-head {
+  padding: 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  span {
+    width: 32px;
   }
 }

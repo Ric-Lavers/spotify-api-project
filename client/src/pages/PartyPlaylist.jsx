@@ -1,11 +1,12 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-
+import { ReactComponent as BackArrow } from '../images/back.svg'
 import { withCurrentSong } from '../hooks'
 import {
   PlaylistTable,
   SavePlaylist,
   UserPlaylistsSelect,
+  SpotifyTrackGrid,
 } from '../components/AnalysisPlaylists'
 import { sortPlaylistTracks } from './AnalysisPlaylists'
 import {
@@ -13,7 +14,7 @@ import {
   updateUserPlaylistTracks,
 } from 'api/spotify'
 import { GlobalContext } from 'globalContext'
-import { timeSince } from 'helpers'
+import { timeSince, formatFeatures } from 'helpers'
 import { specialPlaylists, savedTracks } from 'constants/index'
 import {
   getUserPartyPlaylists,
@@ -77,6 +78,22 @@ export const Survay_01 = () => {
     >
       Loading…
     </iframe>
+  )
+}
+
+const Back = ({ onClick, disabled = '' }) => {
+  return (
+    <button
+      onClick={onClick}
+      data-testid="top-bar-back-button"
+      aria-hidden="true"
+      aria-label="Go back"
+      disabled={disabled}
+      class="back-button "
+      title="Go back"
+    >
+      <BackArrow />
+    </button>
   )
 }
 
@@ -239,6 +256,7 @@ const PartyPlaylistGroup = memo(
       },
       loading: true,
     })
+    const history = useHistory()
     const [tracks, setTracks] = useState([])
     const currentTrack = React.useMemo(() => {
       return tracks.find((t) => t.id === currentPlayingId)
@@ -354,8 +372,18 @@ const PartyPlaylistGroup = memo(
     }, [tracks])
 
     return (
-      <div className="analysis-playlists">
-        <h4>{title}</h4>
+      <div className="analysis-playlists PartyPlaylistGroup">
+        {title && (
+          <div className="title-head">
+            <Back
+              onClick={() => {
+                history.push('/party-playlist')
+              }}
+            />
+            <h4> {title}</h4>
+            <span />
+          </div>
+        )}
 
         {description && <p>{description}</p>}
 
@@ -419,32 +447,37 @@ const CurrentlyPLaying = ({ currentTrack, users = [] }) => {
   if (!currentTrack) {
     return null
   }
+  const images = currentTrack.album.images
   return (
     <>
       <br />
       <fieldset className="currently-playing party-playlist">
         <legend>Currently playing</legend>
-        <a
-          href={`#${currentTrack.id}`}
-          className="currently-playing party-playlist"
-        >
-          <div>
-            {currentTrack.name} ({currentTrack.custom.score})
-          </div>
-          <UserCircles
-            size="small"
-            users={(users || []).filter((u) =>
-              (currentTrack.custom.user_ids || []).find((id) => {
-                const actualUserId = id
-                  .replace('-short_term', '')
-                  .replace('-medium_term', '')
-                  .replace('-long_term', '')
 
-                return u.id === actualUserId
-              })
-            )}
-          />
-        </a>
+        <SpotifyTrackGrid
+          currentlyPlaying
+          name={currentTrack.name}
+          artists={formatFeatures('artists', currentTrack)}
+          imageUrl={images[images.length - 2].url}
+          onClick={() => {
+            document.getElementById(currentTrack.id).scrollIntoView()
+          }}
+          size="md"
+        />
+        <div>({currentTrack.custom.score})</div>
+        <UserCircles
+          size="small"
+          users={(users || []).filter((u) =>
+            (currentTrack.custom.user_ids || []).find((id) => {
+              const actualUserId = id
+                .replace('-short_term', '')
+                .replace('-medium_term', '')
+                .replace('-long_term', '')
+
+              return u.id === actualUserId
+            })
+          )}
+        />
       </fieldset>
     </>
   )
