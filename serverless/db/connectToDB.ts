@@ -8,6 +8,7 @@ const {
   topTableSchema,
   groupSchema,
   topTracksPlaylistSchema,
+  updateSchema,
 } = require('./schemas')
 const mongoose = require('mongoose')
 import wordSchema from './schemas/word.schema'
@@ -16,6 +17,7 @@ import { getMongoUri } from './getMongoUri'
 let cachedDb = null
 
 //* setup
+mongoose.set('useFindAndModify', false)
 
 export function connectToDatabase(
   uri = getMongoUri() || 'mongodb://localhost/demo'
@@ -25,12 +27,14 @@ export function connectToDatabase(
   const Artist = mongoose.model('artist', artistSchema)
   const Track = mongoose.model('track', trackSchema)
   const Word = mongoose.model('word', wordSchema)
-  const User = mongoose.model('user', userSchema)
   const TopTable = mongoose.model('topTable', topTableSchema)
+  // party blends
+  const User = mongoose.model('user', userSchema)
   const TopTracksPlaylist = mongoose.model(
     'topTracksPlaylist',
     topTracksPlaylistSchema
   )
+  const Update = mongoose.model('update', updateSchema)
   // If the database connection is cached,
   // use it instead of creating a new connection
   if (cachedDb) {
@@ -49,10 +53,12 @@ export function connectToDatabase(
     Word,
     Track,
     Artist,
-    User,
     TopTable,
     Group,
+    //
+    User,
     TopTracksPlaylist,
+    Update,
   }
 
   return cachedDb
