@@ -20,7 +20,7 @@ export const userSchema = new Schema(
     uri: String,
     explicit_content: Object,
 
-    spotify_playlist_id: String,
+    spotify_playlist_id: Object,
 
     // track_short_term: [{ type: mongoose.Schema.Types.ObjectId, ref: "topTable" }],
     // track_medium_term: [

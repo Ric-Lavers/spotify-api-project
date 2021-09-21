@@ -1,4 +1,5 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
+import get from 'lodash.get'
 import { useParams, useHistory } from 'react-router-dom'
 import { ReactComponent as BackArrow } from '../images/back.svg'
 import { withCurrentSong } from '../hooks'
@@ -196,8 +197,8 @@ const useSpotifyPlaylist = (user, playlistId) => {
       {
         name: title,
         description: `${description}  -  ${window.location.href}`,
-        isPublic: false,
-        collaborative: true,
+        isPublic: true,
+        collaborative: false,
       },
       uris
     )
@@ -296,9 +297,13 @@ const PartyPlaylistGroup = memo(
           return data
         })
         .then(async (data) => {
+          // updates the playlist to spotify
           const u = (data.users || []).find(({ id }) => id === spotify_user_id)
-          await (u.spotify_playlist_id
-            ? updateSpotifyPlaylist(data.tracks, u.spotify_playlist_id)
+          await (get(u, `spotify_playlist_id[${playlistId}]`)
+            ? updateSpotifyPlaylist(
+                data.tracks,
+                u.spotify_playlist_id[playlistId]
+              )
             : createSpotifyPlaylist(data.tracks, {
                 title: data.title,
                 description: data.description,
@@ -308,7 +313,7 @@ const PartyPlaylistGroup = memo(
                     (u) => u.id === spotify_user_id
                   )
                   if (u) {
-                    u.spotify_playlist_id = playlist.id
+                    u.spotify_playlist_id[playlistId] = playlist.id
                   }
 
                   return prev
@@ -389,10 +394,9 @@ const PartyPlaylistGroup = memo(
 
         <UserCircles users={users} />
         <CurrentlyPLaying currentTrack={currentTrack} users={users} />
-
         {(!loading || createState || updateState) && (
           <>
-            {user.spotify_playlist_id && (
+            {get(user, `spotify_playlist_id[${playlistId}]`) && (
               <>
                 <p className="action-btn-group">
                   <a
@@ -404,7 +408,7 @@ const PartyPlaylistGroup = memo(
                     className="s-submit"
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
+                    href={`https://open.spotify.com/playlist/${user.spotify_playlist_id[playlistId]}`}
                   >
                     Open in Spotify
                   </a>

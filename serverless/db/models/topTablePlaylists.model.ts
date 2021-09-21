@@ -101,6 +101,7 @@ export const getTopTablePlaylistsByUserIds = async (
 
   return usersLists
 }
+
 export const saveSpotifyPlaylistId = async (
   spotify_user_id: string,
   playlist_id: string,
@@ -112,9 +113,13 @@ export const saveSpotifyPlaylistId = async (
     _id: playlist_id,
   })
   const currentUser = await User.findOne({ id: spotify_user_id })
-  currentUser.spotify_playlist_id = spotify_playlist_id
-  //TODO this needs to be something else
-  await currentUser.save()
+  const spotify_playlist_ids = currentUser.spotify_playlist_id || {}
+  spotify_playlist_ids[playlist_id] = spotify_playlist_id
+
+  await User.findOneAndUpdate(
+    { id: spotify_user_id },
+    { spotify_playlist_id: spotify_playlist_ids }
+  )
 
   return playlist
 }
