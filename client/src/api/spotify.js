@@ -779,6 +779,16 @@ export const getArtists = async (artistIds) => {
   return res.json()
 }
 
+export const removePlaylist = async (playlistId) => {
+  await fetch(`${baseUrl}/playlists/${playlistId}/followers`, {
+    ...headers,
+    method: 'DELETE',
+  })
+}
+export const removePlaylists = async (plalistIds) => {
+  await Promise.all([].concat(plalistIds).map(removePlaylist))
+}
+
 export default {
   getMe,
   checkToken,
@@ -805,4 +815,6 @@ export default {
   getAudioFeatures,
   getHeapsTracks,
   getArtists,
+  removePlaylist,
+  removePlaylists,
 }
