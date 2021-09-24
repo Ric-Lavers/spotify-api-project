@@ -1,16 +1,14 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import get from 'lodash.get'
+import { useLocation } from 'react-router-dom'
+
 import { GlobalUiState, GlobalContext } from './globalContext'
-import Search, { SearchResultsContext } from './components/Player/Search'
+import { SearchResultsContext } from './components/Player/Search'
 import CurrentlyPlaying from './context'
 
-import logo from './logo.svg'
-import hooks from './images/hooks.svg'
-import './styles/_index.scss'
 import DiscogsCallbackPage from './pages/DiscogsCallbackPage'
 import SpotifyLogin from './components/SpotifyLogin'
-// import DiscogsLogin from './components/DiscogsLogin'
 import Player from './components/Player/Player'
 import SearchResults from './components/Player/SearchResults'
 import Playlists from './components/playlists/Playlists'
@@ -21,10 +19,12 @@ import SkipList from './components/skip-list/SkipList'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import AnalysisPlaylistsPage from './pages/AnalysisPlaylists'
 import PartyPlaylistPage from './pages/PartyPlaylist'
-import Scratch from './pages/Scratch'
-
 import { useToggle } from './hooks'
 import { ReactComponent as GithubLogo } from './images/github-logo.svg'
+import variables from './styles/variables'
+import PartyBlendsLogo from './images/party-blends.png'
+import './styles/_index.scss'
+const { colors } = variables
 
 const App = () => {
   return (
@@ -54,6 +54,7 @@ const App = () => {
 
 const Layout = ({ children }) => {
   const [showToken, toggleToken] = useToggle(false)
+  const { pathname } = useLocation()
   const [state, dispatch] = React.useContext(GlobalContext)
 
   const handleSetLogin = (payload) => {
@@ -89,7 +90,27 @@ const Layout = ({ children }) => {
           backgroundPosition: 'top',
         }}
       >
-        <SpotifyLogin onLogIn={handleSetLogin} />
+        <SpotifyLogin
+          onLogIn={handleSetLogin}
+          logo={
+            pathname.match('party-playlist|party-blends') ? (
+              <img
+                style={{
+                  fill: colors.success,
+                  stroke: colors.success,
+                  width: 50,
+                  height: 50,
+                  borderRadius: 25,
+                  position: 'relative',
+                  zIndex: 2,
+                  backgroundColor: 'transparent',
+                }}
+                src={PartyBlendsLogo}
+                alt="home"
+              />
+            ) : undefined
+          }
+        />
         {state.isSpotifyLoggedIn ? (
           <>{children}</>
         ) : sessionStorage.getItem('spotifyToken') ? (

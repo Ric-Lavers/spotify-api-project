@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
+import PartyBlendsLogo from '../images/party-blends.png'
 import { checkToken, refereshSpotifyLogin } from '../api/spotify'
 import variables from '../styles/variables'
 import { LOGIN_URL } from '../helpers'
@@ -123,7 +124,7 @@ class SpotifyLogin extends Component {
       email,
       spotifyLink,
     } = this.state
-    const { isLoading } = this.props
+    const { isLoading, logo } = this.props
 
     const logoColor = this.findLogoColor(tokenPresent, tokenValid)
 
@@ -134,7 +135,11 @@ class SpotifyLogin extends Component {
     return (
       <div id="spotify-login" style={styles.container}>
         <div className="pointer" onClick={() => (window.location.href = '/')}>
-          <SpotifyLogo style={{ ...styles.logo, ...logoColor }} />
+          {logo ? (
+            logo
+          ) : (
+            <SpotifyLogo style={{ ...styles.logo, ...logoColor }} />
+          )}
           {tokenValid && display_picture && (
             <>
               <img src={display_picture} alt="display" style={styles.dp} />
