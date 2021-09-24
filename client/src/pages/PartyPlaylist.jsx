@@ -1,6 +1,7 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
 import get from 'lodash.get'
 import { useParams, useHistory } from 'react-router-dom'
+import Favicon from 'react-favicon'
 import { ReactComponent as BackArrow } from '../images/back.svg'
 import { withCurrentSong } from '../hooks'
 import {
@@ -25,6 +26,7 @@ import {
 import { stats as _stats } from '../components/stats/Stats'
 import EmojiLoader from '../components/common/EmojiLoader'
 import UserCircles from '../components/common/UserCircles'
+import PartyBlendsFavi from '../images/party-blends-favi.png'
 
 import {
   useTopTracks,
@@ -141,6 +143,7 @@ const PartyPlaylist = React.memo(
       //TODO move this into its own page, fo realz
       return (
         <>
+          <Favicon url={PartyBlendsFavi} />
           <PartyPlaylistGroup
             playlistId={playlistId}
             currentPlayingId={currentSong ? currentSong.item.id : ''}
@@ -158,6 +161,7 @@ const PartyPlaylist = React.memo(
 
     return (
       <>
+        <Favicon url={PartyBlendsFavi} />
         <div className="analysis-playlists">
           <SavePlaylist
             hideCollaborative
@@ -296,30 +300,30 @@ const PartyPlaylistGroup = memo(
           setData({ data, loading: true })
           return data
         })
-        .then(async (data) => {
-          // updates the playlist to spotify
-          const u = (data.users || []).find(({ id }) => id === spotify_user_id)
-          await (get(u, `spotify_playlist_id[${playlistId}]`)
-            ? updateSpotifyPlaylist(
-                data.tracks,
-                u.spotify_playlist_id[playlistId]
-              )
-            : createSpotifyPlaylist(data.tracks, {
-                title: data.title,
-                description: data.description,
-              }).then((playlist) => {
-                setData((prev) => {
-                  const u = prev.data.users.find(
-                    (u) => u.id === spotify_user_id
-                  )
-                  if (u) {
-                    u.spotify_playlist_id[playlistId] = playlist.id
-                  }
+        // .then(async (data) => {
+        //   // updates the playlist to spotify
+        //   const u = (data.users || []).find(({ id }) => id === spotify_user_id)
+        //   await (get(u, `spotify_playlist_id[${playlistId}]`)
+        //     ? updateSpotifyPlaylist(
+        //         data.tracks,
+        //         u.spotify_playlist_id[playlistId]
+        //       )
+        //     : createSpotifyPlaylist(data.tracks, {
+        //         title: data.title,
+        //         description: data.description,
+        //       }).then((playlist) => {
+        //         setData((prev) => {
+        //           const u = prev.data.users.find(
+        //             (u) => u.id === spotify_user_id
+        //           )
+        //           if (u && u.spotify_playlist_id) {
+        //             u.spotify_playlist_id[playlistId] = playlist.id
+        //           }
 
-                  return prev
-                })
-              }))
-        })
+        //           return prev
+        //         })
+        //       }))
+        // })
         .catch(() => setData((prev) => ({ ...prev, loading: false })))
         .finally(() => {
           setDoing('')
@@ -372,7 +376,7 @@ const PartyPlaylistGroup = memo(
     useEffect(() => {
       if (tracks.length && !initalFetchComplete.current) {
         initalFetchComplete.current = true
-        handleSort({ target: { value: 'users-ASC' } })
+        // handleSort({ target: { value: 'users-ASC' } })
       }
     }, [tracks])
 

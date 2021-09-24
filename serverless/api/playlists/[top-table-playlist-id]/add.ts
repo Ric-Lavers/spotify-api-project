@@ -38,6 +38,7 @@ module.exports = cors(async function (req, res) {
 
     res.status(200).json(playlist)
   } catch (error) {
+    console.log(error)
     res.status(400).send(error)
   }
 })

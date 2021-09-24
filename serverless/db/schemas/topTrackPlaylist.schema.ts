@@ -4,9 +4,10 @@ import { userSchema } from './user.schema'
 const Schema = mongoose.Schema
 mongoose.set('useCreateIndex', true)
 
-const trackSchema = new Schema(
+export const trackSchema = new Schema(
   {
     id: String,
+    playlistId: String,
 
     user_ids: [{ type: String }],
 
@@ -32,8 +33,11 @@ const trackSchema = new Schema(
     time_range: [String],
     audioFeatures: Object,
   },
-  { _id: false, toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true } }
 )
+trackSchema.post('remove', function () {
+  console.log('Removing!')
+})
 // used to determine the position in the playlist,
 // lowest to highest
 // trackSchema.virtual("score").get(function () {
@@ -45,15 +49,22 @@ export const topTracksPlaylistSchema = new Schema(
     user_ids: [{ type: String }],
     users: [
       {
-        //@ts-ignore
-        type: mongoose.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'user',
         index: true,
       },
     ],
     title: String,
     description: String,
-    tracks: [trackSchema],
+    tracks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'track',
+      },
+    ],
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 )
+topTracksPlaylistSchema.post('remove', function () {
+  console.log('removing!')
+})

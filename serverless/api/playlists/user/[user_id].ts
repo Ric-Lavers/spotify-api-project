@@ -1,14 +1,14 @@
-const cors = require("micro-cors")();
+const cors = require('micro-cors')()
 
-import { getTopTablePlaylistsByUserIds } from "../../../db/models/topTablePlaylists.model";
+import { getTopTablePlaylistsByUserId } from '../../../db/models/topTablePlaylists.model'
 
 module.exports = cors(async function (req, res) {
   try {
-    let playlists = await getTopTablePlaylistsByUserIds(req.query["user_id"]);
+    let playlists = await getTopTablePlaylistsByUserId(req.query['user_id'])
 
-    res.status(200).json(playlists);
+    res.status(200).json(playlists)
   } catch (error) {
-    console.log("api/playlists/[top-table-playlist-id]/[user_id].ts", error);
-    res.status(200).json([]);
+    console.log('api/playlists/[top-table-playlist-id]/[user_id].ts', error)
+    res.status(200).json([])
   }
-});
+})

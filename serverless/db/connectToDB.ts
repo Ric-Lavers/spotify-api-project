@@ -5,7 +5,6 @@ const {
   trackSchema,
   artistSchema,
   userSchema,
-  topTableSchema,
   groupSchema,
   topTracksPlaylistSchema,
   updateSchema,
@@ -27,7 +26,6 @@ export function connectToDatabase(
   const Artist = mongoose.model('artist', artistSchema)
   const Track = mongoose.model('track', trackSchema)
   const Word = mongoose.model('word', wordSchema)
-  const TopTable = mongoose.model('topTable', topTableSchema)
   // party blends
   const User = mongoose.model('user', userSchema)
   const TopTracksPlaylist = mongoose.model(
@@ -53,7 +51,6 @@ export function connectToDatabase(
     Word,
     Track,
     Artist,
-    TopTable,
     Group,
     //
     User,
