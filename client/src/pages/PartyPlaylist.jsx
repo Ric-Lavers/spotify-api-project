@@ -1,5 +1,6 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
+import Favicon from 'react-favicon'
 import { ReactComponent as BackArrow } from '../images/back.svg'
 import { withCurrentSong } from '../hooks'
 import {
@@ -21,6 +22,7 @@ import {
   getPartyPlaylist,
   saveSpotifyPlaylistId,
 } from 'api/party-playlist'
+import favicon from '../images/party-blends-favi.png'
 import { stats as _stats } from '../components/stats/Stats'
 import EmojiLoader from '../components/common/EmojiLoader'
 import UserCircles from '../components/common/UserCircles'
@@ -140,6 +142,7 @@ const PartyPlaylist = React.memo(
       //TODO move this into its own page, fo realz
       return (
         <>
+          <Favicon url={favicon} />
           <PartyPlaylistGroup
             playlistId={playlistId}
             currentPlayingId={currentSong ? currentSong.item.id : ''}
@@ -157,6 +160,7 @@ const PartyPlaylist = React.memo(
 
     return (
       <>
+        <Favicon url={favicon} />
         <div className="analysis-playlists">
           <SavePlaylist
             hideCollaborative
