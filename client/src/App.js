@@ -35,7 +35,12 @@ const App = () => {
             <Route exact path="/" render={() => <MainPage />} />
             {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
             <Route
-              path={['/party-playlist/:playlistId', '/party-playlist']}
+              path={[
+                '/party-playlist/:playlistId',
+                '/party-playlist',
+                '/party-blends/:playlistId',
+                '/party-blends',
+              ]}
               component={PartyPlaylistPage}
             />
             <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
