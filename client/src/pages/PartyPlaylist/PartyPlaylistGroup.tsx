@@ -10,6 +10,7 @@ import {
   removeUserFromPlaylist,
 } from 'api/party-playlist'
 
+import { ShareButtons } from 'components/share-buttons/ShareButtons'
 import { Kebab, Menu } from 'components/common/s-menu'
 import UserCircles from '../../components/common/UserCircles'
 import {
@@ -23,6 +24,7 @@ import {
   updateTopTracksPlaylist,
   useSpotifyPlaylist,
 } from './PartyPlaylist.utils'
+import ShareIcon from 'images/share-icon.png'
 
 let sortKeys = [
   'danceability',
@@ -240,6 +242,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
       setSpotifyLinkIds(spotifyLinkIds)
     }
+    const [openShare, setOpenShare] = useState(false)
 
     return (
       <div className="analysis-playlists PartyPlaylistGroup">
@@ -249,7 +252,24 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         {description && <p className="description">{description}</p>}
 
         <UserCircles users={users} />
+        {tracks.length !== 0 && !loading && (
+          <>
+            <img
+              src={ShareIcon}
+              height="32px"
+              width="32px"
+              style={{ borderRadius: '50%', background: 'white', padding: 4 }}
+              className="pointer"
+              onClick={() => setOpenShare(!openShare)}
+            />
 
+            {openShare && (
+              <section>
+                <ShareButtons />
+              </section>
+            )}
+          </>
+        )}
         <CurrentlyPLaying currentTrack={currentTrack} users={users} />
 
         <Actions
