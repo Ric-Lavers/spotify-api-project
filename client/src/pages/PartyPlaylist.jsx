@@ -1,6 +1,7 @@
 import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import Favicon from 'react-favicon'
+import { ShareButtons } from '../components/share-buttons/ShareButtons'
 import { ReactComponent as BackArrow } from '../images/back.svg'
 import { withCurrentSong } from '../hooks'
 import {
@@ -9,6 +10,7 @@ import {
   UserPlaylistsSelect,
   SpotifyTrackGrid,
 } from '../components/AnalysisPlaylists'
+import { Tabs } from '../components/Tabs/Tabs'
 import { sortPlaylistTracks } from './AnalysisPlaylists'
 import {
   createUserPlaylistWithTracks,
@@ -377,6 +379,17 @@ const PartyPlaylistGroup = memo(
 
     return (
       <div className="analysis-playlists PartyPlaylistGroup">
+        <Tabs
+          enableChevrons
+          tabList={[
+            {
+              label: 'Share',
+              id: 'share',
+              content: <ShareButtons />,
+            },
+          ]}
+          style={{ justifyContent: 'center' }}
+        />
         {title && (
           <div className="title-head">
             <Back
