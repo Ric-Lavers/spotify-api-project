@@ -1,4 +1,5 @@
 import { Types, ObjectId } from 'mongoose'
+import get from 'lodash.get'
 import { connectToDatabase } from '../connectToDB'
 import {
   TrackObjectFull,
@@ -79,10 +80,7 @@ export const getTopTablePlaylistById = async (
 
   await TopTracksPlaylist.findById(topTablePlaylistId)
     .populate('users')
-    .populate('tracks')
     .then((playlist) => {
-      playlist.tracks.sort((a, b) => a.score - b.score)
-
       data = playlist
     })
 
@@ -92,6 +90,7 @@ export const getTopTablePlaylistById = async (
       return a
     }, {})
   )
+
   data.users.filter(Boolean).forEach((user, j) => {
     const {
       created_at,
@@ -110,7 +109,10 @@ export const getTopTablePlaylistById = async (
       id,
       images,
       _id,
-      spotify_playlist_id,
+      //TODO only return the current user playlist ids
+      spotify_playlist_id: {
+        [topTablePlaylistId]: get(spotify_playlist_id, topTablePlaylistId),
+      },
     }
   })
 
@@ -144,6 +146,8 @@ export const getTopTablePlaylistById = async (
           ]
     )
     .limit(limit)
+  // console.log(tracks)
+
   data.tracks = tracks
 
   return data
@@ -157,13 +161,8 @@ export const saveSpotifyPlaylistId = async (
   playlist_id: string,
   spotify_playlist_id: string
 ) => {
-  const { TopTracksPlaylist, User } = connectToDatabase()
+  const { User } = connectToDatabase()
 
-  let playlist = await TopTracksPlaylist.findOne({
-    _id: playlist_id,
-  })
-    .populate('users')
-    .populate('tracks')
   const currentUser = await User.findOne({ id: spotify_user_id })
   const spotify_playlist_ids = currentUser.spotify_playlist_id || {}
   spotify_playlist_ids[playlist_id] = spotify_playlist_id
@@ -173,7 +172,7 @@ export const saveSpotifyPlaylistId = async (
     { spotify_playlist_id: spotify_playlist_ids }
   )
 
-  return playlist
+  return spotify_playlist_ids
 }
 
 /**
@@ -190,14 +189,23 @@ export const createNewTopTablePlaylist = async (userId: string, body) => {
 
   const tracks: TrackObjectWithFeatures[] = body.tracks
 
-  const existingUser = await User.findOne({ id: body.user.id })
+  const existingUser = await User.findOneAndUpdate(
+    { id: body.user.id },
+    { images: body.user.images },
+    {
+      new: true,
+    }
+  )
+
   const user = existingUser ? existingUser : new User(body.user)
+
   // create top table instance
   const newTopTablePlaylist = new TopTracksPlaylist({
     ...body,
     user_ids: [actualUserId],
     users: [user],
   })
+
   newTopTablePlaylist.tracks = await Promise.all(
     tracks.map(async ({ id, audioFeatures, popularity }, rank) => {
       const t = new Track({
@@ -234,15 +242,12 @@ export const addTracksToTopTablePlaylist = async (
   tracks: TrackObjectWithFeatures[],
   user: UserObjectPrivate
 ) => {
-  const { User, Update, Track } = connectToDatabase()
-  const list = await getTopTablePlaylistById(topTablePlaylistId)
-
-  if (list.user_ids.some((u) => u === userId)) {
-    return list
-  }
+  const { User, Update, Track, TopTracksPlaylist } = connectToDatabase()
+  const list = await TopTracksPlaylist.findById(topTablePlaylistId)
 
   const u = await User.findOneAndUpdate({ id: user.id }, user, { upsert: true })
-  const userExists = !!list.users.find(({ id }) => id === user.id)
+  const userExists = !!list.user_ids.find((id) => id === user.id)
+  console.log(user.images)
 
   if (userExists) {
     await Update.updateOne(
@@ -251,6 +256,7 @@ export const addTracksToTopTablePlaylist = async (
         playlist: list,
       },
       {
+        images: user.images,
         updated_at: new Date(),
       }
     )
@@ -262,6 +268,7 @@ export const addTracksToTopTablePlaylist = async (
       playlist: list,
     })
   }
+
   //!!
   await Promise.all(
     tracks.map(async ({ id, audioFeatures, popularity }, rank) => {
@@ -281,6 +288,7 @@ export const addTracksToTopTablePlaylist = async (
         return await t.save()
       }
 
+      // create new
       t = await Track.create({
         playlistId: topTablePlaylistId,
         id,
@@ -293,27 +301,6 @@ export const addTracksToTopTablePlaylist = async (
       list.tracks.push(await t.save())
     })
   )
-
-  // tracks
-  //   .map(({ id, audioFeatures, popularity }, rank) => ({
-  //     playlistId: topTablePlaylistId,
-  //     id,
-  //     audioFeatures: { popularity, ...audioFeatures },
-  //     rank: [rank + 1],
-  //     score: rank + 1,
-  //     user_ids: [userId],
-  //   }))
-  //   .forEach((t, rank) => {
-  //     const exists = list.tracks.find((track) => track.id === t.id)
-  //     if (exists) {
-  //       exists.count = exists.count + 1
-  //       exists.rank.push(rank + 1)
-  //       exists.score = calculateScore(exists.rank, exists.count)
-  //       exists.user_ids.push(userId)
-  //     } else {
-  //       list.tracks.push(t)
-  //     }
-  //   })
 
   await list.save()
   const result = await getTopTablePlaylistById(topTablePlaylistId)
@@ -337,12 +324,6 @@ export const updateTracksToTopTablePlaylist = async (
   })
   const aDayAgo = Date.now() - 1000 * 60 * 60 * 24
 
-  await removeUserTracksFromPlaylist(
-    topTablePlaylistId,
-    userId,
-    tracks.map(({ id }) => id)
-  )
-
   if (lastUpdate && new Date(lastUpdate.updated_at).getTime() > aDayAgo) {
     console.log('ITS NEW')
     return list
@@ -350,14 +331,11 @@ export const updateTracksToTopTablePlaylist = async (
 
   //* replace the users tracks with new ones
   // remove the ones
-  const listWithoutUserTracks = await removeUserTracksFromPlaylist(
+  await removeUserTracksFromPlaylist(
     list,
     userId,
     tracks.map(({ id }) => id)
   )
-  return list
-
-  await listWithoutUserTracks.save()
 
   // add the new
   const result = await addTracksToTopTablePlaylist(
@@ -377,7 +355,7 @@ export const removeUserTracksFromPlaylist = async (
 ) => {
   const { Track, TopTracksPlaylist } = connectToDatabase()
 
-  const trackUserId = `${userId}-short_term`
+  const trackUserId = [].concat(userId)
   let q: any = {
     user_ids: {
       $in: trackUserId,
@@ -386,33 +364,50 @@ export const removeUserTracksFromPlaylist = async (
   }
   if (trackIds) {
     q.id = {
-      $in: trackIds,
+      $in: [].concat(trackIds),
     }
   }
 
   // remove user from tracks
   const tracks = await Track.find(q)
-  console.log(tracks)
+
   const deleteTrackList = []
+  let updatedCount = 0
   Promise.all(
     tracks.map(async (t) => {
       const index = t.user_ids.indexOf(userId)
       t.rank.splice(index, 1)
-      t.rank.splice(index, 1)
+      t.user_ids.splice(index, 1)
       t.score = calculateScore(t.rank, t.count)
       t.count = t.rank.length
 
       if (t.count === 0) {
         deleteTrackList.push(t._id)
       } else {
-        const _ = await Track.findOne({ _id: t._id }) //, t)
-        // const _ = await Track.updateOne({ _id: t._id }, t)
-        console.log(_)
+        await Track.updateOne(
+          { _id: t._id },
+          {
+            rank: t.rank,
+            user_ids: t.user_ids,
+            score: t.score,
+            count: t.count,
+          }
+        )
+        updatedCount++
       }
-      console.log(t)
     })
   )
-  console.log(deleteTrackList)
+  const result = await Track.deleteMany({ _id: { $in: deleteTrackList } })
+
+  // remove from playlist tracks
+  await TopTracksPlaylist.updateOne(
+    { _id: topTablePlaylistId },
+    {
+      $pull: { tracks: { $in: deleteTrackList } },
+    }
+  )
+
+  return { ...result, updatedCount }
 
   // await TopTracksPlaylist.update(
   //   { _id: topTablePlaylistId },

@@ -162,7 +162,7 @@ export const saveSpotifyPlaylistId = async (
   playlist_id: string,
   spotify_playlist_id: string
 ) => {
-  const data = await serverFetch(`playlists/user/spotifyplaylist/update`, {
+  const data = await serverFetch(`playlists/user/spotifyplaylistId/add`, {
     method: 'POST',
     body: JSON.stringify({
       user_id,

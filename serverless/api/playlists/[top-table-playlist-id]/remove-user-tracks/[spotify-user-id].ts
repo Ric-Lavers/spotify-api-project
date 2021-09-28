@@ -12,13 +12,8 @@ module.exports = cors(async function (req, res) {
       res.send()
       return
     }
-    console.log(req.query, req.query['spotify-user-id'])
 
     if (!req.query['spotify-user-id']) throw new Error('no spotify user id')
-
-    let currentPlaylist = await getTopTablePlaylistById(
-      req.query['top-table-playlist-id']
-    )
 
     let playlist = await removeUserTracksFromPlaylist(
       req.query['top-table-playlist-id'],

@@ -196,6 +196,7 @@ const useSpotifyPlaylist = (user, playlistId) => {
     const uris = includedUris(tracks)
     if (!uris.length) return
     setCreateState('loading')
+    // saves to spotify
     const data = await createUserPlaylistWithTracks(
       user.id,
       {
@@ -207,6 +208,7 @@ const useSpotifyPlaylist = (user, playlistId) => {
       uris
     )
 
+    // records the playlist is on the user
     await saveSpotifyPlaylistId(user.id, playlistId, data.id)
 
     setCreateState(data ? 'success' : 'error')
@@ -220,7 +222,7 @@ const useSpotifyPlaylist = (user, playlistId) => {
       return
     }
     setCreateState('loading')
-
+    // updates to spotify
     const data = await updateUserPlaylistTracks(spotify_playlist_id, uris)
 
     setCreateState(data ? 'success' : 'error')
@@ -293,37 +295,37 @@ const PartyPlaylistGroup = memo(
             : addTopTracksToPlaylist(userData, playlistId, topTracks))
           return data
         })
-        .then(async () => {
+        .then(async (data) => {
           setDoing('saving to spotify')
+          // updates the playlist to spotify
+          const u = (data.users || []).find(({ id }) => id === spotify_user_id)
+          await (get(u, `spotify_playlist_id[${playlistId}]`)
+            ? updateSpotifyPlaylist(
+                data.tracks,
+                u.spotify_playlist_id[playlistId]
+              )
+            : createSpotifyPlaylist(data.tracks, {
+                title: data.title,
+                description: data.description,
+              }).then((playlist) => {
+                setData((prev) => {
+                  const u = prev.data.users.find(
+                    (u) => u.id === spotify_user_id
+                  )
+                  if (u && u.spotify_playlist_id) {
+                    u.spotify_playlist_id[playlistId] = playlist.id
+                  }
+
+                  return prev
+                })
+              }))
+        })
+        .then(async () => {
           const data = await getPartyPlaylist(playlistId)
           setTracks(data.tracks)
           setData({ data, loading: true })
           return data
         })
-        // .then(async (data) => {
-        //   // updates the playlist to spotify
-        //   const u = (data.users || []).find(({ id }) => id === spotify_user_id)
-        //   await (get(u, `spotify_playlist_id[${playlistId}]`)
-        //     ? updateSpotifyPlaylist(
-        //         data.tracks,
-        //         u.spotify_playlist_id[playlistId]
-        //       )
-        //     : createSpotifyPlaylist(data.tracks, {
-        //         title: data.title,
-        //         description: data.description,
-        //       }).then((playlist) => {
-        //         setData((prev) => {
-        //           const u = prev.data.users.find(
-        //             (u) => u.id === spotify_user_id
-        //           )
-        //           if (u && u.spotify_playlist_id) {
-        //             u.spotify_playlist_id[playlistId] = playlist.id
-        //           }
-
-        //           return prev
-        //         })
-        //       }))
-        // })
         .catch(() => setData((prev) => ({ ...prev, loading: false })))
         .finally(() => {
           setDoing('')

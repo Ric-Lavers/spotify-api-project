@@ -25,3 +25,4 @@ module.exports = cors(async function (req, res) {
     res.status(200).json([])
   }
 })
+
