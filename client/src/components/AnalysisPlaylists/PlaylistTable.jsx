@@ -6,6 +6,7 @@ import { formatFeatures } from 'helpers'
 import { isChecked, getAverages, getRows } from './PlaylistTable.utils'
 import { SpotifyTrackGrid } from './SpotifyTrackGrid'
 import { Survay_01 } from '../../pages/PartyPlaylist'
+
 export const PlaylistTable = ({
   loading,
   tracks,
