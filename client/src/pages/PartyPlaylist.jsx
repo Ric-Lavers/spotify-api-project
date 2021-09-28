@@ -1,51 +1,22 @@
-import React, { memo, useContext, useState, useEffect, useMemo } from 'react'
-import get from 'lodash.get'
-import { useParams, useHistory } from 'react-router-dom'
+import React, { useContext, useState, useEffect } from 'react'
 import Favicon from 'react-favicon'
-import { ReactComponent as BackArrow } from '../images/back.svg'
+import { useParams, useHistory } from 'react-router-dom'
+
 import { withCurrentSong } from '../hooks'
 import {
-  PlaylistTable,
   SavePlaylist,
   UserPlaylistsSelect,
-  SpotifyTrackGrid,
 } from '../components/AnalysisPlaylists'
-import { sortPlaylistTracks } from './AnalysisPlaylists'
-import {
-  createUserPlaylistWithTracks,
-  updateUserPlaylistTracks,
-} from 'api/spotify'
 import { GlobalContext } from 'globalContext'
-import { timeSince, formatFeatures } from 'helpers'
-import { specialPlaylists, savedTracks } from 'constants/index'
-import {
-  getUserPartyPlaylists,
-  getPartyPlaylist,
-  saveSpotifyPlaylistId,
-} from 'api/party-playlist'
-import { stats as _stats } from '../components/stats/Stats'
-import EmojiLoader from '../components/common/EmojiLoader'
-import UserCircles from '../components/common/UserCircles'
+import { getUserPartyPlaylists } from 'api/party-playlist'
 import PartyBlendsFavi from '../images/party-blends-favi.png'
-
+import PartyPlaylistGroup from './PartyPlaylist/PartyPlaylistGroup'
 import {
   useTopTracks,
   getTopTrackIds,
   createTopTracksPlaylist,
   formatUserPlaylists,
-  addTopTracksToPlaylist,
-  updateTopTracksPlaylist,
 } from './PartyPlaylist.utils'
-
-const favPlaylists = [...specialPlaylists, savedTracks]
-
-const Dev = ({ data }) => (
-  <>
-    <code style={{ fontSize: 9 }}>
-      <pre>{JSON.stringify(data, null, 1)}</pre>
-    </code>
-  </>
-)
 
 const useWait = (ms = 8000) => {
   let [__, set__] = useState(true)
@@ -81,22 +52,6 @@ export const Survay_01 = () => {
     >
       Loading…
     </iframe>
-  )
-}
-
-const Back = ({ onClick, disabled = '' }) => {
-  return (
-    <button
-      onClick={onClick}
-      data-testid="top-bar-back-button"
-      aria-hidden="true"
-      aria-label="Go back"
-      disabled={disabled}
-      class="back-button "
-      title="Go back"
-    >
-      <BackArrow />
-    </button>
   )
 }
 
@@ -155,8 +110,12 @@ const PartyPlaylist = React.memo(
         </>
       )
     }
-    if (!userId || loadingTopTracks) {
+
+    if (loadingTopTracks) {
       return <div>loading...</div>
+    }
+    if (!userId) {
+      return <div>cant find you on this list</div>
     }
 
     return (
@@ -185,308 +144,4 @@ const PartyPlaylist = React.memo(
   })
 )
 
-const useSpotifyPlaylist = (user, playlistId) => {
-  const [createState, setCreateState] = useState('')
-
-  const includedUris = (tracks) => {
-    return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
-  }
-
-  const createSpotifyPlaylist = async (tracks, { title, description }) => {
-    const uris = includedUris(tracks)
-    if (!uris.length) return
-    setCreateState('loading')
-    // saves to spotify
-    const data = await createUserPlaylistWithTracks(
-      user.id,
-      {
-        name: title,
-        description: `${description}  -  ${window.location.href}`,
-        isPublic: true,
-        collaborative: false,
-      },
-      uris
-    )
-
-    // records the playlist is on the user
-    await saveSpotifyPlaylistId(user.id, playlistId, data.id)
-
-    setCreateState(data ? 'success' : 'error')
-    return data
-  }
-
-  const updateSpotifyPlaylist = async (tracks, spotify_playlist_id) => {
-    const uris = includedUris(tracks)
-    if (!uris.length || !spotify_playlist_id) {
-      setCreateState('error')
-      return
-    }
-    setCreateState('loading')
-    // updates to spotify
-    const data = await updateUserPlaylistTracks(spotify_playlist_id, uris)
-
-    setCreateState(data ? 'success' : 'error')
-    return data
-  }
-
-  return {
-    createState,
-    createSpotifyPlaylist,
-    updateSpotifyPlaylist,
-  }
-}
-
-const PartyPlaylistGroup = memo(
-  ({
-    playlistId,
-    currentPlayingId,
-    spotify_user_id,
-    topTrackIds,
-    user: userData,
-    topTracks,
-  }) => {
-    const [
-      {
-        data,
-        data: { user_ids, title, description, users },
-        loading,
-      },
-      setData,
-    ] = useState({
-      data: {
-        created_at: '',
-        description: '',
-        title: '',
-        updated_at: '',
-        user_ids: [],
-        users: [],
-      },
-      loading: true,
-    })
-    const history = useHistory()
-    const [tracks, setTracks] = useState([])
-    const currentTrack = React.useMemo(() => {
-      return tracks.find((t) => t.id === currentPlayingId)
-    }, [tracks, currentPlayingId])
-    const timeSinceUpdate = (() => {
-      const u = (users || []).find(({ id }) => id === spotify_user_id)
-      if (!u) return ''
-
-      return timeSince(u.updated_at)
-    })()
-    const user =
-      (users || []).find(({ id }) => id === spotify_user_id) || userData
-
-    const { createSpotifyPlaylist, updateSpotifyPlaylist } = useSpotifyPlaylist(
-      user,
-      playlistId
-    )
-    const [doing, setDoing] = useState('')
-    const isUserContributor = user_ids.includes(spotify_user_id)
-    function getNsetPlaylist() {
-      setData((s) => ({ ...s, loading: true }))
-      setDoing('initialising')
-      getPartyPlaylist(playlistId)
-        .then(async (data) => {
-          setDoing('syncing your favourite tracks')
-          const isUserContributor = data.user_ids.includes(spotify_user_id)
-          await (isUserContributor
-            ? updateTopTracksPlaylist(userData, playlistId, topTracks)
-            : addTopTracksToPlaylist(userData, playlistId, topTracks))
-          return data
-        })
-        .then(async (data) => {
-          setDoing('saving to spotify')
-          // updates the playlist to spotify
-          const u = (data.users || []).find(({ id }) => id === spotify_user_id)
-          await (get(u, `spotify_playlist_id`)
-            ? updateSpotifyPlaylist(data.tracks, u.spotify_playlist_id)
-            : createSpotifyPlaylist(data.tracks, {
-                title: data.title,
-                description: data.description,
-              }).then((playlist) => {
-                setData((prev) => {
-                  const u = prev.data.users.find(
-                    (u) => u.id === spotify_user_id
-                  )
-                  if (u && u.spotify_playlist_id) {
-                    u.spotify_playlist_id = playlist.id
-                  }
-
-                  return prev
-                })
-              }))
-        })
-        .then(async () => {
-          const data = await getPartyPlaylist(playlistId)
-          setTracks(data.tracks)
-          setData({ data, loading: true })
-          return data
-        })
-        .catch(() => setData((prev) => ({ ...prev, loading: false })))
-        .finally(() => {
-          setDoing('')
-          setData((prev) => {
-            prev.loading = false
-            return prev
-          })
-        })
-    }
-
-    const initialising = React.useRef(true)
-    useEffect(() => {
-      if (spotify_user_id && topTrackIds && initialising.current) {
-        getNsetPlaylist()
-        initialising.current = false
-      }
-    }, [playlistId, spotify_user_id, topTrackIds])
-
-    const [createState, setCreateState] = useState('')
-    const [updateState, setUpdateState] = useState('')
-    const includedUris = useMemo(() => {
-      return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
-    }, [tracks])
-
-    function removeFinalStateEmjoi(currentState, setState) {
-      if (currentState === 'loading') return
-      const id = setTimeout(() => {
-        setState('')
-      }, 3000)
-      return () => clearTimeout(id)
-    }
-
-    useEffect(
-      () => removeFinalStateEmjoi(createState, setCreateState),
-      [createState]
-    )
-    useEffect(
-      () => removeFinalStateEmjoi(updateState, setUpdateState),
-      [updateState]
-    )
-
-    //TODO just pass the value
-    const handleSort = ({ target: { value } }) => {
-      const [key, dir] = value.split('-')
-      sortPlaylistTracks(key, dir, tracks, (sortedTracks) => {
-        setTracks(sortedTracks)
-      })
-    }
-    const initalFetchComplete = React.useRef(false)
-    useEffect(() => {
-      if (tracks.length && !initalFetchComplete.current) {
-        initalFetchComplete.current = true
-        // handleSort({ target: { value: 'users-ASC' } })
-      }
-    }, [tracks])
-
-    return (
-      <div className="analysis-playlists PartyPlaylistGroup">
-        {title && (
-          <div className="title-head">
-            <Back
-              onClick={() => {
-                history.push('/party-playlist')
-              }}
-            />
-            <h4> {title}</h4>
-            <span />
-          </div>
-        )}
-
-        {description && <p>{description}</p>}
-
-        <UserCircles users={users} />
-        <CurrentlyPLaying currentTrack={currentTrack} users={users} />
-        {(!loading || createState || updateState) && (
-          <>
-            {get(user, `spotify_playlist_id`) && (
-              <>
-                <p className="action-btn-group">
-                  <a
-                    style={{
-                      textDecoration: 'none',
-                      height: 'inherit',
-                      lineHeight: '32px',
-                    }}
-                    className="s-submit"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
-                  >
-                    Open in Spotify
-                  </a>
-                </p>
-                <p className="action-btn-group">
-                  <a
-                    style={{
-                      textDecoration: 'none',
-                      height: 'inherit',
-                      lineHeight: '32px',
-                    }}
-                    className="s-button"
-                    href={`/analysis/${user.spotify_playlist_id}`}
-                  >
-                    Filter this Playlist
-                  </a>
-                </p>
-              </>
-            )}
-          </>
-        )}
-
-        <PlaylistTable
-          loading={loading}
-          loadingMessage={doing}
-          tracks={tracks}
-          currentTrackId={currentPlayingId}
-          uris={includedUris || []}
-          stats={['score', 'users', 'popularity', 'danceability']}
-          onSort={handleSort}
-          currentSortValue={'title'}
-          users={users}
-        />
-      </div>
-    )
-  }
-)
-
-const CurrentlyPLaying = ({ currentTrack, users = [] }) => {
-  if (!currentTrack) {
-    return null
-  }
-  const images = currentTrack.album.images
-  return (
-    <>
-      <br />
-      <fieldset className="currently-playing party-playlist">
-        <legend>Currently playing</legend>
-
-        <SpotifyTrackGrid
-          currentlyPlaying
-          name={currentTrack.name}
-          artists={formatFeatures('artists', currentTrack)}
-          imageUrl={images[images.length - 2].url}
-          onClick={() => {
-            document.getElementById(currentTrack.id).scrollIntoView()
-          }}
-          size="md"
-        />
-        <div>({currentTrack.custom.score})</div>
-        <UserCircles
-          size="small"
-          users={(users || []).filter((u) =>
-            (currentTrack.custom.user_ids || []).find((id) => {
-              const actualUserId = id
-                .replace('-short_term', '')
-                .replace('-medium_term', '')
-                .replace('-long_term', '')
-
-              return u.id === actualUserId
-            })
-          )}
-        />
-      </fieldset>
-    </>
-  )
-}
 export default PartyPlaylist
