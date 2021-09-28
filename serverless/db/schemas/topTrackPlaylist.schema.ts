@@ -35,6 +35,7 @@ export const trackSchema = new Schema(
   },
   { toJSON: { virtuals: true } }
 )
+
 trackSchema.post('remove', function () {
   console.log('Removing!')
 })

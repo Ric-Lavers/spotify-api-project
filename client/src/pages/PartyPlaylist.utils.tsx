@@ -184,7 +184,6 @@ export const formatUserPlaylists = (
     created_at: Date
     description: string
     title: string
-    user_ids: string[]
   }[]
 ): {
   value: string

@@ -34,33 +34,8 @@ export const getTopTablePlaylistsByUserId = async (spotify_user_id: string) => {
         $in: spotify_user_id,
       },
     },
-    '_id description title created_at user_ids users'
-  ).populate('users', 'created_at updated_at display_name id images ')
-
-  //TODO use a query
-  usersLists.forEach((list, i) => {
-    list.users.filter(Boolean).forEach((user, j) => {
-      const {
-        created_at,
-        updated_at,
-        display_name,
-        id,
-        images,
-        _id,
-        spotify_playlist_id,
-      } = user
-
-      usersLists[i].users[j] = {
-        created_at,
-        updated_at,
-        display_name,
-        id,
-        images,
-        _id,
-        spotify_playlist_id,
-      }
-    })
-  })
+    '_id description title created_at updated_at'
+  )
 
   return usersLists
 }
@@ -138,7 +113,7 @@ export const getTopTablePlaylistById = async (
 }
 
 /**
- * saves the playlist to spotify
+ * saves the spotify playlist id to the user
  */
 export const saveSpotifyPlaylistId = async (
   spotify_user_id: string,
