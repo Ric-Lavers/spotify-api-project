@@ -62,8 +62,17 @@ export const getTopTablePlaylistById = async (
       data = playlist
     })
 
-  data.users.forEach((u, i) => {
+  //TODO can this be linked in the schema or something
+  const lastUpdates = await Update.find({ playlist: data }).then((updates) =>
+    (updates || []).reduce((a, { user, updated_at }) => {
+      a[user] = updated_at
+      return a
+    }, {})
+  )
+
+  data.users.forEach((u) => {
     u.spotify_playlist_id = get(u, `spotify_playlist_id.${topTablePlaylistId}`)
+    u.updated_at = lastUpdates[u._id] || u.updated_at
   })
 
   const tracks = await Track.find(
