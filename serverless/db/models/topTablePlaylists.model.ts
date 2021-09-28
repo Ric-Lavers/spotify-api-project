@@ -54,41 +54,16 @@ export const getTopTablePlaylistById = async (
   let data
 
   await TopTracksPlaylist.findById(topTablePlaylistId)
-    .populate('users')
+    .populate(
+      'users',
+      'created_at updated_at display_name id images _id spotify_playlist_id'
+    )
     .then((playlist) => {
       data = playlist
     })
 
-  const lastUpdates = await Update.find({ playlist: data }).then((updates) =>
-    (updates || []).reduce((a, { user, updated_at }) => {
-      a[user] = updated_at
-      return a
-    }, {})
-  )
-
-  data.users.filter(Boolean).forEach((user, j) => {
-    const {
-      created_at,
-      updated_at,
-      display_name,
-      id,
-      images,
-      _id,
-      spotify_playlist_id,
-    } = user
-
-    data.users[j] = {
-      created_at,
-      updated_at: lastUpdates[_id] || updated_at,
-      display_name,
-      id,
-      images,
-      _id,
-      //TODO only return the current user playlist ids
-      spotify_playlist_id: {
-        [topTablePlaylistId]: get(spotify_playlist_id, topTablePlaylistId),
-      },
-    }
+  data.users.forEach((u, i) => {
+    u.spotify_playlist_id = get(u, `spotify_playlist_id.${topTablePlaylistId}`)
   })
 
   const tracks = await Track.find(
@@ -105,7 +80,6 @@ export const getTopTablePlaylistById = async (
           ]
     )
     .limit(limit)
-  // console.log(tracks)
 
   data.tracks = tracks
 

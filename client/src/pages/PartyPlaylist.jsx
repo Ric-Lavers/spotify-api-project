@@ -299,11 +299,8 @@ const PartyPlaylistGroup = memo(
           setDoing('saving to spotify')
           // updates the playlist to spotify
           const u = (data.users || []).find(({ id }) => id === spotify_user_id)
-          await (get(u, `spotify_playlist_id[${playlistId}]`)
-            ? updateSpotifyPlaylist(
-                data.tracks,
-                u.spotify_playlist_id[playlistId]
-              )
+          await (get(u, `spotify_playlist_id`)
+            ? updateSpotifyPlaylist(data.tracks, u.spotify_playlist_id)
             : createSpotifyPlaylist(data.tracks, {
                 title: data.title,
                 description: data.description,
@@ -313,7 +310,7 @@ const PartyPlaylistGroup = memo(
                     (u) => u.id === spotify_user_id
                   )
                   if (u && u.spotify_playlist_id) {
-                    u.spotify_playlist_id[playlistId] = playlist.id
+                    u.spotify_playlist_id = playlist.id
                   }
 
                   return prev
@@ -402,7 +399,7 @@ const PartyPlaylistGroup = memo(
         <CurrentlyPLaying currentTrack={currentTrack} users={users} />
         {(!loading || createState || updateState) && (
           <>
-            {get(user, `spotify_playlist_id[${playlistId}]`) && (
+            {get(user, `spotify_playlist_id`) && (
               <>
                 <p className="action-btn-group">
                   <a
@@ -414,7 +411,7 @@ const PartyPlaylistGroup = memo(
                     className="s-submit"
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`https://open.spotify.com/playlist/${user.spotify_playlist_id[playlistId]}`}
+                    href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
                   >
                     Open in Spotify
                   </a>
