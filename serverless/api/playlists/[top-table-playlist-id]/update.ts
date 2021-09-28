@@ -14,7 +14,6 @@ module.exports = cors(async function (req, res) {
     }
 
     if (!req.query.spotify_user_id) throw new Error('no spotify user id')
-    const time_range = req.query.time_range ? `-${req.query.time_range}` : ''
 
     let currentPlaylist = await getTopTablePlaylistById(
       req.query['top-table-playlist-id']
@@ -25,7 +24,7 @@ module.exports = cors(async function (req, res) {
     ) {
       let playlist = await updateTracksToTopTablePlaylist(
         req.query['top-table-playlist-id'],
-        `${req.query.spotify_user_id}${time_range}`,
+        req.query.spotify_user_id,
         req.body.tracks,
         req.body.user
       )

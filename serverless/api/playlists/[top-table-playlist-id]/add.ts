@@ -13,8 +13,9 @@ module.exports = cors(async function (req, res) {
       return
     }
 
-    if (!req.query.spotify_user_id) throw new Error('no spotify user id')
-    // const time_range = req.query.time_range ? `-${req.query.time_range}` : ''
+    if (!req.query.spotify_user_id) {
+      throw new Error('no spotify user id')
+    }
 
     let playlist = await addTracksToTopTablePlaylist(
       req.query['top-table-playlist-id'],
