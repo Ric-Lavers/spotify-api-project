@@ -116,22 +116,6 @@ export const getTopTablePlaylistById = async (
     }
   })
 
-  // const aggregated = await Track.aggregate([
-  //   { $match: { playlistId: topTablePlaylistId } },
-  //   { "$project": {
-  //     user_ids: 1,
-  //     rank: 1,
-  //     score: 1,
-  //     count: 1,
-  //     time_range: 1,
-  //     id: 1,
-  //     audioFeatures: 1,
-  //     "length": { "$size": "$user_ids" }
-  //   } }
-
-  // ])
-  // console.log({ aggregated })
-
   const tracks = await Track.find(
     { playlistId: topTablePlaylistId },
     '-_id -playlistId'
@@ -215,7 +199,6 @@ export const createNewTopTablePlaylist = async (userId: string, body) => {
         rank: [rank + 1],
         score: rank + 1,
         user_ids: [userId],
-        time_range: ['short_term'],
       })
 
       return t.save()
@@ -245,9 +228,11 @@ export const addTracksToTopTablePlaylist = async (
   const { User, Update, Track, TopTracksPlaylist } = connectToDatabase()
   const list = await TopTracksPlaylist.findById(topTablePlaylistId)
 
-  const u = await User.findOneAndUpdate({ id: user.id }, user, { upsert: true })
+  const u = await User.findOneAndUpdate({ id: user.id }, user, {
+    upsert: true,
+    new: true,
+  })
   const userExists = !!list.user_ids.find((id) => id === user.id)
-  console.log(user.images)
 
   if (userExists) {
     await Update.updateOne(
@@ -256,7 +241,6 @@ export const addTracksToTopTablePlaylist = async (
         playlist: list,
       },
       {
-        images: user.images,
         updated_at: new Date(),
       }
     )
@@ -316,8 +300,10 @@ export const updateTracksToTopTablePlaylist = async (
   const list = await getTopTablePlaylistById(topTablePlaylistId)
 
   //dont update if it hasn't been a day
-  const { Update, User } = connectToDatabase()
+  const { Update, User, TopTracksPlaylist } = connectToDatabase()
+
   const _user = await User.findOne({ id: user.id })
+
   const lastUpdate = await Update.findOne({
     user: _user,
     playlist: Types.ObjectId(topTablePlaylistId),
@@ -325,14 +311,16 @@ export const updateTracksToTopTablePlaylist = async (
   const aDayAgo = Date.now() - 1000 * 60 * 60 * 24
 
   if (lastUpdate && new Date(lastUpdate.updated_at).getTime() > aDayAgo) {
-    console.log('ITS NEW')
+    console.log('its new!')
+
     return list
   }
 
   //* replace the users tracks with new ones
   // remove the ones
+
   await removeUserTracksFromPlaylist(
-    list,
+    topTablePlaylistId,
     userId,
     tracks.map(({ id }) => id)
   )
@@ -397,6 +385,7 @@ export const removeUserTracksFromPlaylist = async (
       }
     })
   )
+
   const result = await Track.deleteMany({ _id: { $in: deleteTrackList } })
 
   // remove from playlist tracks
