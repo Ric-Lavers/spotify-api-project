@@ -19,6 +19,7 @@ import SkipList from './components/skip-list/SkipList'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import AnalysisPlaylistsPage from './pages/AnalysisPlaylists'
 import PartyPlaylistPage from './pages/PartyPlaylist'
+import Scratch from './pages/Scratch'
 import { useToggle } from './hooks'
 import { ReactComponent as GithubLogo } from './images/github-logo.svg'
 import variables from './styles/variables'
@@ -33,7 +34,7 @@ const App = () => {
         <GlobalUiState>
           <Layout>
             <Route exact path="/" render={() => <MainPage />} />
-            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
+            <Route exact path="/scratch" render={() => <Scratch />} />
             <Route
               path={[
                 '/party-playlist/:playlistId',
