@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 
-import { topTableSchema } from './topTable.schema'
 const Schema = mongoose.Schema
 mongoose.set('useCreateIndex', true)
 
