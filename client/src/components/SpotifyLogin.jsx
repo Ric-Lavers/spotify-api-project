@@ -54,8 +54,8 @@ class SpotifyLogin extends Component {
 
   componentDidMount() {
     const { spotifyToken } = sessionStorage
-
-    if (spotifyToken) this.checkToken(spotifyToken)
+    const { hasAgreed } = localStorage
+    if (spotifyToken || hasAgreed) this.checkToken(spotifyToken)
     this.setToken()
   }
 
@@ -69,6 +69,7 @@ class SpotifyLogin extends Component {
         'refresh_token'
       )
       sessionStorage.spotifyToken = access_token
+      localStorage.hasAgreed = true
       sessionStorage.refresh_token = refresh_token
       window.location.replace(window.origin + window.location.pathname)
     }
@@ -154,7 +155,9 @@ class SpotifyLogin extends Component {
           >
             {sessionStorage.getItem('spotifyToken')
               ? this.state.tokenPresent
-                ? 'spotify auth timed out login again'
+                ? tokenValid
+                  ? 'spotify auth timed out login again'
+                  : ''
                 : ''
               : `login to spotify`}
           </a>
