@@ -31,7 +31,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     const [
       {
         data,
-        data: { user_ids, title, description, users },
+        data: { user_ids, title, description, users, length },
         loading,
       },
       setData,
@@ -121,11 +121,19 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
     const setPlaylist = async (options) => {
       setUpdating(true)
+      const th = document.getElementById('title-head')
+      if (th) {
+        const w = th.getBoundingClientRect().width
+        th.style.width = w + 'px'
+      }
       const data = await getPartyPlaylist(playlistId, options)
 
       setTracks(data.tracks)
       setData({ data, loading: false })
       setUpdating(false)
+      if (th) {
+        th.style.removeProperty('width')
+      }
     }
 
     const initialising = React.useRef(true)
@@ -139,7 +147,6 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     //TODO just pass the value
     const handleSort = ({ target: { value } }) => {
       const [sort, direction] = value.split('-')
-      console.log(sort)
       setPlaylist({ sort, direction })
     }
     const initalFetchComplete = React.useRef(false)
@@ -217,6 +224,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           currentSortValue={'title'}
           users={users}
           defaultSort=""
+          length={length}
         />
       </div>
     )

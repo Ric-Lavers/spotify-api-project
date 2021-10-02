@@ -130,7 +130,6 @@ export const getPartyPlaylist = async (
 }> => {
   //@ts-ignore
   const searchParams = new URLSearchParams(options).toString()
-  console.log(options, searchParams)
   let data = await serverFetch(`playlists/${playlistId}?${searchParams}`)
   const trackIds = data.tracks.map(({ id }) => id)
   const [{ tracks }, audioFeatures] = await Promise.all([

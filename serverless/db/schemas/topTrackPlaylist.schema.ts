@@ -64,8 +64,19 @@ export const topTracksPlaylistSchema = new Schema(
       },
     ],
   },
-  { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
+  {
+    toJSON: { virtuals: true },
+    timestamps: {
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    },
+  }
 )
+
+topTracksPlaylistSchema.virtual('length').get(function () {
+  return this.tracks.length
+})
+
 topTracksPlaylistSchema.post('remove', function () {
   console.log('removing!')
 })

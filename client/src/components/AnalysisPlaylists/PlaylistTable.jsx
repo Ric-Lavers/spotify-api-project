@@ -22,6 +22,7 @@ export const PlaylistTable = ({
   users = [],
   loadingMessage = 'Loading...',
   defaultSort = 'order',
+  length,
 }) => {
   const [sortValue, setSortValue] = useState('')
   const handleSort = (statKey) => {
@@ -82,7 +83,8 @@ export const PlaylistTable = ({
                 <th className="table-average" />
               )}
               <th style={{ overflow: 'visible' }} className="table-average">
-                {tracks.length} tracks
+                {tracks.length} tracks{' '}
+                {length ? <span className="length">of {length}</span> : ''}{' '}
               </th>
               {_stats.map((stat, i) => {
                 return (
@@ -108,21 +110,23 @@ export const PlaylistTable = ({
                 </th>
               )}
               {get(tracks[0], 'custom.score') && <th>#</th>}
-              <th>title</th>
+              <th id="title-head">title</th>
 
-              {_stats.map((statKey) => (
-                <th onClick={() => handleSort(statKey)}>
-                  <span
-                    className={
-                      sortValue &&
-                      sortValue.includes(statKey) &&
-                      sortValue.split('-')[1]
-                    }
-                  >
-                    {statKey}
-                  </span>
-                </th>
-              ))}
+              {_stats.map((statKey) => {
+                return (
+                  <th onClick={() => handleSort(statKey)}>
+                    <span
+                      className={
+                        sortValue &&
+                        sortValue.includes(statKey) &&
+                        sortValue.split('-')[1]
+                      }
+                    >
+                      {statKey}
+                    </span>
+                  </th>
+                )
+              })}
             </tr>
           </thead>
           <tbody>

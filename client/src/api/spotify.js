@@ -815,6 +815,4 @@ export default {
   getAudioFeatures,
   getHeapsTracks,
   getArtists,
-  removePlaylist,
-  removePlaylists,
 }
