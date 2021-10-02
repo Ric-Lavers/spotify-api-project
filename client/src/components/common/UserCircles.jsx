@@ -7,15 +7,35 @@ const UserCircles = memo(({ users, size, loading = false }) => {
   if (loading) {
     return <Skeleton circle width={30} height={30} />
   }
+  if (size === 'small' && users.length > 4) {
+    const len = users.length
+    const otherUsers = users.splice(4, len)
+    users.push({
+      updated_at: new Date(),
+      display_name: `+ ${len - 4}`,
+      isInfo: true,
+      otherUsers,
+    })
+  }
   return (
-    <div className="user-circles">
+    <div className={`user-circles ${size}`}>
       {(users || []).map((user) => (
-        <UserCircle user={user} size={size} />
+        <UserCircle
+          user={user}
+          size={size}
+          isInfo={user.isInfo}
+          otherUsers={user.otherUsers}
+        />
       ))}
     </div>
   )
 })
-export const UserCircle = ({ user, size = '' }) => {
+export const UserCircle = ({
+  user,
+  size = '',
+  isInfo = false,
+  otherUsers = [],
+}) => {
   const [timeSinceUpdate, setTimeSinceUpdate] = React.useState(
     timeSince(user.updated_at)
   )
@@ -36,6 +56,21 @@ export const UserCircle = ({ user, size = '' }) => {
   // percent of a month
   const percentOfaMonth =
     (1 - (new Date() - updatedAt) / (new Date() - aMonthAgo)) * 100
+
+  if (isInfo) {
+    return (
+      <div className={`user-circle tooltip`} /* style={{ zIndex: 3 }} */>
+        <div class="tooltiptext">
+          <small>
+            {otherUsers.map(({ display_name }) => display_name).join(', ')}{' '}
+          </small>
+        </div>
+        <div className={`user-circle__txt ${size} info`}>
+          <span>{displayName}</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div onMouseEnter={handleTimeSinceUpdate} className={`user-circle tooltip`}>

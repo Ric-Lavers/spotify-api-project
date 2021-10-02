@@ -174,6 +174,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         {description && <p>{description}</p>}
 
         <UserCircles users={users} />
+
         <CurrentlyPLaying currentTrack={currentTrack} users={users} />
         {!loading && (
           <>

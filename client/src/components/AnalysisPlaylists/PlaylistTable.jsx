@@ -146,7 +146,7 @@ export const PlaylistTable = ({
               const smallestImage = images[images.length - 1]
               const { checked, isLocalFile } = isChecked(uri, include)
               return (
-                <tr id={id}>
+                <tr className={updating ? 'updating' : ''} id={id}>
                   {enableSelecting && (
                     <td style={{ textAlign: 'center' }}>
                       <input
