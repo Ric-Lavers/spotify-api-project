@@ -139,7 +139,7 @@ export const PlaylistTable = ({
                 rows.rank = custom.rank.join(', ')
                 rows.user_ids = custom.user_ids.join(', ')
                 rows.users = users.filter((u) =>
-                  custom.user_ids.find((id) => id.includes(u.id))
+                  custom.user_ids.find((id) => id === u.id)
                 )
               }
               const images = track.album.images || []
