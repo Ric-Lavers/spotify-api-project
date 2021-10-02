@@ -81,11 +81,10 @@ export const getTopTablePlaylistById = async (
   )
     .sort(
       sort
-        ? { [sort]: direction }
+        ? { [`audioFeatures.${sort}`]: direction }
         : [
             ['count', -1],
             ['score', 1],
-            // ['audioFeatures.popularity', 1],
           ]
     )
     .limit(limit)

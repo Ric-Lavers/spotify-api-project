@@ -43,11 +43,17 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         updated_at: '',
         user_ids: [],
         users: [],
+        tracks: [],
       },
       loading: true,
     })
     const history = useHistory()
-    const [tracks, setTracks] = useState([])
+    const [, setTracks] = useState([])
+    const tracks = data.tracks
+
+    const includedUris = useMemo(() => {
+      return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
+    }, [tracks])
     const currentTrack = React.useMemo(() => {
       return tracks.find((t) => t.id === currentPlayingId)
     }, [tracks, currentPlayingId])
@@ -59,9 +65,11 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       user,
       playlistId
     )
-    const [doing, setDoing] = useState('')
 
-    function getNsetPlaylist() {
+    const [doing, setDoing] = useState('')
+    const [updating, setUpdating] = useState(false)
+
+    function initalisePlaylist() {
       setData((s) => ({ ...s, loading: true }))
       setDoing('initialising')
       getPartyPlaylist(playlistId)
@@ -111,43 +119,28 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         })
     }
 
+    const setPlaylist = async (options) => {
+      setUpdating(true)
+      const data = await getPartyPlaylist(playlistId, options)
+
+      setTracks(data.tracks)
+      setData({ data, loading: false })
+      setUpdating(false)
+    }
+
     const initialising = React.useRef(true)
     useEffect(() => {
       if (spotify_user_id && topTrackIds && initialising.current) {
-        getNsetPlaylist()
+        initalisePlaylist()
         initialising.current = false
       }
     }, [playlistId, spotify_user_id, topTrackIds])
 
-    const [createState, setCreateState] = useState('')
-    const [updateState, setUpdateState] = useState('')
-    const includedUris = useMemo(() => {
-      return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
-    }, [tracks])
-
-    function removeFinalStateEmjoi(currentState, setState) {
-      if (currentState === 'loading') return
-      const id = setTimeout(() => {
-        setState('')
-      }, 3000)
-      return () => clearTimeout(id)
-    }
-
-    useEffect(
-      () => removeFinalStateEmjoi(createState, setCreateState),
-      [createState]
-    )
-    useEffect(
-      () => removeFinalStateEmjoi(updateState, setUpdateState),
-      [updateState]
-    )
-
     //TODO just pass the value
     const handleSort = ({ target: { value } }) => {
-      const [key, dir] = value.split('-')
-      sortPlaylistTracks(key, dir, tracks, (sortedTracks) => {
-        setTracks(sortedTracks)
-      })
+      const [sort, direction] = value.split('-')
+      console.log(sort)
+      setPlaylist({ sort, direction })
     }
     const initalFetchComplete = React.useRef(false)
     useEffect(() => {
@@ -175,7 +168,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
         <UserCircles users={users} />
         <CurrentlyPLaying currentTrack={currentTrack} users={users} />
-        {(!loading || createState || updateState) && (
+        {!loading && (
           <>
             {get(user, `spotify_playlist_id`) && (
               <>
@@ -214,6 +207,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
         <PlaylistTable
           loading={loading}
+          updating={updating}
           loadingMessage={doing}
           tracks={tracks}
           currentTrackId={currentPlayingId}
@@ -222,6 +216,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           onSort={handleSort}
           currentSortValue={'title'}
           users={users}
+          defaultSort=""
         />
       </div>
     )
@@ -249,7 +244,7 @@ const CurrentlyPLaying = ({ currentTrack, users = [] }) => {
           }}
           size="md"
         />
-        <div>({currentTrack.custom.score})</div>
+
         <UserCircles
           size="small"
           users={(users || []).filter((u) =>

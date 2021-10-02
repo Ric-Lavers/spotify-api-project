@@ -1,13 +1,14 @@
-
 export const variables = {
   colors: {
-    inactive:'grey',
+    inactive: 'grey',
     success: '#61DAFB',
     error: '#FF0000',
-    spotify: { // https://developer.spotify.com/branding-guidelines/
+    spotify: {
+      // https://developer.spotify.com/branding-guidelines/
       green: '#1DB954',
       white: '#FFFFFF',
       black: '#191414',
+      spotifyGreyMenu: '#282828',
     },
   },
   sizes: {
@@ -16,7 +17,7 @@ export const variables = {
     md: 14,
     lg: 21,
     xl: 42,
-  }
+  },
 }
 
 export default variables

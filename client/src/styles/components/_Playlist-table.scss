@@ -11,6 +11,7 @@
       text-align: center;
       font-size: $md;
     }
+
     th {
       padding: 0 $sm;
       margin-right: 23px;
@@ -23,6 +24,7 @@
         line-height: 18px; //16px;
         text-transform: uppercase;
         color: rgb(179, 179, 179);
+        border-bottom: 1px solid rgba($spotify-white, 0.1);
       }
       .ASC::after {
         height: 16px;
@@ -36,15 +38,27 @@
       }
     }
   }
+  tbody {
+    tr {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+  //rgb(88, 144, 208)
+
   td {
     font-size: 0.8em;
+    border: 0px;
+    padding: 8px 8px 8px;
   }
 }
 
 .spotify-track {
   min-width: 220px;
   display: flex;
-  img {
+  img,
+  .img {
     margin-right: 16px;
   }
 

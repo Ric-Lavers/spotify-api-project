@@ -1,14 +1,20 @@
 import React, { memo } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import get from 'lodash.get'
 import { timeSince, mix } from 'helpers'
 
-const UserCircles = memo(({ users, size }) => (
-  <div className="user-circles">
-    {(users || []).map((user) => (
-      <UserCircle user={user} size={size} />
-    ))}
-  </div>
-))
+const UserCircles = memo(({ users, size, loading = false }) => {
+  if (loading) {
+    return <Skeleton circle width={30} height={30} />
+  }
+  return (
+    <div className="user-circles">
+      {(users || []).map((user) => (
+        <UserCircle user={user} size={size} />
+      ))}
+    </div>
+  )
+})
 export const UserCircle = ({ user, size = '' }) => {
   const [timeSinceUpdate, setTimeSinceUpdate] = React.useState(
     timeSince(user.updated_at)
@@ -30,6 +36,7 @@ export const UserCircle = ({ user, size = '' }) => {
   // percent of a month
   const percentOfaMonth =
     (1 - (new Date() - updatedAt) / (new Date() - aMonthAgo)) * 100
+
   return (
     <div onMouseEnter={handleTimeSinceUpdate} className={`user-circle tooltip`}>
       {displayName && (
@@ -59,7 +66,7 @@ export const UserCircle = ({ user, size = '' }) => {
             backgroundColor: mix('1db954', 'ff0000', percentOfaMonth),
           }}
         >
-          {displayName[0].toUpperCase()}
+          <span>{displayName[0].toUpperCase()}</span>
         </div>
       )}
     </div>

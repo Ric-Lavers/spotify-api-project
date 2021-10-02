@@ -118,12 +118,20 @@ interface PartySong extends Song {
 }
 
 export const getPartyPlaylist = async (
-  playlistId: string
+  playlistId: string,
+  options?: {
+    sort?: string
+    direction?: 'acs' | 'desc' | 1 | 0
+    limit?: number
+  }
 ): Promise<{
   uris: string[]
   tracks: PartySong[]
 }> => {
-  let data = await serverFetch(`playlists/${playlistId}`)
+  //@ts-ignore
+  const searchParams = new URLSearchParams(options).toString()
+  console.log(options, searchParams)
+  let data = await serverFetch(`playlists/${playlistId}?${searchParams}`)
   const trackIds = data.tracks.map(({ id }) => id)
   const [{ tracks }, audioFeatures] = await Promise.all([
     getHeapsTracks(trackIds),

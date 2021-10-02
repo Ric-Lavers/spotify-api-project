@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import get from 'lodash.get'
 import { useLocation } from 'react-router-dom'
+import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { GlobalUiState, GlobalContext } from './globalContext'
 import { SearchResultsContext } from './components/Player/Search'
@@ -30,23 +31,28 @@ const App = () => {
   return (
     <ErrorBoundary>
       <Router>
-        <GlobalUiState>
-          <Layout>
-            <Route exact path="/" render={() => <MainPage />} />
-            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
-            <Route
-              path={['/party-playlist/:playlistId', '/party-playlist']}
-              component={PartyPlaylistPage}
-            />
-            <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
-            <Route
-              path="/analysis/:playlistId"
-              component={AnalysisPlaylistsPage}
-            />
-            <Route path="/discogs-callback" component={DiscogsCallbackPage} />
-            <Route path="*" render={() => <div />} />
-          </Layout>
-        </GlobalUiState>
+        <SkeletonTheme
+          color={colors.spotify.spotifyGreyMenu}
+          highlightColor={colors.spotify.spotifyGreyMenu}
+        >
+          <GlobalUiState>
+            <Layout>
+              <Route exact path="/" render={() => <MainPage />} />
+              {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
+              <Route
+                path={['/party-playlist/:playlistId', '/party-playlist']}
+                component={PartyPlaylistPage}
+              />
+              <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
+              <Route
+                path="/analysis/:playlistId"
+                component={AnalysisPlaylistsPage}
+              />
+              <Route path="/discogs-callback" component={DiscogsCallbackPage} />
+              <Route path="*" render={() => <div />} />
+            </Layout>
+          </GlobalUiState>
+        </SkeletonTheme>
       </Router>
     </ErrorBoundary>
   )

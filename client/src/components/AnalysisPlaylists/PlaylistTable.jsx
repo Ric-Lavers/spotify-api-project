@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import get from 'lodash.get'
-import remove from 'lodash.remove'
+import Skeleton from 'react-loading-skeleton'
+
 import { play } from 'api/spotify'
 import { formatFeatures } from 'helpers'
 import { isChecked, getAverages, getRows } from './PlaylistTable.utils'
@@ -9,6 +10,7 @@ import { Survay_01 } from '../../pages/PartyPlaylist'
 
 export const PlaylistTable = ({
   loading,
+  updating,
   tracks,
   currentTrackId,
   uris,
@@ -19,13 +21,14 @@ export const PlaylistTable = ({
   currentSortValue,
   users = [],
   loadingMessage = 'Loading...',
+  defaultSort = 'order',
 }) => {
   const [sortValue, setSortValue] = useState('')
   const handleSort = (statKey) => {
     let sV
     if (!sortValue.includes(statKey)) sV = `${statKey}-ASC`
     else if (sortValue.endsWith('ASC')) sV = `${statKey}-DESC`
-    else sV = 'order-ASC'
+    else sV = `${defaultSort}-ASC`
     onSort({ target: { value: sV } })
     setSortValue(sV)
   }
@@ -65,13 +68,18 @@ export const PlaylistTable = ({
         <Survay_01 />
       </section>
       <div className="table-container">
-        <table className="playlist-table">
+        <table
+          className="playlist-table"
+          border="0"
+          cellspacing="0"
+          cellpadding="0"
+        >
           <thead>
             <tr>
               {enableSelecting ? (
                 <th className="table-average">{averages.checked}</th>
               ) : (
-                <th />
+                <th className="table-average" />
               )}
               <th style={{ overflow: 'visible' }} className="table-average">
                 {tracks.length} tracks
@@ -99,7 +107,7 @@ export const PlaylistTable = ({
                   />
                 </th>
               )}
-              {get(tracks[0], 'custom.score') && <th>score</th>}
+              {get(tracks[0], 'custom.score') && <th>#</th>}
               <th>title</th>
 
               {_stats.map((statKey) => (
@@ -149,7 +157,14 @@ export const PlaylistTable = ({
                     </td>
                   )}
                   {rows.score && stats.includes('score') && (
-                    <td>{rows.score}</td>
+                    <td>
+                      {' '}
+                      {updating ? (
+                        <Skeleton width={14} height={14} />
+                      ) : (
+                        rows.score
+                      )}
+                    </td>
                   )}
                   <td>
                     <SpotifyTrackGrid
@@ -160,21 +175,11 @@ export const PlaylistTable = ({
                       onClick={() =>
                         uris && play({ uris: uris, offset: { position: i } })
                       }
+                      loading={updating}
                     />
                   </td>
-                  {/* <td
-                    className={`playlist__song ${
-                      currentTrackId === id ? 'green' : ''
-                    }`}
-                    onClick={() =>
-                      uris && play({ uris: uris, offset: { position: i } })
-                    }
-                  >
-                    {name}
-                  </td> */}
-
                   {_stats.map((statKey) => (
-                    <td>{formatFeatures(statKey, rows)}</td>
+                    <td>{formatFeatures(statKey, rows, false, updating)}</td>
                   ))}
                 </tr>
               )
