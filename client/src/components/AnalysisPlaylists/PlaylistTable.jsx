@@ -79,10 +79,10 @@ export const PlaylistTable = ({
               {_stats.map((stat, i) => {
                 return (
                   <th key={`${averages[stat]}-${i}`} className="table-average">
-                    {stat === 'popularity'
-                      ? `${averages[stat]}%`
-                      : averages[stat] === ''
+                    {averages[stat] === '' || averages[stat] === undefined
                       ? ''
+                      : stat === 'popularity'
+                      ? `${averages[stat]}%`
                       : formatFeatures(stat, averages)}
                   </th>
                 )
