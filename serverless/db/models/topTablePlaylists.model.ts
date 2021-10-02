@@ -51,16 +51,13 @@ export const getTopTablePlaylistById = async (
   limit: number = 100
 ) => {
   const { TopTracksPlaylist, Update, Track } = connectToDatabase()
-  let data
 
-  await TopTracksPlaylist.findById(topTablePlaylistId)
+  const data = await TopTracksPlaylist.findById(topTablePlaylistId)
     .populate(
       'users',
       'created_at updated_at display_name id images _id spotify_playlist_id'
     )
-    .then((playlist) => {
-      data = playlist
-    })
+    .then((d) => d.toJSON())
 
   //TODO can this be linked in the schema or something
   const lastUpdates = await Update.find({ playlist: data }).then((updates) =>
@@ -74,7 +71,6 @@ export const getTopTablePlaylistById = async (
     u.spotify_playlist_id = get(u, `spotify_playlist_id.${topTablePlaylistId}`)
     u.updated_at = lastUpdates[u._id] || u.updated_at
   })
-
   const tracks = await Track.find(
     { playlistId: topTablePlaylistId },
     '-_id -playlistId'

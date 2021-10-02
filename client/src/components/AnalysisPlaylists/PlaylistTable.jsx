@@ -27,8 +27,8 @@ export const PlaylistTable = ({
   const [sortValue, setSortValue] = useState('')
   const handleSort = (statKey) => {
     let sV
-    if (!sortValue.includes(statKey)) sV = `${statKey}-ASC`
-    else if (sortValue.endsWith('ASC')) sV = `${statKey}-DESC`
+    if (!sortValue.includes(statKey)) sV = `${statKey}-DESC`
+    else if (sortValue.endsWith('DESC')) sV = `${statKey}-ASC`
     else sV = `${defaultSort}-ASC`
     onSort({ target: { value: sV } })
     setSortValue(sV)
