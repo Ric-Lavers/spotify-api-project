@@ -2,23 +2,33 @@
 import React, { useMemo, memo, useState, useEffect } from 'react'
 import get from 'lodash.get'
 
-import { timeSince, formatFeatures } from 'helpers'
+import { formatFeatures } from 'helpers'
 import { getPartyPlaylist } from 'api/party-playlist'
+import { Kebab, Menu } from 'components/common/s-menu'
 import UserCircles from '../../components/common/UserCircles'
 import {
   PlaylistTable,
   SpotifyTrackGrid,
 } from '../../components/AnalysisPlaylists'
-import { stats as _stats } from '../../components/stats/Stats'
 import PartyBlendsLayout from './Layout'
 import { Survay_01 } from '../../pages/PartyPlaylist'
-
 import {
   addTopTracksToPlaylist,
   updateTopTracksPlaylist,
   useSpotifyPlaylist,
 } from './PartyPlaylist.utils'
 
+let sortKeys = [
+  'danceability',
+  'popularity',
+  'energy',
+  'valence',
+  'speechiness',
+  'acousticness',
+  'tempo',
+  'instrumentalness',
+  'liveness',
+]
 const PartyPlaylistGroup: React.FC<any> = memo(
   ({
     playlistId,
@@ -51,6 +61,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     const tracks = data.tracks
     const [limit, _setLimit] = useState(localStorage.getItem('limit') || 100)
     const [sort, setSort] = useState('')
+    const [direction, setDirection] = useState('DESC')
     const setLimit = (limit) => {
       localStorage.setItem('limit', limit)
       _setLimit(limit)
@@ -135,8 +146,10 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         th.style.width = w + 'px'
       }
       const data = await getPartyPlaylist(playlistId, options)
-
-      setSort(options.sort || '')
+      if (sort !== 'users') {
+        setSort(options.sort || '')
+        setDirection(options.direction || '')
+      }
       setTracks(data.tracks)
       setData({ data, loading: false })
       setUpdating(false)
@@ -169,6 +182,13 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       }
     }, [tracks])
 
+    const handleActions = (value) => {
+      console.log('handle actions', value)
+      if (sortKeys.includes(value)) {
+        handleSort({ target: { value: [value, 'DESC'].join('-') } })
+      }
+    }
+
     return (
       <PartyBlendsLayout enableBack>
         <div className="analysis-playlists PartyPlaylistGroup">
@@ -180,42 +200,8 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           <UserCircles users={users} />
 
           <CurrentlyPLaying currentTrack={currentTrack} users={users} />
-          {!loading && (
-            <>
-              {get(user, `spotify_playlist_id`) && (
-                <>
-                  <p className="action-btn-group">
-                    <a
-                      style={{
-                        textDecoration: 'none',
-                        height: 'inherit',
-                        lineHeight: '32px',
-                      }}
-                      className="s-submit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
-                    >
-                      Open in Spotify
-                    </a>
-                  </p>
-                  {/* window.location.origin.includes('rictify') && <p className="action-btn-group">
-                    <a
-                      style={{
-                        textDecoration: 'none',
-                        height: 'inherit',
-                        lineHeight: '32px',
-                      }}
-                      className="s-button"
-                      href={`/analysis/${user.spotify_playlist_id}`}
-                    >
-                      Filter this Playlist
-                    </a>
-                  </p> */}
-                </>
-              )}
-            </>
-          )}
+
+          <Actions onClick={handleActions} loading={loading} user={user} />
 
           <PlaylistTable
             loading={loading}
@@ -224,9 +210,9 @@ const PartyPlaylistGroup: React.FC<any> = memo(
             tracks={tracks}
             currentTrackId={currentPlayingId}
             uris={includedUris || []}
-            stats={['users', 'popularity', 'danceability']}
+            stats={['users', sort || 'danceability']}
             onSort={handleSort}
-            currentSortValue={'title'}
+            currentSortValue={[sort, direction].join('-')}
             users={users}
             defaultSort=""
             length={length}
@@ -241,6 +227,71 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     )
   }
 )
+
+const Actions = ({ onClick, loading, user }) => {
+  const [actionsOpen, setActionsOpen] = useState(false)
+  const handleClick = (arg) => {
+    onClick(arg)
+    setActionsOpen(false)
+  }
+  return (
+    /* loading ? null : */ <>
+      {get(user, `spotify_playlist_id`) && (
+        <div className="actions">
+          <p className="action-btn-group">
+            <a
+              style={{
+                textDecoration: 'none',
+                height: 'inherit',
+                lineHeight: '32px',
+              }}
+              className="s-submit"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
+            >
+              Open in Spotify
+            </a>
+          </p>
+          <div>
+            <Kebab onClick={setActionsOpen} className="actions-kebab">
+              <Menu
+                open={actionsOpen}
+                list={[
+                  {
+                    value: '',
+                    label: 'sort by',
+                    list: sortKeys.map((k) => ({ value: k, label: k })),
+                  },
+                  { value: '', label: 'remove yourself from playlist' },
+                  {
+                    value: user.spotify_playlist_id,
+                    label: 'analysis',
+                  },
+                ]}
+                onClick={handleClick}
+                onClickOutside={() => setActionsOpen(false)}
+              />
+            </Kebab>
+          </div>
+          {/* window.location.origin.includes('rictify') && <p className="action-btn-group">
+              <a
+                style={{
+                  textDecoration: 'none',
+                  height: 'inherit',
+                  lineHeight: '32px',
+                }}
+                className="s-button"
+                href={`/analysis/${user.spotify_playlist_id}`}
+              >
+                Filter this Playlist
+              </a>
+            </p> */}
+        </div>
+      )}
+    </>
+  )
+}
 
 const CurrentlyPLaying = ({ currentTrack, users = [] }) => {
   if (!currentTrack) {

@@ -71,6 +71,7 @@ export const getTopTablePlaylistById = async (
     u.spotify_playlist_id = get(u, `spotify_playlist_id.${topTablePlaylistId}`)
     u.updated_at = lastUpdates[u._id] || u.updated_at
   })
+
   const tracks = await Track.find(
     { playlistId: topTablePlaylistId },
     '-_id -playlistId'
