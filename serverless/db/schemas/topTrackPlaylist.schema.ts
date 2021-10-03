@@ -74,7 +74,7 @@ export const topTracksPlaylistSchema = new Schema(
 )
 
 topTracksPlaylistSchema.virtual('length').get(function () {
-  return this.tracks.length
+  return this.tracks ? this.tracks.length : null
 })
 
 topTracksPlaylistSchema.post('remove', function () {
