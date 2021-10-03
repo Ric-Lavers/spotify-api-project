@@ -1,9 +1,16 @@
 .analysis-playlists {
-  & .PartyPlaylistGroup {
+  scroll-behavior: smooth;
+  &.PartyPlaylistGroup {
     width: 100%;
     text-align: center;
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .description {
+      margin-top: 0;
+    }
   }
-  scroll-behavior: smooth;
   .stat-check-list {
     // display: grid;
     // grid-template-columns: 1fr 1fr 1fr 1fr;

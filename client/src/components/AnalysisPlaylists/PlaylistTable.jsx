@@ -65,9 +65,6 @@ export const PlaylistTable = ({
   const _stats = stats.filter((s) => !s.match('score|artists'))
   return !tracks.length ? null : (
     <>
-      <section>
-        <Survay_01 />
-      </section>
       <div className="table-container">
         <table
           className="playlist-table"
@@ -79,9 +76,9 @@ export const PlaylistTable = ({
             <tr>
               {enableSelecting ? (
                 <th className="table-average">{averages.checked}</th>
-              ) : (
+              ) : stats.find((s) => s === 'score') ? (
                 <th className="table-average" />
-              )}
+              ) : null}
               <th style={{ overflow: 'visible' }} className="table-average">
                 {tracks.length} tracks{' '}
                 {length ? <span className="length">of {length}</span> : ''}{' '}
@@ -109,7 +106,8 @@ export const PlaylistTable = ({
                   />
                 </th>
               )}
-              {get(tracks[0], 'custom.score') && <th>#</th>}
+              {get(tracks[0], 'custom.score') &&
+                stats.find((s) => s === 'score') && <th>#</th>}
               <th id="title-head">title</th>
 
               {_stats.map((statKey) => {

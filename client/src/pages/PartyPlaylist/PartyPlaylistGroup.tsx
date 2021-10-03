@@ -1,18 +1,18 @@
 //@ts-nocheck
 import React, { useMemo, memo, useState, useEffect } from 'react'
 import get from 'lodash.get'
-import { useHistory } from 'react-router-dom'
 
 import { timeSince, formatFeatures } from 'helpers'
 import { getPartyPlaylist } from 'api/party-playlist'
-import { ReactComponent as BackArrow } from '../../images/back.svg'
 import UserCircles from '../../components/common/UserCircles'
 import {
   PlaylistTable,
   SpotifyTrackGrid,
 } from '../../components/AnalysisPlaylists'
 import { stats as _stats } from '../../components/stats/Stats'
-import { sortPlaylistTracks } from '../AnalysisPlaylists'
+import PartyBlendsLayout from './Layout'
+import { Survay_01 } from '../../pages/PartyPlaylist'
+
 import {
   addTopTracksToPlaylist,
   updateTopTracksPlaylist,
@@ -47,7 +47,6 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       },
       loading: true,
     })
-    const history = useHistory()
     const [, setTracks] = useState([])
     const tracks = data.tracks
 
@@ -158,76 +157,72 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     }, [tracks])
 
     return (
-      <div className="analysis-playlists PartyPlaylistGroup">
-        {title && (
-          <div className="title-head">
-            <Back
-              onClick={() => {
-                history.push('/party-playlist')
-              }}
-            />
-            <h4> {title}</h4>
-            <span />
-          </div>
-        )}
+      <PartyBlendsLayout enableBack>
+        <div className="analysis-playlists PartyPlaylistGroup">
+          {title && <h2> {title}</h2>}
+          <span />
 
-        {description && <p>{description}</p>}
+          {description && <p className="description">{description}</p>}
 
-        <UserCircles users={users} />
+          <UserCircles users={users} />
 
-        <CurrentlyPLaying currentTrack={currentTrack} users={users} />
-        {!loading && (
-          <>
-            {get(user, `spotify_playlist_id`) && (
-              <>
-                <p className="action-btn-group">
-                  <a
-                    style={{
-                      textDecoration: 'none',
-                      height: 'inherit',
-                      lineHeight: '32px',
-                    }}
-                    className="s-submit"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
-                  >
-                    Open in Spotify
-                  </a>
-                </p>
-                <p className="action-btn-group">
-                  <a
-                    style={{
-                      textDecoration: 'none',
-                      height: 'inherit',
-                      lineHeight: '32px',
-                    }}
-                    className="s-button"
-                    href={`/analysis/${user.spotify_playlist_id}`}
-                  >
-                    Filter this Playlist
-                  </a>
-                </p>
-              </>
-            )}
-          </>
-        )}
+          <CurrentlyPLaying currentTrack={currentTrack} users={users} />
+          {!loading && (
+            <>
+              {get(user, `spotify_playlist_id`) && (
+                <>
+                  <p className="action-btn-group">
+                    <a
+                      style={{
+                        textDecoration: 'none',
+                        height: 'inherit',
+                        lineHeight: '32px',
+                      }}
+                      className="s-submit"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
+                    >
+                      Open in Spotify
+                    </a>
+                  </p>
+                  {/* window.location.origin.includes('rictify') && <p className="action-btn-group">
+                    <a
+                      style={{
+                        textDecoration: 'none',
+                        height: 'inherit',
+                        lineHeight: '32px',
+                      }}
+                      className="s-button"
+                      href={`/analysis/${user.spotify_playlist_id}`}
+                    >
+                      Filter this Playlist
+                    </a>
+                  </p> */}
+                </>
+              )}
+            </>
+          )}
 
-        <PlaylistTable
-          loading={loading}
-          updating={updating}
-          loadingMessage={doing}
-          tracks={tracks}
-          currentTrackId={currentPlayingId}
-          uris={includedUris || []}
-          stats={['score', 'users', 'popularity', 'danceability']}
-          onSort={handleSort}
-          currentSortValue={'title'}
-          users={users}
-          defaultSort=""
-          length={length}
-        />
-      </div>
+          <PlaylistTable
+            loading={loading}
+            updating={updating}
+            loadingMessage={doing}
+            tracks={tracks}
+            currentTrackId={currentPlayingId}
+            uris={includedUris || []}
+            stats={['users', 'popularity', 'danceability']}
+            onSort={handleSort}
+            currentSortValue={'title'}
+            users={users}
+            defaultSort=""
+            length={length}
+          />
+          <section>
+            <Survay_01 />
+          </section>
+        </div>
+      </PartyBlendsLayout>
     )
   }
 )
@@ -269,22 +264,6 @@ const CurrentlyPLaying = ({ currentTrack, users = [] }) => {
         />
       </fieldset>
     </>
-  )
-}
-
-const Back = ({ onClick, disabled = '' }) => {
-  return (
-    <button
-      onClick={onClick}
-      data-testid="top-bar-back-button"
-      aria-hidden="true"
-      aria-label="Go back"
-      disabled={disabled}
-      class="back-button "
-      title="Go back"
-    >
-      <BackArrow />
-    </button>
   )
 }
 

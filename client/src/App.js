@@ -36,21 +36,44 @@ const App = () => {
           highlightColor={colors.spotify.spotifyGreyMenu}
         >
           <GlobalUiState>
-            <Layout>
-              <Route exact path="/" render={() => <MainPage />} />
-              {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
-              <Route
-                path={['/party-playlist/:playlistId', '/party-playlist']}
-                component={PartyPlaylistPage}
-              />
-              <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
-              <Route
-                path="/analysis/:playlistId"
-                component={AnalysisPlaylistsPage}
-              />
-              <Route path="/discogs-callback" component={DiscogsCallbackPage} />
-              <Route path="*" render={() => <div />} />
-            </Layout>
+            <Route
+              exact
+              path={[
+                '/party-playlist/:playlistId',
+                '/party-playlist',
+                '/party-blends/:playlistId',
+                '/party-blends',
+              ]}
+              component={PartyPlaylistPage}
+            />
+            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
+            <Route
+              exact
+              path="/"
+              render={() => (
+                <Layout>
+                  <MainPage />
+                </Layout>
+              )}
+            />
+            <Route
+              exact
+              path={['/analysis', '/analysis/:playlistId']}
+              render={() => (
+                <Layout>
+                  <AnalysisPlaylistsPage />
+                </Layout>
+              )}
+            />
+            <Route
+              exact
+              path="/discogs-callback"
+              render={() => (
+                <Layout>
+                  <DiscogsCallbackPage />
+                </Layout>
+              )}
+            />
           </GlobalUiState>
         </SkeletonTheme>
       </Router>

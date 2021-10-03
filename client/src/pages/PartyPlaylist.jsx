@@ -11,6 +11,7 @@ import { GlobalContext } from 'globalContext'
 import { getUserPartyPlaylists } from 'api/party-playlist'
 import PartyBlendsFavi from '../images/party-blends-favi.png'
 import PartyPlaylistGroup from './PartyPlaylist/PartyPlaylistGroup'
+import PartyBlendsLayout from './PartyPlaylist/Layout'
 import {
   useTopTracks,
   getTopTrackIds,
@@ -119,7 +120,7 @@ const PartyPlaylist = React.memo(
     }
 
     return (
-      <>
+      <PartyBlendsLayout>
         <Favicon url={PartyBlendsFavi} />
         <div className="analysis-playlists">
           <SavePlaylist
@@ -139,7 +140,7 @@ const PartyPlaylist = React.memo(
             />
           </div>
         )}
-      </>
+      </PartyBlendsLayout>
     )
   })
 )
