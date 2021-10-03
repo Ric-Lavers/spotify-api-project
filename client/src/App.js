@@ -35,7 +35,7 @@ const App = () => {
           color={colors.spotify.spotifyGreyMenu}
           highlightColor={colors.spotify.spotifyGreyMenu}
         >
-          <GlobalUiState>
+          <GlobalUiState prevent={[1, 0]}>
             <Route
               exact
               path={[
@@ -46,35 +46,41 @@ const App = () => {
               ]}
               component={PartyPlaylistPage}
             />
-            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
-            <Route
-              exact
-              path="/"
-              render={() => (
+          </GlobalUiState>
+          {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
+          <Route
+            exact
+            path="/"
+            render={() => (
+              <GlobalUiState>
                 <Layout>
                   <MainPage />
                 </Layout>
-              )}
-            />
-            <Route
-              exact
-              path={['/analysis', '/analysis/:playlistId']}
-              render={() => (
+              </GlobalUiState>
+            )}
+          />
+          <Route
+            exact
+            path={['/analysis', '/analysis/:playlistId']}
+            render={() => (
+              <GlobalUiState>
                 <Layout>
                   <AnalysisPlaylistsPage />
                 </Layout>
-              )}
-            />
-            <Route
-              exact
-              path="/discogs-callback"
-              render={() => (
+              </GlobalUiState>
+            )}
+          />
+          <Route
+            exact
+            path="/discogs-callback"
+            render={() => (
+              <GlobalUiState>
                 <Layout>
                   <DiscogsCallbackPage />
                 </Layout>
-              )}
-            />
-          </GlobalUiState>
+              </GlobalUiState>
+            )}
+          />
         </SkeletonTheme>
       </Router>
     </ErrorBoundary>

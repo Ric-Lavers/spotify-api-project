@@ -66,6 +66,7 @@ const PartyPlaylist = React.memo(
     ] = useContext(GlobalContext)
     const history = useHistory()
     const { playlistId } = useParams()
+    const [loadingTheirList, setLoader] = React.useState(true)
     const { topTracks, loading: loadingTopTracks } = useTopTracks(userId)
     const [playlists, setPlaylists] = useState([])
     const createPartyPlaylist = async ({
@@ -87,6 +88,7 @@ const PartyPlaylist = React.memo(
     useEffect(() => {
       if (userId) {
         getUserPartyPlaylists(userId).then((playlists) => {
+          setLoader(false)
           setPlaylists(formatUserPlaylists(playlists))
         })
       }
@@ -112,7 +114,7 @@ const PartyPlaylist = React.memo(
       )
     }
 
-    if (loadingTopTracks) {
+    if (loadingTopTracks || loadingTheirList) {
       return (
         <PartyBlendsLayout>
           <div>loading...</div>

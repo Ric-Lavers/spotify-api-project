@@ -163,12 +163,12 @@ function reducer(state, action) {
   }
 }
 
-export const GlobalUiState = ({ children }) => {
+export const GlobalUiState = ({ children, prevent = [1, 1] }) => {
   const [state, dispatch] = useReducer(reducer, initalState)
-
+  const [me, devices] = prevent
   React.useEffect(() => {
-    fetchMe()
-    fetchDevices()
+    me && fetchMe()
+    devices && fetchDevices()
   }, [])
 
   const fetchMe = async () => {
