@@ -113,10 +113,18 @@ const PartyPlaylist = React.memo(
     }
 
     if (loadingTopTracks) {
-      return <div>loading...</div>
+      return (
+        <PartyBlendsLayout>
+          <div>loading...</div>
+        </PartyBlendsLayout>
+      )
     }
     if (!userId) {
-      return <div>cant find you on this list</div>
+      return (
+        <PartyBlendsLayout>
+          <div>cant find you on this list</div>
+        </PartyBlendsLayout>
+      )
     }
 
     return (
