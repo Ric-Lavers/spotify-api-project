@@ -44,8 +44,10 @@
   tbody {
     tr {
       &:not(.updating) {
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.1);
+        @media (hover: hover) {
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+          }
         }
       }
     }
@@ -78,6 +80,7 @@
     .title {
       color: #fff;
       grid-area: title;
+      user-select: none;
 
       font-size: 16px;
       font-weight: 400;
@@ -104,5 +107,4 @@
   }
 }
 .limit {
-  
 }

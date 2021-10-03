@@ -25,7 +25,7 @@ export const SpotifyTrackGrid = ({
         <Skeleton className="img" height={wh} width={wh} />
 
         <div className="track-grid">
-          <div className="title" onClick={onClick}>
+          <div className="title">
             <Skeleton width={130} />
           </div>
           <span className="sub-title ">
