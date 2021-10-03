@@ -190,40 +190,38 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     }
 
     return (
-      <PartyBlendsLayout enableBack>
-        <div className="analysis-playlists PartyPlaylistGroup">
-          {title && <h2> {title}</h2>}
-          <span />
+      <div className="analysis-playlists PartyPlaylistGroup">
+        {title && <h2> {title}</h2>}
+        <span />
 
-          {description && <p className="description">{description}</p>}
+        {description && <p className="description">{description}</p>}
 
-          <UserCircles users={users} />
+        <UserCircles users={users} />
 
-          <CurrentlyPLaying currentTrack={currentTrack} users={users} />
+        <CurrentlyPLaying currentTrack={currentTrack} users={users} />
 
-          <Actions onClick={handleActions} loading={loading} user={user} />
+        <Actions onClick={handleActions} loading={loading} user={user} />
 
-          <PlaylistTable
-            loading={loading}
-            updating={updating}
-            loadingMessage={doing}
-            tracks={tracks}
-            currentTrackId={currentPlayingId}
-            uris={includedUris || []}
-            stats={['users', sort || 'danceability']}
-            onSort={handleSort}
-            currentSortValue={[sort, direction].join('-')}
-            users={users}
-            defaultSort=""
-            length={length}
-            onLimitChange={setLimit}
-            limit={limit}
-          />
-          <section>
-            <Survay_01 />
-          </section>
-        </div>
-      </PartyBlendsLayout>
+        <PlaylistTable
+          loading={loading}
+          updating={updating}
+          loadingMessage={doing}
+          tracks={tracks}
+          currentTrackId={currentPlayingId}
+          uris={includedUris || []}
+          stats={['users', sort || 'danceability']}
+          onSort={handleSort}
+          currentSortValue={[sort, direction].join('-')}
+          users={users}
+          defaultSort=""
+          length={length}
+          onLimitChange={setLimit}
+          limit={limit}
+        />
+        <section>
+          <Survay_01 />
+        </section>
+      </div>
     )
   }
 )

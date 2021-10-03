@@ -100,14 +100,16 @@ const PartyPlaylist = React.memo(
       return (
         <>
           <Favicon url={PartyBlendsFavi} />
-          <PartyPlaylistGroup
-            playlistId={playlistId}
-            currentPlayingId={currentSong ? currentSong.item.id : ''}
-            spotify_user_id={userId}
-            user={userData}
-            topTrackIds={!loadingTopTracks && getTopTrackIds(topTracks)}
-            topTracks={topTracks}
-          />
+          <PartyBlendsLayout enableBack>
+            <PartyPlaylistGroup
+              playlistId={playlistId}
+              currentPlayingId={currentSong ? currentSong.item.id : ''}
+              spotify_user_id={userId}
+              user={userData}
+              topTrackIds={!loadingTopTracks && getTopTrackIds(topTracks)}
+              topTracks={topTracks}
+            />
+          </PartyBlendsLayout>
         </>
       )
     }
