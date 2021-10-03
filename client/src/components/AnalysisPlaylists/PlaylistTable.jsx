@@ -23,6 +23,8 @@ export const PlaylistTable = ({
   loadingMessage = 'Loading...',
   defaultSort = 'order',
   length,
+  onLimitChange,
+  limit,
 }) => {
   const [sortValue, setSortValue] = useState('')
   const handleSort = (statKey) => {
@@ -189,6 +191,18 @@ export const PlaylistTable = ({
           </tbody>
         </table>
       </div>
+      {onLimitChange && limit && length && (
+        <div className="limit">
+          <select
+            onChange={({ target: { value } }) => onLimitChange(value)}
+            value={limit}
+          >
+            {[50, 100, 250, 500, 1000].map((num) => (
+              <option value={num}>{num} tracks</option>
+            ))}
+          </select>
+        </div>
+      )}
     </>
   )
 }

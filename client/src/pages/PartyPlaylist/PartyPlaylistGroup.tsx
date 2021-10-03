@@ -49,6 +49,12 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     })
     const [, setTracks] = useState([])
     const tracks = data.tracks
+    const [limit, _setLimit] = useState(localStorage.getItem('limit') || 100)
+    const [sort, setSort] = useState('')
+    const setLimit = (limit) => {
+      localStorage.setItem('limit', limit)
+      _setLimit(limit)
+    }
 
     const includedUris = useMemo(() => {
       return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
@@ -71,9 +77,10 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     function initalisePlaylist() {
       setData((s) => ({ ...s, loading: true }))
       setDoing('initialising')
-      getPartyPlaylist(playlistId)
+      getPartyPlaylist(playlistId, { limit })
         .then(async (data) => {
           setDoing('syncing your favourite tracks')
+          //TODO move this to one fetch on BE
           const isUserContributor = data.user_ids.includes(spotify_user_id)
           await (isUserContributor
             ? updateTopTracksPlaylist(userData, playlistId, topTracks)
@@ -83,6 +90,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         .then(async (data) => {
           setDoing('saving to spotify')
           // updates the playlist to spotify
+          //TODO move this to one fetch on BE
           const u = (data.users || []).find(({ id }) => id === spotify_user_id)
           await (get(u, `spotify_playlist_id`)
             ? updateSpotifyPlaylist(data.tracks, u.spotify_playlist_id)
@@ -103,7 +111,8 @@ const PartyPlaylistGroup: React.FC<any> = memo(
               }))
         })
         .then(async () => {
-          const data = await getPartyPlaylist(playlistId)
+          //TODO is this fetch required if the add track fetch returned data?
+          const data = await getPartyPlaylist(playlistId, { limit })
           setTracks(data.tracks)
           setData({ data, loading: true })
           return data
@@ -127,6 +136,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       }
       const data = await getPartyPlaylist(playlistId, options)
 
+      setSort(options.sort || '')
       setTracks(data.tracks)
       setData({ data, loading: false })
       setUpdating(false)
@@ -134,6 +144,9 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         th.style.removeProperty('width')
       }
     }
+    useEffect(() => {
+      setPlaylist({ sort, limit, direction: 'DESC' })
+    }, [limit])
 
     const initialising = React.useRef(true)
     useEffect(() => {
@@ -217,6 +230,8 @@ const PartyPlaylistGroup: React.FC<any> = memo(
             users={users}
             defaultSort=""
             length={length}
+            onLimitChange={setLimit}
+            limit={limit}
           />
           <section>
             <Survay_01 />
