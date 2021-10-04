@@ -48,16 +48,26 @@ export const getTopTablePlaylistById = async (
   topTablePlaylistId: string,
   sort?: string,
   direction: 'asc' | 'desc' | number = 1,
-  limit: number = 100
+  limit: number = 100,
+  user_id?: string
 ) => {
-  const { TopTracksPlaylist, Update, Track } = connectToDatabase()
+  const { TopTracksPlaylist, Update, Track, User } = connectToDatabase()
 
-  const data = await TopTracksPlaylist.findById(topTablePlaylistId)
+  let data = await TopTracksPlaylist.findById(topTablePlaylistId)
     .populate(
       'users',
       'created_at updated_at display_name id images _id spotify_playlist_id'
     )
-    .then((d) => d.toJSON())
+    .then((d) => {
+      d.users.map((u) => {
+        u.spotify_playlist_id =
+          user_id === u.id
+            ? get(u, `spotify_playlist_id.${topTablePlaylistId}`)
+            : null
+      })
+
+      return d.toJSON()
+    })
 
   //TODO can this be linked in the schema or something
   const lastUpdates = await Update.find({ playlist: data }).then((updates) =>
@@ -68,7 +78,6 @@ export const getTopTablePlaylistById = async (
   )
 
   data.users.forEach((u) => {
-    u.spotify_playlist_id = get(u, `spotify_playlist_id.${topTablePlaylistId}`)
     u.updated_at = lastUpdates[u._id] || u.updated_at
   })
 
@@ -97,20 +106,44 @@ export const getTopTablePlaylistById = async (
 export const saveSpotifyPlaylistId = async (
   spotify_user_id: string,
   playlist_id: string,
-  spotify_playlist_id: string
+  spotify_playlist_id: string,
+  key: string = ''
 ) => {
   const { User } = connectToDatabase()
 
   const currentUser = await User.findOne({ id: spotify_user_id })
   const spotify_playlist_ids = currentUser.spotify_playlist_id || {}
-  spotify_playlist_ids[playlist_id] = spotify_playlist_id
+  const currentPlaylistSpotifyLinks = spotify_playlist_ids[playlist_id] || {}
 
-  await User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     { id: spotify_user_id },
-    { spotify_playlist_id: spotify_playlist_ids }
+    {
+      spotify_playlist_id: {
+        ...spotify_playlist_ids,
+        [playlist_id]: {
+          ...currentPlaylistSpotifyLinks,
+          [key]: spotify_playlist_id,
+        },
+      },
+    },
+    { new: true }
   )
 
-  return spotify_playlist_ids
+  return user.spotify_playlist_id[playlist_id]
+}
+
+export const getSpotifyLinksForPlaylist = async (
+  spotify_user_id: string,
+  playlist_id: string
+) => {
+  const { User } = connectToDatabase()
+
+  const { spotify_playlist_ids } = await User.findOne(
+    { id: spotify_user_id },
+    'spotify_playlist_ids'
+  )
+
+  return spotify_playlist_ids[playlist_id] || {}
 }
 
 /**

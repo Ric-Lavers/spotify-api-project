@@ -123,13 +123,17 @@ export const getPartyPlaylist = async (
     sort?: string
     direction?: 'acs' | 'desc' | 1 | 0
     limit?: number
-  }
+  },
+  userId?: string
 ): Promise<{
   uris: string[]
   tracks: PartySong[]
 }> => {
   //@ts-ignore
-  const searchParams = new URLSearchParams(options).toString()
+  const searchParams = new URLSearchParams({
+    ...options,
+    user_id: userId,
+  }).toString()
   let data = await serverFetch(`playlists/${playlistId}?${searchParams}`)
   const trackIds = data.tracks.map(({ id }) => id)
   const [{ tracks }, audioFeatures] = await Promise.all([
@@ -167,7 +171,8 @@ export const getUserTopTracks = async (user_id: string) => {
 export const saveSpotifyPlaylistId = async (
   user_id: string,
   playlist_id: string,
-  spotify_playlist_id: string
+  spotify_playlist_id: string,
+  sort_key: string
 ) => {
   const data = await serverFetch(`playlists/user/spotifyplaylistId/add`, {
     method: 'POST',
@@ -175,6 +180,7 @@ export const saveSpotifyPlaylistId = async (
       user_id,
       playlist_id,
       spotify_playlist_id,
+      sort_key,
     }),
   })
   return data

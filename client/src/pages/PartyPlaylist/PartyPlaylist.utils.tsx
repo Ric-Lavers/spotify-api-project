@@ -206,7 +206,11 @@ export const useSpotifyPlaylist = (user, playlistId) => {
     return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
   }
 
-  const createSpotifyPlaylist = async (tracks, { title, description }) => {
+  const createSpotifyPlaylist = async (
+    tracks,
+    { title, description },
+    sortKey
+  ) => {
     const uris = includedUris(tracks)
     if (!uris.length) return
     setCreateState('loading')
@@ -223,10 +227,15 @@ export const useSpotifyPlaylist = (user, playlistId) => {
     )
 
     // records the playlist is on the user
-    await saveSpotifyPlaylistId(user.id, playlistId, data.id)
+    const res = await saveSpotifyPlaylistId(
+      user.id,
+      playlistId,
+      data.id,
+      sortKey
+    )
 
     setCreateState(data ? 'success' : 'error')
-    return data
+    return res
   }
 
   const updateSpotifyPlaylist = async (tracks, spotify_playlist_id) => {

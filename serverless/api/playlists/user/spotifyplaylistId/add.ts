@@ -13,16 +13,17 @@ module.exports = cors(async function (req, res) {
     const userId = req.body['user_id']
     const playlistId = req.body['playlist_id']
     const spotifyPlaylistId = req.body['spotify_playlist_id']
-    let playlist = await saveSpotifyPlaylistId(
+    const sort_key = req.body['sort_key']
+    let spotifyLinkids = await saveSpotifyPlaylistId(
       userId,
       playlistId,
-      spotifyPlaylistId
+      spotifyPlaylistId,
+      sort_key
     )
 
-    res.status(200).json(playlist)
+    res.status(200).json(spotifyLinkids)
   } catch (error) {
     console.log('api/playlists/[top-table-playlist-id]/[user_id].ts', error)
     res.status(200).json([])
   }
 })
-
