@@ -64,7 +64,7 @@ export const PlaylistTable = ({
   }
   const enableSelecting = onAllCheck && onCheckTrack
   const _stats = stats.filter((s) => !s.match('score|artists'))
-  return !tracks.length ? null : (
+  return !tracks.length || loading ? null : (
     <>
       <div className="table-container">
         <table

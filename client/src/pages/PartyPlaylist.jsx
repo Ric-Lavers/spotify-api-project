@@ -94,6 +94,9 @@ const PartyPlaylist = React.memo(
     const handleChangePlaylist = (partyPlaylistId) => {
       history.push(`/party-playlist/${partyPlaylistId}`)
     }
+    useEffect(() => {
+      document.title = 'Party Blends'
+    }, [])
 
     if (playlistId) {
       //TODO move this into its own page, fo realz

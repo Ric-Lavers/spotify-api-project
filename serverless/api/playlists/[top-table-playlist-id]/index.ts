@@ -9,14 +9,15 @@ module.exports = cors(async function (req, res) {
       res.send()
       return
     }
-    let { sort, direction, limit } = req.query
+    let { sort, direction, limit, user_id } = req.query
     if (limit) limit = parseInt(limit)
 
     let playlist = await getTopTablePlaylistById(
       req.query['top-table-playlist-id'],
       sort,
       direction,
-      limit
+      limit,
+      user_id
     )
 
     res.status(200).json(playlist)

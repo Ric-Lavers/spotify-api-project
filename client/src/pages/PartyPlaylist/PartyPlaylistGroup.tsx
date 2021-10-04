@@ -1,10 +1,15 @@
 //@ts-nocheck
-import React, { useMemo, memo, useState, useEffect } from 'react'
+import React, { useMemo, memo, useState, useEffect, useRef } from 'react'
 import get from 'lodash.get'
 import { useHistory } from 'react-router-dom'
 
 import { formatFeatures } from 'helpers'
-import { getPartyPlaylist, removeUserFromPlaylist } from 'api/party-playlist'
+import {
+  saveSpotifyPlaylistId,
+  getPartyPlaylist,
+  removeUserFromPlaylist,
+} from 'api/party-playlist'
+
 import { Kebab, Menu } from 'components/common/s-menu'
 import UserCircles from '../../components/common/UserCircles'
 import {
@@ -42,7 +47,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     const [
       {
         data,
-        data: { user_ids, title, description, users, length },
+        data: { user_ids, title: _title, description, users, length },
         loading,
       },
       setData,
@@ -59,15 +64,24 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       loading: true,
     })
     const history = useHistory()
+    const [title, setTitle] = useState(_title)
     const [, setTracks] = useState([])
+    const didMount = useRef(false)
     const tracks = data.tracks
     const [limit, _setLimit] = useState(localStorage.getItem('limit') || 100)
     const [sort, setSort] = useState('')
-    const [direction, setDirection] = useState('DESC')
+    const [direction, setDirection] = useState('')
+    const getSortKey = (sort, direction) =>
+      sort + direction ? [sort, direction].join('-') : ''
+    const sortKey = getSortKey(sort, direction)
     const setLimit = (limit) => {
       localStorage.setItem('limit', limit)
       _setLimit(limit)
     }
+
+    useEffect(() => {
+      setTitle(_title)
+    }, [_title])
 
     const includedUris = useMemo(() => {
       return tracks.filter((t) => t.include && !t.is_local).map((t) => t.uri)
@@ -86,11 +100,13 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
     const [doing, setDoing] = useState('')
     const [updating, setUpdating] = useState(false)
+    const [spotifyLinks, setSpotifyLinkIds] = useState({})
+    const currentSpotifyLink = spotifyLinks[sortKey]
 
     function initalisePlaylist() {
       setData((s) => ({ ...s, loading: true }))
       setDoing('initialising')
-      getPartyPlaylist(playlistId, { limit })
+      getPartyPlaylist(playlistId, { limit }, user.id)
         .then(async (data) => {
           setDoing('syncing your favourite tracks')
           //TODO move this to one fetch on BE
@@ -106,26 +122,23 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           //TODO move this to one fetch on BE
           const u = (data.users || []).find(({ id }) => id === spotify_user_id)
           await (get(u, `spotify_playlist_id`)
-            ? updateSpotifyPlaylist(data.tracks, u.spotify_playlist_id)
-            : createSpotifyPlaylist(data.tracks, {
-                title: data.title,
-                description: data.description,
-              }).then((playlist) => {
-                setData((prev) => {
-                  const u = prev.data.users.find(
-                    (u) => u.id === spotify_user_id
-                  )
-                  if (u && u.spotify_playlist_id) {
-                    u.spotify_playlist_id = playlist.id
-                  }
-
-                  return prev
-                })
-              }))
+            ? updateSpotifyPlaylist(data.tracks, u.spotify_playlist_id).then(
+                () => {
+                  setSpotifyLinkIds(u.spotify_playlist_id)
+                }
+              )
+            : createSpotifyPlaylist(
+                data.tracks,
+                {
+                  title: data.title,
+                  description: data.description,
+                },
+                ''
+              ).then(setSpotifyLinkIds))
         })
         .then(async () => {
           //TODO is this fetch required if the add track fetch returned data?
-          const data = await getPartyPlaylist(playlistId, { limit })
+          const data = await getPartyPlaylist(playlistId, { limit }, user.id)
           setTracks(data.tracks)
           setData({ data, loading: true })
           return data
@@ -147,10 +160,18 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         const w = th.getBoundingClientRect().width
         th.style.width = w + 'px'
       }
-      const data = await getPartyPlaylist(playlistId, options)
-      if (sort !== 'users') {
+      const data = await getPartyPlaylist(playlistId, options, user.id)
+      if (options.sort === 'users' || options.sort === '') {
+        setSort('')
+        setDirection('')
+        setTitle(title.replace(/\s(\(\w+-[A-Z]+\))/, ''))
+      } else {
         setSort(options.sort || '')
         setDirection(options.direction || '')
+        setTitle(
+          title.replace(/\s(\(\w+-[A-Z]+\))/, '') +
+            ` (${getSortKey(options.sort, options.direction)})`
+        )
       }
       setTracks(data.tracks)
       setData({ data, loading: false })
@@ -160,7 +181,10 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       }
     }
     useEffect(() => {
-      setPlaylist({ sort, limit, direction: 'DESC' })
+      if (didMount.current) {
+        setPlaylist({ sort, limit, direction })
+      }
+      didMount.current = true
     }, [limit])
 
     const initialising = React.useRef(true)
@@ -172,10 +196,11 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     }, [playlistId, spotify_user_id, topTrackIds])
 
     //TODO just pass the value
-    const handleSort = ({ target: { value } }) => {
+    const handleSort = async ({ target: { value } }) => {
       const [sort, direction] = value.split('-')
-      setPlaylist({ sort, direction })
+      await setPlaylist({ sort, direction })
     }
+
     const initalFetchComplete = React.useRef(false)
     useEffect(() => {
       if (tracks.length && !initalFetchComplete.current) {
@@ -203,6 +228,18 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           .focus()
       }
     }
+    const handleSaveToSpotify = async () => {
+      const spotifyLinkIds = await createSpotifyPlaylist(
+        tracks,
+        {
+          title,
+          description: data.description,
+        },
+        sortKey
+      )
+
+      setSpotifyLinkIds(spotifyLinkIds)
+    }
 
     return (
       <div className="analysis-playlists PartyPlaylistGroup">
@@ -215,7 +252,13 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
         <CurrentlyPLaying currentTrack={currentTrack} users={users} />
 
-        <Actions onClick={handleActions} loading={loading} user={user} />
+        <Actions
+          onClick={handleActions}
+          loading={!tracks.length || loading}
+          user={user}
+          currentSpotifyLink={currentSpotifyLink}
+          onSaveToSpotify={handleSaveToSpotify}
+        />
 
         <PlaylistTable
           loading={loading}
@@ -241,17 +284,25 @@ const PartyPlaylistGroup: React.FC<any> = memo(
   }
 )
 
-const Actions = ({ onClick, loading, user }) => {
+const Actions = ({
+  onClick,
+  loading,
+  user,
+  currentSpotifyLink,
+  onSaveToSpotify,
+}) => {
   const [actionsOpen, setActionsOpen] = useState(false)
   const handleClick = (arg) => {
     onClick(arg)
     setActionsOpen(false)
   }
-  return (
-    /* loading ? null : */ <>
-      {get(user, `spotify_playlist_id`) && (
-        <div className="actions">
-          <p className="action-btn-group">
+
+  return loading ? null : (
+    <>
+      <div className="actions">
+        <p className="action-btn-group">
+          {currentSpotifyLink ? (
+            // TODO when the sort playlist exists update it with current list
             <a
               style={{
                 textDecoration: 'none',
@@ -261,50 +312,55 @@ const Actions = ({ onClick, loading, user }) => {
               className="s-submit"
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://open.spotify.com/playlist/${user.spotify_playlist_id}`}
+              href={`https://open.spotify.com/playlist/${currentSpotifyLink}`}
             >
               Open in Spotify
             </a>
-          </p>
-          <div>
-            <Kebab onClick={setActionsOpen} className="actions-kebab">
-              <Menu
-                open={actionsOpen}
-                list={[
-                  {
-                    value: '',
-                    label: 'sort by',
-                    list: sortKeys.map((k) => ({ value: k, label: k })),
-                  },
-                  {
-                    value: 'removeCurrentUser',
-                    label: 'remove yourself from blend',
-                  },
-                  {
-                    value: { spotify_playlist_id: user.spotify_playlist_id },
-                    label: 'analysis',
-                  },
-                ]}
-                onClick={handleClick}
-                onClickOutside={() => setActionsOpen(false)}
-              />
-            </Kebab>
-          </div>
-          {/* window.location.origin.includes('rictify') && <p className="action-btn-group">
-              <a
-                style={{
-                  textDecoration: 'none',
-                  height: 'inherit',
-                  lineHeight: '32px',
-                }}
-                className="s-button"
-                href={`/analysis/${user.spotify_playlist_id}`}
-              >
-                Filter this Playlist
-              </a>
-            </p> */}
+          ) : (
+            <a
+              style={{
+                textDecoration: 'none',
+                height: 'inherit',
+                lineHeight: '32px',
+              }}
+              className="s-submit secondary"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onSaveToSpotify}
+            >
+              Save to Spotify
+            </a>
+          )}
+        </p>
+        <div>
+          <Kebab onClick={setActionsOpen} className="actions-kebab">
+            <Menu
+              open={actionsOpen}
+              list={[
+                {
+                  value: '',
+                  label: 'sort by',
+                  list: sortKeys.map((k) => ({ value: k, label: k })),
+                },
+                {
+                  value: 'removeCurrentUser',
+                  label: 'remove yourself from blend',
+                },
+                ...(currentSpotifyLink
+                  ? [
+                      {
+                        value: { spotify_playlist_id: currentSpotifyLink },
+                        label: 'analysis',
+                      },
+                    ]
+                  : []),
+              ]}
+              onClick={handleClick}
+              onClickOutside={() => setActionsOpen(false)}
+            />
+          </Kebab>
         </div>
-      )}
+      </div>
     </>
   )
 }
