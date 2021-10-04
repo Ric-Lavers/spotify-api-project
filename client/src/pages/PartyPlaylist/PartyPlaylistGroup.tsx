@@ -183,8 +183,8 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     }, [tracks])
 
     const handleActions = (value) => {
-      console.log('handle actions', value)
       if (sortKeys.includes(value)) {
+        setSort(value)
         handleSort({ target: { value: [value, 'DESC'].join('-') } })
       }
     }
