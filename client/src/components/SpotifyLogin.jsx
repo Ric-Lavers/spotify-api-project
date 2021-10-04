@@ -105,7 +105,9 @@ class SpotifyLogin extends Component {
     } else {
       // no token
       this.setState({ tokenPresent: false })
-      window.location.href = LOGIN_URL
+      if (localStorage.hasAgreed) {
+        window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
+      }
     }
   }
 
