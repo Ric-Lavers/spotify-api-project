@@ -2,6 +2,7 @@ export * from './handlePlay'
 export * from './formatFeatures'
 export * from './mix'
 export * from './timeSince'
+export * from './htmlDecode'
 
 let LOGIN_URL
 if (process.env.REACT_APP_ENV === 'PROD') {

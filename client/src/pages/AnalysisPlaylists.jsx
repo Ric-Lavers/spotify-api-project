@@ -3,6 +3,7 @@ import get from 'lodash.get'
 import { useParams } from 'react-router-dom'
 
 import Range from 'components/common/RangeSlider'
+import { htmlDecode } from 'helpers'
 import { useToggle, withCurrentSong, usePollCurrentSong } from 'hooks'
 import { FetchProvider } from '../hooks/useFetchCache'
 import {
@@ -405,7 +406,7 @@ const AnalysisPlaylistsPage = React.memo(({ currentSong }) => {
               currentPlaylist={currentPlaylist}
               currentSort={currentSort}
               createPlaylist={handleCreatePlaylist}
-              description={currentPlaylist.description}
+              description={htmlDecode(currentPlaylist.description)}
               mergedPlaylistNames={mergedPlaylistNames}
             />
             <UserPlaylistsSelect

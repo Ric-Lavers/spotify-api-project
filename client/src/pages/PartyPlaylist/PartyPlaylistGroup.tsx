@@ -194,6 +194,14 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           history.push('/party-blends')
         })
       }
+      if (value && value.spotify_playlist_id) {
+        window
+          .open(
+            `https://rictify.com/analysis/${value.spotify_playlist_id}?access_token=${sessionStorage.spotifyToken}`,
+            '_blank'
+          )
+          .focus()
+      }
     }
 
     return (
@@ -273,7 +281,7 @@ const Actions = ({ onClick, loading, user }) => {
                     label: 'remove yourself from blend',
                   },
                   {
-                    value: user.spotify_playlist_id,
+                    value: { spotify_playlist_id: user.spotify_playlist_id },
                     label: 'analysis',
                   },
                 ]}
