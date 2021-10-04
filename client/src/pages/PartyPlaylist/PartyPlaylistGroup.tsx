@@ -1,9 +1,10 @@
 //@ts-nocheck
 import React, { useMemo, memo, useState, useEffect } from 'react'
 import get from 'lodash.get'
+import { useHistory } from 'react-router-dom'
 
 import { formatFeatures } from 'helpers'
-import { getPartyPlaylist } from 'api/party-playlist'
+import { getPartyPlaylist, removeUserFromPlaylist } from 'api/party-playlist'
 import { Kebab, Menu } from 'components/common/s-menu'
 import UserCircles from '../../components/common/UserCircles'
 import {
@@ -57,6 +58,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       },
       loading: true,
     })
+    const history = useHistory()
     const [, setTracks] = useState([])
     const tracks = data.tracks
     const [limit, _setLimit] = useState(localStorage.getItem('limit') || 100)
@@ -187,6 +189,11 @@ const PartyPlaylistGroup: React.FC<any> = memo(
         setSort(value)
         handleSort({ target: { value: [value, 'DESC'].join('-') } })
       }
+      if (value === 'removeCurrentUser') {
+        removeUserFromPlaylist(playlistId, spotify_user_id).then(() => {
+          history.push('/party-blends')
+        })
+      }
     }
 
     return (
@@ -261,7 +268,10 @@ const Actions = ({ onClick, loading, user }) => {
                     label: 'sort by',
                     list: sortKeys.map((k) => ({ value: k, label: k })),
                   },
-                  { value: '', label: 'remove yourself from playlist' },
+                  {
+                    value: 'removeCurrentUser',
+                    label: 'remove yourself from blend',
+                  },
                   {
                     value: user.spotify_playlist_id,
                     label: 'analysis',

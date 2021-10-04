@@ -1,9 +1,5 @@
 const cors = require('micro-cors')()
-import get from 'lodash.get'
-import {
-  removeUserTracksFromPlaylist,
-  getTopTablePlaylistById,
-} from '../../../../db/models/topTablePlaylists.model'
+import { removeUserTracksFromPlaylist } from '../../../../db/models/topTablePlaylists.model'
 
 module.exports = cors(async function (req, res) {
   try {
@@ -18,7 +14,7 @@ module.exports = cors(async function (req, res) {
     let playlist = await removeUserTracksFromPlaylist(
       req.query['top-table-playlist-id'],
       req.query['spotify-user-id'],
-      req.body.tracks
+      req.body && req.body.tracks
     )
 
     res.status(200).json(playlist)

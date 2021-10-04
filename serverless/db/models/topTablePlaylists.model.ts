@@ -273,11 +273,7 @@ export const updateTracksToTopTablePlaylist = async (
   //* replace the users tracks with new ones
   // remove the ones
 
-  await removeUserTracksFromPlaylist(
-    topTablePlaylistId,
-    userId,
-    tracks.map(({ id }) => id)
-  )
+  await removeUserTracksFromPlaylist(topTablePlaylistId, userId)
 
   // add the new
   const result = await addTracksToTopTablePlaylist(
@@ -288,6 +284,23 @@ export const updateTracksToTopTablePlaylist = async (
   )
 
   return result
+}
+
+export const removeUserFromPlaylist = async (topTablePlaylistId, userId) => {
+  const { User, TopTracksPlaylist } = connectToDatabase()
+  const user = await User.findOne({ id: userId })
+
+  await User.updateOne(
+    { id: userId },
+    { $unset: { [`spotify_playlist_id.${topTablePlaylistId}`]: 1 } }
+  )
+
+  return await TopTracksPlaylist.updateOne(
+    { _id: topTablePlaylistId },
+    {
+      $pull: { users: { $in: [user] }, user_ids: { $in: [userId] } },
+    }
+  )
 }
 
 export const removeUserTracksFromPlaylist = async (

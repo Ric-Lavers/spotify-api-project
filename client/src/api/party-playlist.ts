@@ -179,3 +179,15 @@ export const saveSpotifyPlaylistId = async (
   })
   return data
 }
+export const removeUserFromPlaylist = async (
+  playlist_id: string,
+  user_id: string
+) => {
+  const data = await serverFetch(`playlists/${playlist_id}/remove-user`, {
+    method: 'POST',
+    body: JSON.stringify({
+      user_id,
+    }),
+  })
+  return data
+}
