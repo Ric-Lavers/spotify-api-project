@@ -1,5 +1,8 @@
 .share-buttons {
   display: inline-flex;
+  image {
+    cursor: pointer;
+  }
   .mobile-share-buttons {
     display: none;
     @media (hover: none) {
@@ -22,4 +25,8 @@
       }
     }
   }
+}
+
+.qr-code {
+  margin-top: 8px;
 }

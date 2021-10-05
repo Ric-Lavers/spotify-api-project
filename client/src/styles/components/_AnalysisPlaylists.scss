@@ -1,9 +1,31 @@
 .analysis-playlists {
-  & .PartyPlaylistGroup {
-    width: 100%;
-    text-align: center;
-  }
   scroll-behavior: smooth;
+  &.PartyPlaylistGroup {
+    // width: 100%;
+    text-align: center;
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .description {
+      margin-top: 0;
+    }
+    .actions {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      .kebab-btn {
+        position: relative;
+      }
+      .s-menu {
+        left: inherit;
+        right: 16px;
+        z-index: 6;
+      }
+    }
+  }
   .stat-check-list {
     // display: grid;
     // grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -85,6 +107,7 @@ input[type='checkbox'] {
   cursor: pointer;
 }
 .currently-playing {
+  background-color: black;
   display: inline-flex;
   justify-content: center;
   border-radius: $sm;

@@ -118,12 +118,23 @@ interface PartySong extends Song {
 }
 
 export const getPartyPlaylist = async (
-  playlistId: string
+  playlistId: string,
+  options?: {
+    sort?: string
+    direction?: 'acs' | 'desc' | 1 | 0
+    limit?: number
+  },
+  userId?: string
 ): Promise<{
   uris: string[]
   tracks: PartySong[]
 }> => {
-  let data = await serverFetch(`playlists/${playlistId}`)
+  //@ts-ignore
+  const searchParams = new URLSearchParams({
+    ...options,
+    user_id: userId,
+  }).toString()
+  let data = await serverFetch(`playlists/${playlistId}?${searchParams}`)
   const trackIds = data.tracks.map(({ id }) => id)
   const [{ tracks }, audioFeatures] = await Promise.all([
     getHeapsTracks(trackIds),
@@ -160,14 +171,28 @@ export const getUserTopTracks = async (user_id: string) => {
 export const saveSpotifyPlaylistId = async (
   user_id: string,
   playlist_id: string,
-  spotify_playlist_id: string
+  spotify_playlist_id: string,
+  sort_key: string
 ) => {
-  const data = await serverFetch(`playlists/user/spotifyplaylist/update`, {
+  const data = await serverFetch(`playlists/user/spotifyplaylistId/add`, {
     method: 'POST',
     body: JSON.stringify({
       user_id,
       playlist_id,
       spotify_playlist_id,
+      sort_key,
+    }),
+  })
+  return data
+}
+export const removeUserFromPlaylist = async (
+  playlist_id: string,
+  user_id: string
+) => {
+  const data = await serverFetch(`playlists/${playlist_id}/remove-user`, {
+    method: 'POST',
+    body: JSON.stringify({
+      user_id,
     }),
   })
   return data

@@ -213,6 +213,9 @@ input[type='checkbox'] {
 .s-submit {
   color: $spotify-bg;
   background-color: $spotify-green;
+  &.secondary {
+    background-color: $spotify-green-dark;
+  }
   &:disabled {
     color: lighten($spotify-bg, 50%);
     background-color: lighten($spotify-green, 20%);

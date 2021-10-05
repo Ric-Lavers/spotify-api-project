@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import get from 'lodash.get'
-import remove from 'lodash.remove'
+import Skeleton from 'react-loading-skeleton'
+
 import { play } from 'api/spotify'
 import { formatFeatures } from 'helpers'
 import { isChecked, getAverages, getRows } from './PlaylistTable.utils'
 import { SpotifyTrackGrid } from './SpotifyTrackGrid'
-import { Survay_01 } from '../../pages/PartyPlaylist'
+
 export const PlaylistTable = ({
   loading,
+  updating,
   tracks,
   currentTrackId,
   uris,
@@ -18,13 +20,17 @@ export const PlaylistTable = ({
   currentSortValue,
   users = [],
   loadingMessage = 'Loading...',
+  defaultSort = 'order',
+  length,
+  onLimitChange,
+  limit,
 }) => {
   const [sortValue, setSortValue] = useState('')
   const handleSort = (statKey) => {
     let sV
-    if (!sortValue.includes(statKey)) sV = `${statKey}-ASC`
-    else if (sortValue.endsWith('ASC')) sV = `${statKey}-DESC`
-    else sV = 'order-ASC'
+    if (!sortValue.includes(statKey)) sV = `${statKey}-DESC`
+    else if (sortValue.endsWith('DESC')) sV = `${statKey}-ASC`
+    else sV = `${defaultSort}-ASC`
     onSort({ target: { value: sV } })
     setSortValue(sV)
   }
@@ -58,30 +64,33 @@ export const PlaylistTable = ({
   }
   const enableSelecting = onAllCheck && onCheckTrack
   const _stats = stats.filter((s) => !s.match('score|artists'))
-  return !tracks.length ? null : (
+  return !tracks.length || loading ? null : (
     <>
-      <section>
-        <Survay_01 />
-      </section>
       <div className="table-container">
-        <table className="playlist-table">
+        <table
+          className="playlist-table"
+          border="0"
+          cellspacing="0"
+          cellpadding="0"
+        >
           <thead>
             <tr>
               {enableSelecting ? (
                 <th className="table-average">{averages.checked}</th>
-              ) : (
-                <th />
-              )}
+              ) : stats.find((s) => s === 'score') ? (
+                <th className="table-average" />
+              ) : null}
               <th style={{ overflow: 'visible' }} className="table-average">
-                {tracks.length} tracks
+                {tracks.length} tracks{' '}
+                {length ? <span className="length">of {length}</span> : ''}{' '}
               </th>
               {_stats.map((stat, i) => {
                 return (
                   <th key={`${averages[stat]}-${i}`} className="table-average">
-                    {stat === 'popularity'
-                      ? `${averages[stat]}%`
-                      : averages[stat] === ''
+                    {averages[stat] === '' || averages[stat] === undefined
                       ? ''
+                      : stat === 'popularity'
+                      ? `${averages[stat]}%`
                       : formatFeatures(stat, averages)}
                   </th>
                 )
@@ -98,22 +107,25 @@ export const PlaylistTable = ({
                   />
                 </th>
               )}
-              {get(tracks[0], 'custom.score') && <th>score</th>}
-              <th>title</th>
+              {get(tracks[0], 'custom.score') &&
+                stats.find((s) => s === 'score') && <th>#</th>}
+              <th id="title-head">title</th>
 
-              {_stats.map((statKey) => (
-                <th onClick={() => handleSort(statKey)}>
-                  <span
-                    className={
-                      sortValue &&
-                      sortValue.includes(statKey) &&
-                      sortValue.split('-')[1]
-                    }
-                  >
-                    {statKey}
-                  </span>
-                </th>
-              ))}
+              {_stats.map((statKey) => {
+                return (
+                  <th onClick={() => handleSort(statKey)}>
+                    <span
+                      className={
+                        sortValue &&
+                        sortValue.includes(statKey) &&
+                        sortValue.split('-')[1]
+                      }
+                    >
+                      {statKey}
+                    </span>
+                  </th>
+                )
+              })}
             </tr>
           </thead>
           <tbody>
@@ -126,14 +138,14 @@ export const PlaylistTable = ({
                 rows.rank = custom.rank.join(', ')
                 rows.user_ids = custom.user_ids.join(', ')
                 rows.users = users.filter((u) =>
-                  custom.user_ids.find((id) => id.includes(u.id))
+                  custom.user_ids.find((id) => id === u.id)
                 )
               }
               const images = track.album.images || []
               const smallestImage = images[images.length - 1]
               const { checked, isLocalFile } = isChecked(uri, include)
               return (
-                <tr id={id}>
+                <tr className={updating ? 'updating' : ''} id={id}>
                   {enableSelecting && (
                     <td style={{ textAlign: 'center' }}>
                       <input
@@ -148,7 +160,14 @@ export const PlaylistTable = ({
                     </td>
                   )}
                   {rows.score && stats.includes('score') && (
-                    <td>{rows.score}</td>
+                    <td>
+                      {' '}
+                      {updating ? (
+                        <Skeleton width={14} height={14} />
+                      ) : (
+                        rows.score
+                      )}
+                    </td>
                   )}
                   <td>
                     <SpotifyTrackGrid
@@ -159,21 +178,11 @@ export const PlaylistTable = ({
                       onClick={() =>
                         uris && play({ uris: uris, offset: { position: i } })
                       }
+                      loading={updating}
                     />
                   </td>
-                  {/* <td
-                    className={`playlist__song ${
-                      currentTrackId === id ? 'green' : ''
-                    }`}
-                    onClick={() =>
-                      uris && play({ uris: uris, offset: { position: i } })
-                    }
-                  >
-                    {name}
-                  </td> */}
-
                   {_stats.map((statKey) => (
-                    <td>{formatFeatures(statKey, rows)}</td>
+                    <td>{formatFeatures(statKey, rows, false, updating)}</td>
                   ))}
                 </tr>
               )
@@ -181,6 +190,18 @@ export const PlaylistTable = ({
           </tbody>
         </table>
       </div>
+      {onLimitChange && limit && length && (
+        <div className="limit">
+          <select
+            onChange={({ target: { value } }) => onLimitChange(value)}
+            value={limit}
+          >
+            {[50, 100, 250, 500, 1000].map((num) => (
+              <option value={num}>{num} tracks</option>
+            ))}
+          </select>
+        </div>
+      )}
     </>
   )
 }

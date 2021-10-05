@@ -131,3 +131,9 @@ $bp-xxl-min: 1410 !default;
     display: none;
   }
 }
+
+@media (max-width: 650px) {
+  .hide-up-sm {
+    display: none;
+  }
+}

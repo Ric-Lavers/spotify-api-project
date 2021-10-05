@@ -116,7 +116,7 @@ export const checkToken = async (
   } catch (error) {
     console.error(error.message)
     if (redirect) {
-      window.location.replace(LOGIN_URL)
+      window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
     }
     return error
   }

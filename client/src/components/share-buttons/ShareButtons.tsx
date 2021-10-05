@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import {
   WhatsappShareButton,
@@ -53,8 +54,8 @@ export const ShareButtons: React.FC<{ url?: string; title?: string }> = ({
             ) : (
               <img
                 src={CopyToClipboardIcon}
-                height="42px"
-                width="42px"
+                height="32px"
+                width="32px"
                 title="copy to clipboard"
               />
             )}
@@ -94,7 +95,7 @@ export const ShareButtons: React.FC<{ url?: string; title?: string }> = ({
         </span>
       </div>
 
-      <div>
+      <div className="qr-code">
         <QRCode value={url} />
       </div>
     </>
