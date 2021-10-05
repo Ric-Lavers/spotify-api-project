@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
-import PartyBlendsLogo from '../images/party-blends.png'
 import { checkToken, refereshSpotifyLogin } from '../api/spotify'
 import variables from '../styles/variables'
 import { LOGIN_URL } from '../helpers'
@@ -41,6 +40,21 @@ export const styles = {
 }
 
 const refreshToken = (refresh_token) => {}
+
+const logout = () => {
+  const url = ' https://accounts.spotify.com/en/logout'
+  const spotifyLogoutWindow = window.open(
+    url,
+    'Spotify Logout',
+    'width=700,height=500,top=40,left=40'
+  )
+  setTimeout(() => {
+    spotifyLogoutWindow.close()
+    sessionStorage.clear()
+    localStorage.clear()
+    window.location.reload()
+  }, 2000)
+}
 
 class SpotifyLogin extends Component {
   state = {
