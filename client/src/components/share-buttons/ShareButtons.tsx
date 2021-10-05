@@ -56,6 +56,7 @@ export const ShareButtons: React.FC<{ url?: string; title?: string }> = ({
                 src={CopyToClipboardIcon}
                 height="32px"
                 width="32px"
+                style={{ padding: 4 }}
                 title="copy to clipboard"
               />
             )}
