@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-no-target-blank */
 import React, { useState, useEffect, useContext } from 'react'
-import useSWR from 'swr'
 import get from 'lodash.get'
 import { getDiscogsTrackInfo } from '../api/discogs'
 import DiscogsLogo from '../images/discogs-logo.png'

@@ -1,21 +1,20 @@
-import React, { useMemo, useState } from "react"
-import classNames from "classnames"
+import React, { useMemo, useState } from 'react'
 
 const PlayerButton = ({ text, action, onClick }) => {
-  const [successClass, setSuccess] = useState("")
+  const [successClass, setSuccess] = useState('')
 
   const handleClick = () => {
-    const isSuccess = onClick(action) ? "touched-success" : "touched-error"
+    const isSuccess = onClick(action) ? 'touched-success' : 'touched-error'
     setSuccess(isSuccess)
     window.navigator.vibrate(200)
     setTimeout(() => {
-      setSuccess("")
+      setSuccess('')
     }, 1000)
   }
 
   const formatButton = useMemo(
     () => (
-      <div className={classNames("icon", successClass)} onClick={handleClick}>
+      <div className={`icon ${successClass}`} onClick={handleClick}>
         {text}
       </div>
     ),
