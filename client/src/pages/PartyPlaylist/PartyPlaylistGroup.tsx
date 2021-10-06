@@ -103,7 +103,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     const [doing, setDoing] = useState('')
     const [updating, setUpdating] = useState(false)
     const [spotifyLinks, setSpotifyLinkIds] = useState({})
-    const currentSpotifyLink = spotifyLinks[sortKey]
+    const currentSpotifyLink = (spotifyLinks || {})[sortKey]
 
     function initalisePlaylist() {
       setData((s) => ({ ...s, loading: true }))
@@ -123,20 +123,21 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           // updates the playlist to spotify
           //TODO move this to one fetch on BE
           const u = (data.users || []).find(({ id }) => id === spotify_user_id)
-          await (get(u, `spotify_playlist_id`)
-            ? updateSpotifyPlaylist(data.tracks, u.spotify_playlist_id).then(
-                () => {
-                  setSpotifyLinkIds(u.spotify_playlist_id)
-                }
-              )
-            : createSpotifyPlaylist(
-                data.tracks,
-                {
-                  title: data.title,
-                  description: data.description,
-                },
-                ''
-              ).then(setSpotifyLinkIds))
+          const currentSpotifyPlaylistId = get(u, `spotify_playlist_id.${''}`)
+          if (currentSpotifyPlaylistId || currentSpotifyPlaylistId === '') {
+            await updateSpotifyPlaylist(data.tracks, currentSpotifyPlaylistId)
+            setSpotifyLinkIds(u.spotify_playlist_id)
+          } else {
+            const linkIds = await createSpotifyPlaylist(
+              data.tracks,
+              {
+                title: data.title,
+                description: data.description,
+              },
+              ''
+            )
+            setSpotifyLinkIds(linkIds)
+          }
         })
         .then(async () => {
           //TODO is this fetch required if the add track fetch returned data?
@@ -145,7 +146,10 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           setData({ data, loading: true })
           return data
         })
-        .catch(() => setData((prev) => ({ ...prev, loading: false })))
+        .catch((err) => {
+          console.log('error initaliis', err)
+          setData((prev) => ({ ...prev, loading: false }))
+        })
         .finally(() => {
           setDoing('')
           setData((prev) => {
