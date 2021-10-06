@@ -168,7 +168,7 @@ export const GlobalUiState = ({ children }) => {
 
   React.useEffect(() => {
     fetchMe()
-    fetchDevices()
+    false && fetchDevices()
   }, [])
 
   const fetchMe = async () => {

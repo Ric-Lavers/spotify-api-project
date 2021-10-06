@@ -467,7 +467,7 @@ export const createUserPlaylistWithTracks = async (
       isOk(res)
     }
 
-    const playlistTracks = await getAllPlaylistsTracks(playlist_id)
+    // const playlistTracks = await getAllPlaylistsTracks(playlist_id)
 
     return newPlaylist
   } catch (error) {}

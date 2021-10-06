@@ -15,7 +15,7 @@ module.exports = function (req, res) {
         scope: partyblendsPermissions,
         redirect_uri: REDIRECT_URI,
         state: req.query.path,
-        show_dialog: true || req.query.show_dialog || false,
+        show_dialog: req.query.show_dialog || false,
       })
   )
 }
