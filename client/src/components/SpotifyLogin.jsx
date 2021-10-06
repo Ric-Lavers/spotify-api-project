@@ -70,7 +70,7 @@ class SpotifyLogin extends Component {
   componentDidMount() {
     const { spotifyToken } = sessionStorage
     const { hasAgreed } = localStorage
-    if (spotifyToken || hasAgreed) this.checkToken(spotifyToken)
+    if (spotifyToken || hasAgreed === 'true') this.checkToken(spotifyToken)
     this.setToken()
   }
 
@@ -83,9 +83,13 @@ class SpotifyLogin extends Component {
       let refresh_token = new URLSearchParams(window.location.search).get(
         'refresh_token'
       )
-      sessionStorage.spotifyToken = access_token
-      localStorage.hasAgreed = true
-      sessionStorage.refresh_token = refresh_token
+      if (access_token !== 'undefined') {
+        sessionStorage.spotifyToken = access_token
+        localStorage.hasAgreed = true
+        sessionStorage.refresh_token = refresh_token
+      } else {
+        localStorage.hasAgreed = false
+      }
       window.location.replace(window.origin + window.location.pathname)
     }
   }
