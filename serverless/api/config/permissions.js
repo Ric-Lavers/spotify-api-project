@@ -19,18 +19,23 @@ const allPermisions = [
   'user-library-modify',
 ].join(' ')
 const topTablePermissions = ['user-top-read', 'user-read-email']
-const partyPlaylistPermissions = [
+
+export const partyblendsPermissions = [
   'user-top-read',
   'playlist-modify-private',
   'playlist-modify-public',
   'playlist-read-private',
   'playlist-read-collaborative',
 
+  'user-modify-playback-state',
   'user-read-email',
+  'user-read-private',
   'user-read-currently-playing',
-]
+  'app-remote-control',
+].join(' ')
 
 module.exports = {
   allPermisions,
   topTablePermissions,
+  partyblendsPermissions,
 }
