@@ -38,16 +38,11 @@ const App = () => {
           <GlobalUiState>
             <Route
               exact
-              path={[
-                '/party-playlist/:playlistId',
-                '/party-playlist',
-                '/party-blends/:playlistId',
-                '/party-blends',
-              ]}
+              path={['/:playlistId', '/']}
               component={PartyPlaylistPage}
             />
             {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
-            <Route
+            {/*  <Route
               exact
               path="/"
               render={() => (
@@ -73,7 +68,7 @@ const App = () => {
                   <DiscogsCallbackPage />
                 </Layout>
               )}
-            />
+            /> */}
           </GlobalUiState>
         </SkeletonTheme>
       </Router>

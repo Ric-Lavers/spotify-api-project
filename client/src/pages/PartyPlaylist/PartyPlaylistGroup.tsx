@@ -222,7 +222,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       }
       if (value === 'removeCurrentUser') {
         removeUserFromPlaylist(playlistId, spotify_user_id).then(() => {
-          history.push('/party-blends')
+          history.push('/')
         })
       }
       if (value && value.spotify_playlist_id) {

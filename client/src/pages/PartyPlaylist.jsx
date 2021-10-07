@@ -91,7 +91,7 @@ const PartyPlaylist = React.memo(
       }
     }, [userId])
     const handleChangePlaylist = (partyPlaylistId) => {
-      history.push(`/party-playlist/${partyPlaylistId}`)
+      history.push(`/${partyPlaylistId}`)
     }
     useEffect(() => {
       document.title = 'Party Blends'

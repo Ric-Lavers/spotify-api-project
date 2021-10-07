@@ -29,7 +29,6 @@ module.exports = function (req, res) {
       console.log(error)
     }
     var access_token = body && body.access_token
-    console.log('access_token', access_token)
     res.redirect(
       `${FRONTEND_URI}${path}?access_token=${access_token}&refresh_token=${body.refresh_token}`
     )

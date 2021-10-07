@@ -27,7 +27,7 @@ const Layout = ({ children, enableBack = false }) => {
         {enableBack && (
           <Back
             onClick={() => {
-              history.push('/party-playlist')
+              history.push('/')
             }}
             title="make another party blend"
           />

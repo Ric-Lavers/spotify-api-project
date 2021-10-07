@@ -175,11 +175,7 @@ class SpotifyLogin extends Component {
             href={`${LOGIN_URL}?path=${window.location.pathname}`}
           >
             {sessionStorage.getItem('spotifyToken')
-              ? this.state.tokenPresent
-                ? tokenValid
-                  ? 'spotify auth timed out login again'
-                  : ''
-                : ''
+              ? 'spotify auth timed out login again'
               : `login to spotify`}
           </a>
         )}

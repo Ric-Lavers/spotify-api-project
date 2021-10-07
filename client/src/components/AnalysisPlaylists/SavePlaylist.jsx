@@ -47,10 +47,10 @@ export const SavePlaylist = ({
     name,
   ])
 
-  const handleChange = ({ target: { name, value, checked } }) => {
+  const handleChange = ({ target: { type, name, value, checked } }) => {
     setValues((prev) => ({
       ...prev,
-      [name]: value === 'on' ? checked : value,
+      [name]: value === 'on' && type !== 'text' ? checked : value,
     }))
   }
   const [hadSuccess, setHadSuccess] = useState(false)
