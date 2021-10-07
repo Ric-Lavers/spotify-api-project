@@ -3,9 +3,14 @@ import Skeleton from 'react-loading-skeleton'
 import get from 'lodash.get'
 import { timeSince, mix } from 'helpers'
 
-const UserCircles = memo(({ users, size, loading = false }) => {
+const UserCircles = memo(({ users, size, loading = false, children }) => {
   if (loading) {
-    return <Skeleton circle width={30} height={30} />
+    return null
+    // <Skeleton
+    //   circle
+    //   width={size === 'small' ? 30 : 40}
+    //   height={size === 'small' ? 30 : 40}
+    // />
   }
   if (size === 'small' && users.length > 4) {
     const len = users.length
@@ -27,6 +32,7 @@ const UserCircles = memo(({ users, size, loading = false }) => {
           otherUsers={user.otherUsers}
         />
       ))}
+      {children}
     </div>
   )
 })
