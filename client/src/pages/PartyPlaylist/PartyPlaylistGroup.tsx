@@ -255,24 +255,26 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
         {description && <p className="description">{description}</p>}
 
-        <UserCircles users={users} />
-        {tracks.length !== 0 && !loading && (
-          <>
-            <img
-              src={ShareIcon}
-              height="32px"
-              width="32px"
-              style={{ borderRadius: '50%', background: 'white', padding: 4 }}
-              className="pointer"
-              onClick={() => setOpenShare(!openShare)}
-            />
+        <UserCircles users={users} loading={loading}>
+          <img
+            src={ShareIcon}
+            height="32px"
+            width="32px"
+            style={{
+              borderRadius: '50%',
+              background: 'white',
+              padding: 4,
+              marginLeft: 8,
+            }}
+            className="pointer"
+            onClick={() => setOpenShare(!openShare)}
+          />
+        </UserCircles>
 
-            {openShare && (
-              <section>
-                <ShareButtons />
-              </section>
-            )}
-          </>
+        {openShare && (
+          <section style={{ marginTop: 16 }}>
+            <ShareButtons />
+          </section>
         )}
         <CurrentlyPLaying currentTrack={currentTrack} users={users} />
 
