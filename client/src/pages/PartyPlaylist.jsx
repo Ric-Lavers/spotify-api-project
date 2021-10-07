@@ -135,9 +135,17 @@ const PartyPlaylist = React.memo(
       <PartyBlendsLayout>
         <Favicon url={PartyBlendsFavi} />
         <div className="analysis-playlists">
+          <p style={{ fontSize: 16, padding: '0 16px' }}>
+            Make a new Party Blend and share it with your friends - the music
+            your groups been listening to the most will be available in a
+            Spotify playlist.
+          </p>
+        </div>
+        <div className="analysis-playlists">
           <SavePlaylist
             hideCollaborative
             hidePublic
+            title="Create a Party Blend"
             user_id={userId}
             createPlaylist={createPartyPlaylist}
           />

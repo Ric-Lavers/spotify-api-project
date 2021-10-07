@@ -5,6 +5,9 @@ import SpotifyLogin from 'components/SpotifyLogin'
 import variables from 'styles/variables'
 import { GlobalContext } from '../../globalContext'
 import PartyBlendsLogo from '../../images/party-blends.png'
+import SpotifyTxtLogo from '../../images/Spotify_Logo_Green.png'
+import LinkedInLogo from '../../images/LinkedIn.png'
+import { ReactComponent as GithubLogo } from '../../images/github-logo.svg'
 import Back from './Back'
 
 const { colors } = variables
@@ -67,6 +70,20 @@ const Layout = ({ children, enableBack = false }) => {
           </>
         )}
       </main>
+      <footer>
+        <div>
+          Made by Ric Lavers{' '}
+          <a href="https://github.com/Ric-Lavers" target="_blank">
+            <GithubLogo height={24} fill="white" />
+          </a>
+          <a href="https://www.linkedin.com/in/ric-lavers/" target="_blank">
+            <img height={24} src={LinkedInLogo} />
+          </a>
+        </div>
+        <div>
+          powered by <img height={24} src={SpotifyTxtLogo} />
+        </div>
+      </footer>
     </div>
   )
 }

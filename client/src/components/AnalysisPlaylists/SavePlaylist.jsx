@@ -7,6 +7,7 @@ export const SavePlaylist = ({
   currentPlaylist,
   createPlaylist,
   description: _description = '',
+  title = 'Create new playlist',
   mergedPlaylistNames = [],
   hideCollaborative = false,
   hidePublic = false,
@@ -90,7 +91,7 @@ export const SavePlaylist = ({
       autoComplete="off"
     >
       <fieldset>
-        <legend>Create new playlist</legend>
+        <legend>{title}</legend>
         <Input
           label="Name"
           type="text"

@@ -39,6 +39,27 @@
   color: white;
   font-size: calc(10px + 2vmin);
   text-align: center;
+  footer {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(white, 0.6);
+    padding: 8px 16px;
+    background-color: $spotify-bg;
+    div {
+      display: flex;
+    }
+    a {
+      text-decoration: none;
+    }
+    img {
+      margin-left: 4px;
+    }
+    @media (max-width: 650px) {
+      display: block;
+    }
+  }
 }
 .party-blends-header {
   display: flex;
