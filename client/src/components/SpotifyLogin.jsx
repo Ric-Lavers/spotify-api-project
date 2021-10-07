@@ -59,6 +59,7 @@ const logout = () => {
 
 class SpotifyLogin extends Component {
   state = {
+    isLoading: true,
     tokenPresent: null,
     tokenValid: null,
 
@@ -67,10 +68,13 @@ class SpotifyLogin extends Component {
     spotifyLink: '',
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { spotifyToken } = sessionStorage
     const { hasAgreed } = localStorage
-    if (spotifyToken || hasAgreed === 'true') this.checkToken(spotifyToken)
+    if (spotifyToken || hasAgreed === 'true') {
+      await this.checkToken(spotifyToken)
+    }
+    this.setState({ isLoading: false })
     this.setToken()
   }
 
@@ -145,14 +149,11 @@ class SpotifyLogin extends Component {
       display_name,
       email,
       spotifyLink,
+      isLoading,
     } = this.state
-    const { isLoading, logo } = this.props
+    const { logo } = this.props
 
     const logoColor = this.findLogoColor(tokenPresent, tokenValid)
-
-    if (isLoading) {
-      return <p>...loading</p>
-    }
 
     return (
       <div id="spotify-login" style={styles.container}>
@@ -168,7 +169,7 @@ class SpotifyLogin extends Component {
             </>
           )}
         </div>
-        {!tokenValid && (
+        {!tokenValid && !isLoading && (
           <a
             style={{ color: 'white' }}
             href="#"
