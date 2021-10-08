@@ -1,10 +1,14 @@
 import React, { Component } from 'react'
+import onClickOutside from 'react-onclickoutside'
 
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
 import PartyBlendsLogo from '../images/party-blends.png'
 import { checkToken, refereshSpotifyLogin } from '../api/spotify'
 import variables from '../styles/variables'
+import { ReactComponent as ChevronACS } from '../images/chevron-ACS.svg'
+import { ReactComponent as ChevronDESC } from '../images/chevron-DESC.svg'
 import { LOGIN_URL } from '../helpers'
+import Menu from '../components/common/s-menu/Menu'
 
 const { colors } = variables
 
@@ -34,7 +38,8 @@ export const styles = {
     position: 'relative',
   },
   noLinkStyle: {
-    // cursor: "pointer",
+    cursor: 'pointer',
+    position: 'relative',
     color: 'inherit',
     textDecoration: 'inherit',
   },
@@ -54,7 +59,7 @@ const logout = () => {
     sessionStorage.clear()
     localStorage.clear()
     window.location.reload()
-  }, 2000)
+  }, 1000)
 }
 
 class SpotifyLogin extends Component {
@@ -66,6 +71,7 @@ class SpotifyLogin extends Component {
     display_name: null,
     display_picture: null,
     spotifyLink: '',
+    openMenu: false,
   }
 
   async componentDidMount() {
@@ -133,6 +139,9 @@ class SpotifyLogin extends Component {
       }
     }
   }
+  setOpenMenu = (openMenu) => {
+    this.setState({ openMenu })
+  }
 
   findLogoColor = (tokenPresent, tokenValid) =>
     tokenValid === null
@@ -148,7 +157,7 @@ class SpotifyLogin extends Component {
       display_picture,
       display_name,
       email,
-      spotifyLink,
+      openMenu,
       isLoading,
     } = this.state
     const { logo } = this.props
@@ -172,21 +181,57 @@ class SpotifyLogin extends Component {
         {!tokenValid && !isLoading && (
           <a
             style={{ color: 'white' }}
-            href="#"
             href={`${LOGIN_URL}?path=${window.location.pathname}`}
           >
             {sessionStorage.getItem('spotifyToken')
-              ? 'spotify auth timed out login again'
+              ? 'timed out - login again'
               : `login to spotify`}
           </a>
         )}
-        <div style={styles.noLinkStyle}>
-          {display_name ? display_name : email}
-        </div>
+        <LoginOut name={display_name ? display_name : email} />
         {/* <button onClick={() => refereshSpotifyLogin()}>refresh token</button> */}
       </div>
     )
   }
 }
+
+const clickOutsideConfig = {
+  handleClickOutside: () => LoginOut.handleClickOutside,
+}
+const LoginOut = onClickOutside(({ name }) => {
+  const [openMenu, setOpenMenu] = React.useState(false)
+  LoginOut.handleClickOutside = () => setOpenMenu(false)
+
+  if (!name) {
+    return null
+  }
+  return (
+    <div
+      style={styles.noLinkStyle}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setOpenMenu(!openMenu)
+      }}
+    >
+      {name}{' '}
+      <ChevronDESC
+        height={12}
+        style={openMenu ? { transform: 'rotate(180deg)' } : {}}
+      />
+      <Menu
+        open={openMenu}
+        className="logout-menu"
+        list={[
+          {
+            label: 'logout',
+            value: 'logout',
+            onClick: logout,
+          },
+        ]}
+      />
+    </div>
+  )
+}, clickOutsideConfig)
 
 export default SpotifyLogin

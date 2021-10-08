@@ -53,6 +53,7 @@ const Menu = ({
   open,
   onClickOutside = () => {},
   isChild = false,
+  className = '',
 }) => {
   Menu.handleClickOutside = () => onClickOutside(false)
   if (!open) {
@@ -62,13 +63,15 @@ const Menu = ({
     <>
       <div
         id="context-menu"
-        className={`${isChild ? 's-menu-child' : 's-menu'} ${open && 'open'} `}
+        className={`${isChild ? 's-menu-child' : 's-menu'} ${
+          open && 'open'
+        } ${className}`}
       >
         <ul tabindex="0" role="menu">
-          {list.map(({ label, value, list }) => (
+          {list.map(({ label, value, list, onClick: _onClick }) => (
             <li key={value} role="presentation">
               <MenuButton
-                onClick={onClick}
+                onClick={_onClick || onClick}
                 label={label}
                 value={value}
                 currentPlaylistId={currentPlaylistId}
