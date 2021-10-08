@@ -302,9 +302,11 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           onLimitChange={setLimit}
           limit={limit}
         />
-        <section>
-          <Survay_01 />
-        </section>
+        {!loading && (
+          <section>
+            <Survay_01 />
+          </section>
+        )}
       </div>
     )
   }

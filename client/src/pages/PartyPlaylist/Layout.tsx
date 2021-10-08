@@ -63,8 +63,12 @@ const Layout = ({ children, enableBack = false }) => {
           <></>
         ) : (
           <>
-            <p>
-              hey, so to make this work you need to login into spotify and allow
+            <p style={{ padding: '0 16px' }}>
+              Welcome to Party Blends - a way to blend all your friends
+              favourite tracks into one Spotify playlist.
+            </p>
+            <p style={{ padding: '0 16px' }}>
+              ... so to make this work you need to login into spotify and allow
               permissions :)
             </p>
           </>
@@ -72,7 +76,7 @@ const Layout = ({ children, enableBack = false }) => {
       </main>
       <footer>
         <div>
-          Made by Ric Lavers{' '}
+          made by Ric Lavers{' '}
           <a href="https://github.com/Ric-Lavers" target="_blank">
             <GithubLogo height={24} fill="white" />
           </a>

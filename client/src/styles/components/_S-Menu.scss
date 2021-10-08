@@ -24,6 +24,8 @@
 }
 .s-kebab {
   // position: relative;
+  display: flex;
+  align-items: center;
 
   .kebab-btn {
     background: transparent;
@@ -121,4 +123,11 @@
 }
 .highlight {
   color: $spotify-green;
+}
+.logout-menu {
+  position: absolute;
+  ul {
+    min-width: 80px;
+    margin-top: 4px;
+  }
 }

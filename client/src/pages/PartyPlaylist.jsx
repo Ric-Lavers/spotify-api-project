@@ -18,7 +18,7 @@ import {
   formatUserPlaylists,
 } from './PartyPlaylist.utils'
 
-const useWait = (ms = 8000) => {
+const useWait = (ms = 12000) => {
   let [__, set__] = useState(true)
   useEffect(() => {
     Promise.all([new Promise((res) => setTimeout(res, ms))]).then(() =>
@@ -136,9 +136,12 @@ const PartyPlaylist = React.memo(
         <Favicon url={PartyBlendsFavi} />
         <div className="analysis-playlists">
           <p style={{ fontSize: 16, padding: '0 16px' }}>
-            Make a new Party Blend and share it with your friends - the music
-            your groups been listening to the most will be available in a
-            Spotify playlist.
+            Welcome to Party Blends, a way to blend all your friends favourite
+            tracks into one Spotify playlist. <br /> <br /> Get started by
+            making a new Blend{' '}
+            {playlists.length === 0
+              ? ''
+              : ' or pick an existing Party Blend from the dropdown'}
           </p>
         </div>
         <div className="analysis-playlists">
