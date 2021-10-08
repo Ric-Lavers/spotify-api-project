@@ -28,7 +28,7 @@ export const partyblendsPermissions = [
   'playlist-read-collaborative',
 
   'user-modify-playback-state',
-  'user-read-email',
+  // 'user-read-email',
   'user-read-private',
   'user-read-currently-playing',
   'app-remote-control',
