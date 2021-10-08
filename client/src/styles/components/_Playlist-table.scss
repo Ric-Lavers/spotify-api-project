@@ -26,16 +26,16 @@
         color: rgb(179, 179, 179);
         border-bottom: 1px solid rgba($spotify-white, 0.1);
       }
-      .ASC::after {
-        height: 16px;
-        padding-left: $sm;
-        content: url('../images/chevron-ACS.svg');
-      }
-      .DESC::after {
-        height: 16px;
-        padding-left: $sm;
-        content: url('../images/chevron-DESC.svg');
-      }
+      // .ASC::after {
+      //   height: 12px;
+      //   padding-left: $sm;
+      //   content: url('../images/chevron-ACS.svg');
+      // }
+      // .DESC::after {
+      //   height: 12px;
+      //   padding-left: $sm;
+      //   content: url('../images/chevron-DESC.svg');
+      // }
       .length {
         font-weight: normal;
       }
@@ -60,14 +60,14 @@
     padding: 8px 8px 8px;
   }
 }
-.ASC::after {
-  height: 16px;
-  padding-left: $sm;
+.ASC::before {
+  height: 12px;
+  padding-right: $sm;
   content: url('../images/chevron-ACS.svg');
 }
-.DESC::after {
-  height: 16px;
-  padding-left: $sm;
+.DESC::before {
+  height: 12px;
+  padding-right: $sm;
   content: url('../images/chevron-DESC.svg');
 }
 

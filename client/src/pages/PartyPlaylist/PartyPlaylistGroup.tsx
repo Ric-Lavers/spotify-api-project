@@ -71,6 +71,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     const didMount = useRef(false)
     const tracks = data.tracks
     const [limit, _setLimit] = useState(localStorage.getItem('limit') || 100)
+    const [selectedSort, setSelectedSort] = useState('danceability')
     const [sort, setSort] = useState('')
     const [direction, setDirection] = useState('')
     const getSortKey = (sort, direction) =>
@@ -217,6 +218,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
     const handleActions = (value) => {
       if (sortKeys.includes(value)) {
+        value && setSelectedSort(value)
         setSort(value)
         handleSort({ target: { value: [value, 'DESC'].join('-') } })
       }
@@ -293,7 +295,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           tracks={tracks}
           currentTrackId={currentPlayingId}
           uris={includedUris || []}
-          stats={['users', sort || 'danceability']}
+          stats={['users', selectedSort]}
           onSort={handleSort}
           currentSortValue={[sort, direction].join('-')}
           users={users}
