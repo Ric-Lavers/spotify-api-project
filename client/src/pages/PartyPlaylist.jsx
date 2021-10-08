@@ -105,7 +105,7 @@ const PartyPlaylist = React.memo(
           <PartyBlendsLayout enableBack>
             <PartyPlaylistGroup
               playlistId={playlistId}
-              currentPlayingId={currentSong ? currentSong.item.id : ''}
+              currentPlayingId={currentSong.item ? currentSong.item.id : ''}
               spotify_user_id={userId}
               user={userData}
               topTrackIds={!loadingTopTracks && getTopTrackIds(topTracks)}
