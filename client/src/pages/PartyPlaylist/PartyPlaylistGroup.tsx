@@ -197,6 +197,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     const initialising = React.useRef(true)
     useEffect(() => {
       if (spotify_user_id && topTrackIds && initialising.current) {
+        window.scrollTo(0, 0)
         initalisePlaylist()
         initialising.current = false
       }
