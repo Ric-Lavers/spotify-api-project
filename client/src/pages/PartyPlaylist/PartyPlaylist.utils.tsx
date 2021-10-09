@@ -114,18 +114,34 @@ export const createTopTracksPlaylist = async (
   }
 }
 
+function concatTracks(allTopTracks: AllTopTracks) {
+  const ids = new Set()
+
+  const tracks = []
+    .concat(
+      allTopTracks.short_term,
+      allTopTracks.medium_term,
+      allTopTracks.long_term
+    )
+    .filter(({ id }) => {
+      if (ids.has(id)) return false
+      ids.add(id)
+      return true
+    })
+    .slice(0, 50)
+
+  return tracks
+}
+
 export const addTopTracksToPlaylist = async (
   user: UserObjectPrivate,
   topTablePlaylistId: string,
   allTopTracks: AllTopTracks
 ) => {
+  const tracks = concatTracks(allTopTracks)
+
   try {
-    return await addToPartyPlaylist(
-      user,
-      topTablePlaylistId,
-      allTopTracks.short_term,
-      'short_term'
-    )
+    return await addToPartyPlaylist(user, topTablePlaylistId, tracks)
     // await addToPartyPlaylist(
     //   user,
     //   topTablePlaylistId,
@@ -148,13 +164,10 @@ export const updateTopTracksPlaylist = async (
   topTablePlaylistId: string,
   allTopTracks: AllTopTracks
 ) => {
+  const tracks = concatTracks(allTopTracks)
+
   try {
-    return await updatePartyPlaylist(
-      user,
-      topTablePlaylistId,
-      allTopTracks.short_term,
-      'short_term'
-    )
+    return await updatePartyPlaylist(user, topTablePlaylistId, tracks)
     // await updatePartyPlaylist(
     //   user,
     //   topTablePlaylistId,
