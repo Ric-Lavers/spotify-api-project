@@ -6,6 +6,7 @@ import { play } from 'api/spotify'
 import { formatFeatures } from 'helpers'
 import { isChecked, getAverages, getRows } from './PlaylistTable.utils'
 import { SpotifyTrackGrid } from './SpotifyTrackGrid'
+import LoadingStrip from 'images/custom-svgs/Loading'
 
 export const PlaylistTable = ({
   loading,
@@ -51,12 +52,20 @@ export const PlaylistTable = ({
   if (tracksUnavailableMsg) {
     return (
       <table
-        style={{ display: 'flex', justifyContent: 'center' }}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          textAlign: 'center',
+        }}
         key="loading"
       >
         <thead>
           <th key={tracksUnavailableMsg} className="highlight">
-            {tracksUnavailableMsg}
+            <div>
+              {tracksUnavailableMsg}
+
+              <LoadingStrip />
+            </div>
           </th>
         </thead>
       </table>

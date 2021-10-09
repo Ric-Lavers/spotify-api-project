@@ -17,7 +17,6 @@ import {
   PlaylistTable,
   SpotifyTrackGrid,
 } from '../../components/AnalysisPlaylists'
-import PartyBlendsLayout from './Layout'
 import { Survay_01 } from '../../pages/PartyPlaylist'
 import {
   addTopTracksToPlaylist,
@@ -290,7 +289,6 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           currentSpotifyLink={currentSpotifyLink}
           onSaveToSpotify={handleSaveToSpotify}
         />
-
         <PlaylistTable
           loading={loading}
           updating={updating}
