@@ -5,12 +5,13 @@ import { timeSince, mix } from 'helpers'
 
 const UserCircles = memo(({ users, size, loading = false, children }) => {
   if (loading) {
-    return null
-    // <Skeleton
-    //   circle
-    //   width={size === 'small' ? 30 : 40}
-    //   height={size === 'small' ? 30 : 40}
-    // />
+    return (
+      <Skeleton
+        circle
+        width={size === 'small' ? 30 : 40}
+        height={size === 'small' ? 30 : 40}
+      />
+    )
   }
   if (size === 'small' && users.length > 4) {
     const len = users.length

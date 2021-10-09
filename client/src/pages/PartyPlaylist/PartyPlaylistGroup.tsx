@@ -258,21 +258,23 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
         {description && <p className="description">{description}</p>}
 
-        <UserCircles users={users} loading={loading}>
-          <img
-            src={ShareIcon}
-            height="32px"
-            width="32px"
-            style={{
-              borderRadius: '50%',
-              background: 'white',
-              padding: 4,
-              marginLeft: 8,
-            }}
-            className="pointer"
-            onClick={() => setOpenShare(!openShare)}
-          />
-        </UserCircles>
+        {!loading && (
+          <UserCircles users={users}>
+            <img
+              src={ShareIcon}
+              height="32px"
+              width="32px"
+              style={{
+                borderRadius: '50%',
+                background: 'white',
+                padding: 4,
+                marginLeft: 8,
+              }}
+              className="pointer"
+              onClick={() => setOpenShare(!openShare)}
+            />
+          </UserCircles>
+        )}
 
         {openShare && (
           <section style={{ marginTop: 16 }}>
