@@ -103,7 +103,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     const [doing, setDoing] = useState('')
     const [updating, setUpdating] = useState(false)
     const [spotifyLinks, setSpotifyLinkIds] = useState({})
-    const currentSpotifyLink = (spotifyLinks || {})[sortKey]
+    const currentSpotifyLinkId = (spotifyLinks || {})[sortKey]
 
     function initalisePlaylist() {
       setData((s) => ({ ...s, loading: true }))
@@ -181,6 +181,15 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       }
       setTracks(data.tracks)
       setData({ data, loading: false })
+      if (
+        options.sort !== '' &&
+        spotifyLinks[getSortKey(options.sort, options.direction)]
+      ) {
+        updateSpotifyPlaylist(
+          data.tracks,
+          spotifyLinks[getSortKey(options.sort, options.direction)]
+        )
+      }
       setUpdating(false)
       if (th) {
         th.style.removeProperty('width')
@@ -286,7 +295,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           onClick={handleActions}
           loading={!tracks.length || loading}
           user={user}
-          currentSpotifyLink={currentSpotifyLink}
+          currentSpotifyLinkId={currentSpotifyLinkId}
           onSaveToSpotify={handleSaveToSpotify}
         />
         <PlaylistTable
@@ -318,8 +327,8 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 const Actions = ({
   onClick,
   loading,
-  user,
-  currentSpotifyLink,
+  updating,
+  currentSpotifyLinkId,
   onSaveToSpotify,
 }) => {
   const [actionsOpen, setActionsOpen] = useState(false)
@@ -332,7 +341,7 @@ const Actions = ({
     <>
       <div className="actions">
         <p className="action-btn-group">
-          {currentSpotifyLink ? (
+          {currentSpotifyLinkId ? (
             // TODO when the sort playlist exists update it with current list
             <a
               style={{
@@ -340,10 +349,10 @@ const Actions = ({
                 height: 'inherit',
                 lineHeight: '32px',
               }}
-              className="s-submit"
+              className={`s-submit`}
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://open.spotify.com/playlist/${currentSpotifyLink}`}
+              href={`https://open.spotify.com/playlist/${currentSpotifyLinkId}`}
             >
               Open in Spotify
             </a>
@@ -377,10 +386,10 @@ const Actions = ({
                   value: 'removeCurrentUser',
                   label: 'remove yourself from blend',
                 },
-                ...(currentSpotifyLink
+                ...(currentSpotifyLinkId
                   ? [
                       {
-                        value: { spotify_playlist_id: currentSpotifyLink },
+                        value: { spotify_playlist_id: currentSpotifyLinkId },
                         label: 'analysis',
                       },
                     ]
