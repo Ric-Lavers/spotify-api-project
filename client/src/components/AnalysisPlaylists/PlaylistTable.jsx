@@ -64,7 +64,7 @@ export const PlaylistTable = ({
             <div>
               {tracksUnavailableMsg}
 
-              <LoadingStrip />
+              {'No tracks' !== tracksUnavailableMsg && <LoadingStrip />}
             </div>
           </th>
         </thead>

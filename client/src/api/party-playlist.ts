@@ -197,3 +197,9 @@ export const removeUserFromPlaylist = async (
   })
   return data
 }
+
+export const getRedirectForStickers = async (options = {}) => {
+  const search = new URLSearchParams(options)
+
+  return await serverFetch(`redirects?${search.toString()}`)
+}

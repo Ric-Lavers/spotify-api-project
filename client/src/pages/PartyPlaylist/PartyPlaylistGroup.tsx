@@ -221,7 +221,6 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     useEffect(() => {
       if (tracks.length && !initalFetchComplete.current) {
         initalFetchComplete.current = true
-        // handleSort({ target: { value: 'users-ASC' } })
       }
     }, [tracks])
 

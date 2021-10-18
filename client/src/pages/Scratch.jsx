@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { GlobalContext } from 'globalContext'
 import { PlaylistRemover } from 'components/playlist-remover/PlaylistRemover'
 import { getUserPartyPlaylists } from '../api/party-playlist'
+import Stickers from 'components/stickers/Stickers'
 
 const useData = () => {
   const [
@@ -30,7 +31,8 @@ const useData = () => {
 }
 
 const Scratch = () => {
-  return <PlaylistRemover />
+  return <Stickers />
+  // return <PlaylistRemover />
   // return (
   //   <>
   //     <h1>Scratch</h1>

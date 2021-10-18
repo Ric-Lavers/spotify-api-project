@@ -40,6 +40,19 @@ export const getTopTablePlaylistsByUserId = async (spotify_user_id: string) => {
   return usersLists
 }
 
+const slugToId = async (partyBlendId: string): Promise<string> => {
+  const { Redirect } = connectToDatabase()
+  const redirect = await Redirect.findOne({
+    slug: partyBlendId,
+  })
+
+  if (redirect) {
+    return redirect.party_blend_id
+  }
+
+  return partyBlendId
+}
+
 /**
  * sort the playlist
  * initially set as with tracks with most users on top
@@ -51,9 +64,11 @@ export const getTopTablePlaylistById = async (
   limit: number = 100,
   user_id?: string
 ) => {
-  const { TopTracksPlaylist, Update, Track, User } = connectToDatabase()
+  const { TopTracksPlaylist, Update, Track } = connectToDatabase()
 
-  let data = await TopTracksPlaylist.findById(topTablePlaylistId)
+  const partyBlendId = await slugToId(topTablePlaylistId)
+
+  let data = await TopTracksPlaylist.findById(partyBlendId)
     .populate(
       'users',
       'created_at updated_at display_name id images _id spotify_playlist_id'
@@ -62,7 +77,7 @@ export const getTopTablePlaylistById = async (
       d.users.map((u) => {
         u.spotify_playlist_id =
           user_id === u.id
-            ? get(u, `spotify_playlist_id.${topTablePlaylistId}`)
+            ? get(u, `spotify_playlist_id.${partyBlendId}`)
             : null
       })
 
@@ -82,7 +97,7 @@ export const getTopTablePlaylistById = async (
   })
 
   const tracks = await Track.find(
-    { playlistId: topTablePlaylistId },
+    { playlistId: partyBlendId },
     '-_id -playlistId'
   )
     .sort(
@@ -105,22 +120,26 @@ export const getTopTablePlaylistById = async (
  */
 export const saveSpotifyPlaylistId = async (
   spotify_user_id: string,
-  playlist_id: string,
+  party_blend_id: string,
   spotify_playlist_id: string,
   key: string = ''
 ) => {
+  console.log('saveSpotifyPlaylistId')
+
   const { User } = connectToDatabase()
+
+  const partyBlendId = await slugToId(party_blend_id)
 
   const currentUser = await User.findOne({ id: spotify_user_id })
   const spotify_playlist_ids = currentUser.spotify_playlist_id || {}
-  const currentPlaylistSpotifyLinks = spotify_playlist_ids[playlist_id] || {}
+  const currentPlaylistSpotifyLinks = spotify_playlist_ids[party_blend_id] || {}
 
   const user = await User.findOneAndUpdate(
     { id: spotify_user_id },
     {
       spotify_playlist_id: {
         ...spotify_playlist_ids,
-        [playlist_id]: {
+        [partyBlendId]: {
           ...currentPlaylistSpotifyLinks,
           [key]: spotify_playlist_id,
         },
@@ -129,12 +148,12 @@ export const saveSpotifyPlaylistId = async (
     { new: true }
   )
 
-  return user.spotify_playlist_id[playlist_id]
+  return user.spotify_playlist_id[partyBlendId]
 }
 
 export const getSpotifyLinksForPlaylist = async (
   spotify_user_id: string,
-  playlist_id: string
+  party_blend_id: string
 ) => {
   const { User } = connectToDatabase()
 
@@ -142,8 +161,9 @@ export const getSpotifyLinksForPlaylist = async (
     { id: spotify_user_id },
     'spotify_playlist_ids'
   )
+  const partyBlendId = await slugToId(party_blend_id)
 
-  return spotify_playlist_ids[playlist_id] || {}
+  return spotify_playlist_ids[partyBlendId] || {}
 }
 
 /**
@@ -207,13 +227,14 @@ const calculateScore = (rank: number[], count) =>
   Math.round((rank.reduce((a, c) => a + c, 0) / count) * 10) / 10
 
 export const addTracksToTopTablePlaylist = async (
-  topTablePlaylistId,
+  party_blend_id,
   userId: string,
   tracks: TrackObjectWithFeatures[],
   user: UserObjectPrivate
 ) => {
+  const partyBlendId = await slugToId(party_blend_id)
   const { User, Update, Track, TopTracksPlaylist } = connectToDatabase()
-  const list = await TopTracksPlaylist.findById(topTablePlaylistId)
+  const list = await TopTracksPlaylist.findById(partyBlendId)
 
   const u = await User.findOneAndUpdate({ id: user.id }, user, {
     upsert: true,
@@ -245,7 +266,7 @@ export const addTracksToTopTablePlaylist = async (
     tracks.map(async ({ id, audioFeatures, popularity }, rank) => {
       let t = await Track.findOne({
         id,
-        playlistId: topTablePlaylistId,
+        playlistId: partyBlendId,
       })
 
       //add to existing
@@ -261,7 +282,7 @@ export const addTracksToTopTablePlaylist = async (
 
       // create new
       t = await Track.create({
-        playlistId: topTablePlaylistId,
+        playlistId: partyBlendId,
         id,
         audioFeatures: { popularity, ...audioFeatures },
         rank: [rank + 1],
@@ -274,17 +295,18 @@ export const addTracksToTopTablePlaylist = async (
   )
 
   await list.save()
-  const result = await getTopTablePlaylistById(topTablePlaylistId)
+  const result = await getTopTablePlaylistById(partyBlendId)
   return result
 }
 
 export const updateTracksToTopTablePlaylist = async (
-  topTablePlaylistId,
+  party_blend_id,
   userId: string,
   tracks: TrackObjectWithFeatures[],
   user: UserObjectPrivate
 ) => {
-  const list = await getTopTablePlaylistById(topTablePlaylistId)
+  const partyBlendId = await slugToId(party_blend_id)
+  const list = await getTopTablePlaylistById(partyBlendId)
 
   //dont update if it hasn't been a day
   const { Update, User, TopTracksPlaylist } = connectToDatabase()
@@ -293,7 +315,7 @@ export const updateTracksToTopTablePlaylist = async (
 
   const lastUpdate = await Update.findOne({
     user: _user,
-    playlist: Types.ObjectId(topTablePlaylistId),
+    playlist: Types.ObjectId(partyBlendId),
   })
   const aDayAgo = Date.now() - 1000 * 60 * 60 * 24
 
@@ -304,11 +326,11 @@ export const updateTracksToTopTablePlaylist = async (
   //* replace the users tracks with new ones
   // remove the ones
 
-  await removeUserTracksFromPlaylist(topTablePlaylistId, userId)
+  await removeUserTracksFromPlaylist(partyBlendId, userId)
 
   // add the new
   const result = await addTracksToTopTablePlaylist(
-    topTablePlaylistId,
+    partyBlendId,
     userId,
     tracks,
     user
@@ -317,17 +339,18 @@ export const updateTracksToTopTablePlaylist = async (
   return result
 }
 
-export const removeUserFromPlaylist = async (topTablePlaylistId, userId) => {
+export const removeUserFromPlaylist = async (party_blend_id, userId) => {
+  const partyBlendId = await slugToId(party_blend_id)
   const { User, TopTracksPlaylist } = connectToDatabase()
   const user = await User.findOne({ id: userId })
 
   await User.updateOne(
     { id: userId },
-    { $unset: { [`spotify_playlist_id.${topTablePlaylistId}`]: 1 } }
+    { $unset: { [`spotify_playlist_id.${partyBlendId}`]: 1 } }
   )
 
   return await TopTracksPlaylist.updateOne(
-    { _id: topTablePlaylistId },
+    { _id: partyBlendId },
     {
       $pull: { users: { $in: [user] }, user_ids: { $in: [userId] } },
     }
@@ -335,10 +358,11 @@ export const removeUserFromPlaylist = async (topTablePlaylistId, userId) => {
 }
 
 export const removeUserTracksFromPlaylist = async (
-  topTablePlaylistId,
+  party_blend_id,
   userId,
   trackIds?: string[]
 ) => {
+  const partyBlendId = await slugToId(party_blend_id)
   const { Track, TopTracksPlaylist } = connectToDatabase()
 
   const trackUserId = [].concat(userId)
@@ -346,7 +370,7 @@ export const removeUserTracksFromPlaylist = async (
     user_ids: {
       $in: trackUserId,
     },
-    playlistId: topTablePlaylistId,
+    playlistId: partyBlendId,
   }
   if (trackIds) {
     q.id = {
@@ -388,7 +412,7 @@ export const removeUserTracksFromPlaylist = async (
 
   // remove from playlist tracks
   await TopTracksPlaylist.updateOne(
-    { _id: topTablePlaylistId },
+    { _id: partyBlendId },
     {
       $pull: { tracks: { $in: deleteTrackList } },
     }
