@@ -133,13 +133,15 @@ export const SavePlaylist = ({
 
         <input
           className="s-submit right"
-          disabled={preventSubmit}
+          disabled={preventSubmit || loading}
           type="submit"
-          value="SAVE"
+          value={`CREATE ${
+            (loading && '🤞') ||
+            (hadSuccess && '👍') ||
+            (hadError && '👎') ||
+            ''
+          }`}
         />
-        {loading && '🤞'}
-        {hadSuccess && '👍'}
-        {hadError && '👎'}
       </fieldset>
     </form>
   )
