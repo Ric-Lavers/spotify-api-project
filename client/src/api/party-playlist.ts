@@ -203,3 +203,15 @@ export const getRedirectForStickers = async (options = {}) => {
 
   return await serverFetch(`redirects?${search.toString()}`)
 }
+
+export const refreshToken = async () => {
+  try {
+    const { access_token } = await serverFetch(
+      `login/refresh?refresh_token=${sessionStorage.refresh_token}`
+    )
+    sessionStorage.spotifyToken = access_token
+    sessionStorage.expiresAt = Date.now() + 3600000
+  } catch (error) {
+    console.error('problem refreshing token')
+  }
+}

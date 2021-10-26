@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import get from 'lodash.get'
-import { LOGIN_URL } from 'helpers'
 import { currentPlaying } from '../api/spotify'
-import { useAudioControls } from 'components/AudioControls'
 import CurrentPlayingInital from '../mocks/currentlyPlaying_empty.json'
+import { refreshToken } from 'api/party-playlist'
 
 export const pulseIds = (
   elementList = [
@@ -32,8 +30,11 @@ export const usePollCurrentSong = (initialSong = CurrentPlayingInital) => {
       setSong(playingNow)
       setFetching(false)
     } catch (error) {
+      if (error.message === 'The access token expired') {
+        refreshToken()
+      }
       if (error.message === 'Unauthorized') {
-        window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
+        // window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
       }
     }
     setFetching(false)
