@@ -12,6 +12,7 @@ import {
 
 import { ShareButtons } from 'components/share-buttons/ShareButtons'
 import { Kebab, Menu } from 'components/common/s-menu'
+import Tips from 'components/tips/Tips'
 import UserCircles from '../../components/common/UserCircles'
 import {
   PlaylistTable,
@@ -80,6 +81,9 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       localStorage.setItem('limit', limit)
       _setLimit(limit)
     }
+    useEffect(() => {
+      window.scrollTo(0, 0)
+    }, [])
 
     useEffect(() => {
       setTitle(_title)
@@ -217,13 +221,6 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       await setPlaylist({ sort, direction })
     }
 
-    const initalFetchComplete = React.useRef(false)
-    useEffect(() => {
-      if (tracks.length && !initalFetchComplete.current) {
-        initalFetchComplete.current = true
-      }
-    }, [tracks])
-
     const handleActions = (value) => {
       if (sortKeys.includes(value)) {
         value && setSelectedSort(value)
@@ -313,6 +310,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           onLimitChange={setLimit}
           limit={limit}
         />
+
         {!loading && (
           <section>
             <Survay_01 />
