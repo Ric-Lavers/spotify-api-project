@@ -36,6 +36,7 @@ let sortKeys = [
   'tempo',
   'instrumentalness',
   'liveness',
+  'zScore',
 ]
 const PartyPlaylistGroup: React.FC<any> = memo(
   ({
