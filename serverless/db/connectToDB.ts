@@ -5,6 +5,7 @@ const {
   userSchema,
   topTracksPlaylistSchema,
   updateSchema,
+  redirectSchema,
 } = require('./schemas')
 const mongoose = require('mongoose')
 import { getMongoUri } from './getMongoUri'
@@ -18,6 +19,7 @@ export function connectToDatabase(
   uri = getMongoUri() || 'mongodb://localhost/demo'
 ) {
   // attach schemas
+  const Redirect = mongoose.model('redirect', redirectSchema)
   const Artist = mongoose.model('artist', artistSchema)
   const Track = mongoose.model('track', trackSchema)
   // party blends
@@ -48,6 +50,7 @@ export function connectToDatabase(
     User,
     TopTracksPlaylist,
     Update,
+    Redirect,
   }
 
   return cachedDb

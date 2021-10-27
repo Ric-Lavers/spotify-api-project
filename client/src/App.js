@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { GlobalUiState } from './globalContext'
@@ -7,6 +7,8 @@ import ErrorBoundary from './components/common/ErrorBoundary'
 import PartyPlaylistPage from './pages/PartyPlaylist'
 import variables from './styles/variables'
 import './styles/_index.scss'
+import Scratch from './pages/Scratch'
+
 const { colors } = variables
 
 const App = () => {
@@ -18,13 +20,14 @@ const App = () => {
           highlightColor={colors.spotify.spotifyGreyMenu}
         >
           <GlobalUiState>
-            <Route
-              exact
-              path={['/:playlistId', '/']}
-              component={PartyPlaylistPage}
-            />
-            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
-            {/*  <Route
+            <Switch>
+              <Route exact path="/scratch" render={() => <Scratch />} />
+              <Route
+                path={['/:playlistId', '/']}
+                component={PartyPlaylistPage}
+              />
+
+              {/*  <Route
               exact
               path="/"
               render={() => (
@@ -51,6 +54,7 @@ const App = () => {
                 </Layout>
               )}
             /> */}
+            </Switch>
           </GlobalUiState>
         </SkeletonTheme>
       </Router>

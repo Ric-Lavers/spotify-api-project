@@ -64,7 +64,7 @@ export const PlaylistTable = ({
             <div>
               {tracksUnavailableMsg}
 
-              <LoadingStrip />
+              {'No tracks' !== tracksUnavailableMsg && <LoadingStrip />}
             </div>
           </th>
         </thead>
@@ -142,7 +142,6 @@ export const PlaylistTable = ({
               const { id, custom, name, uri, include } = track
               const rows = getRows(track)
               if (custom) {
-                // rows.score = custom.score
                 rows.count = custom.count
                 rows.rank = custom.rank.join(', ')
                 rows.user_ids = custom.user_ids.join(', ')

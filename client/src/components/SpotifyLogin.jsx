@@ -3,7 +3,9 @@ import onClickOutside from 'react-onclickoutside'
 
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
 import PartyBlendsLogo from '../images/party-blends.png'
-import { checkToken, refereshSpotifyLogin } from '../api/spotify'
+import { checkToken } from '../api/spotify'
+import { refreshToken } from 'api/party-playlist'
+import { serverFetch } from 'api/utils'
 import variables from '../styles/variables'
 import { ReactComponent as ChevronACS } from '../images/chevron-ACS.svg'
 import { ReactComponent as ChevronDESC } from '../images/chevron-DESC.svg'
@@ -44,8 +46,6 @@ export const styles = {
     textDecoration: 'inherit',
   },
 }
-
-const refreshToken = (refresh_token) => {}
 
 const logout = () => {
   const url = ' https://accounts.spotify.com/en/logout'
@@ -95,6 +95,7 @@ class SpotifyLogin extends Component {
       )
       if (access_token !== 'undefined') {
         sessionStorage.spotifyToken = access_token
+        sessionStorage.expiresAt = Date.now() + 3600000
         localStorage.hasAgreed = true
         sessionStorage.refresh_token = refresh_token
       } else {
@@ -102,6 +103,10 @@ class SpotifyLogin extends Component {
       }
       window.location.replace(window.origin + window.location.pathname)
     }
+  }
+  refreshToken = async () => {
+    await refreshToken()
+    this.render()
   }
 
   checkToken = async (spotifyToken) => {
@@ -189,7 +194,6 @@ class SpotifyLogin extends Component {
           </a>
         )}
         <LoginOut name={display_name ? display_name : email} />
-        {/* <button onClick={() => refereshSpotifyLogin()}>refresh token</button> */}
       </div>
     )
   }

@@ -34,27 +34,6 @@ export const getHref = async (href) => {
   }
 }
 
-export const refereshSpotifyLogin = async (
-  refresh_token = sessionStorage.refresh_token
-) => {
-  try {
-    let body = new URLSearchParams()
-    body.append('grant_type', 'refresh_token')
-    body.append('refresh_token', refresh_token)
-    body.append('client_id', spotifyClientId)
-
-    const data = await fetch('https://accounts.spotify.com/api/token', {
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded',
-      }),
-      method: 'POST',
-      body,
-    }).then((d) => d.json())
-  } catch (error) {
-    console.error(error.message)
-  }
-}
-
 /*
  * Params can be genre, year, artist, album, label
  */
@@ -574,7 +553,11 @@ export const currentPlaying = async () => {
     }),
   })
   is204(res)
-  isOk(res)
+
+  if (!res.ok) {
+    const { error } = await res.json()
+    throw Error(error.message)
+  }
 
   const data = res.json()
   return data
