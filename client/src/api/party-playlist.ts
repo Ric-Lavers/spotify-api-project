@@ -136,9 +136,11 @@ export const getPartyPlaylist = async (
   }).toString()
   let data = await serverFetch(`playlists/${playlistId}?${searchParams}`)
   const trackIds = data.tracks.map(({ id }) => id)
-  const [{ tracks }, audioFeatures] = await Promise.all([
+  const audioFeatures = data.tracks.map(({ audioFeatures }) => audioFeatures)
+
+  const [{ tracks }] = await Promise.all([
     getHeapsTracks(trackIds),
-    getHeapsAudioFeatures(trackIds),
+    // getHeapsAudioFeatures(trackIds),
   ])
 
   return {

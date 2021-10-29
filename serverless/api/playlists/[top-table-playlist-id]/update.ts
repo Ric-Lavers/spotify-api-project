@@ -14,9 +14,9 @@ module.exports = cors(async function (req, res) {
     }
 
     if (!req.query.spotify_user_id) throw new Error('no spotify user id')
-
     let currentPlaylist = await getTopTablePlaylistById(
-      req.query['top-table-playlist-id']
+      req.query['top-table-playlist-id'],
+      req.query.spotify_user_id
     )
 
     if (
@@ -34,6 +34,8 @@ module.exports = cors(async function (req, res) {
     }
     throw new Error('user does not exist')
   } catch (error) {
+    console.log('err', error)
+
     res.status(400).send(error)
   }
 })

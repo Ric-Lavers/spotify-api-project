@@ -1,6 +1,10 @@
 .flex {
   display: flex;
 }
+.align {
+  display: flex;
+  align-items: center;
+}
 
 .green {
   color: $spotify-green !important;
