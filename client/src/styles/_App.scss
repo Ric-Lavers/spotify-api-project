@@ -66,12 +66,25 @@
 .party-blends-header {
   display: flex;
   justify-content: space-between;
-  &.home {
-    justify-content: center;
-  }
   align-items: center;
   flex-direction: row;
   padding: 0 $lg;
+  .back-button-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  &.home {
+    justify-content: center;
+  }
+  .back-button-container {
+    position: relative;
+    small {
+      position: absolute;
+      left: 40px;
+      white-space: nowrap;
+    }
+  }
 
   .desktop-spacer {
     width: 32px;

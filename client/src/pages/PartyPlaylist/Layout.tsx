@@ -28,12 +28,15 @@ const Layout = ({ children, enableBack = false }) => {
     <div className="party-blends">
       <header className={`party-blends-header ${enableBack ? '' : 'home'}`}>
         {enableBack && (
-          <Back
-            onClick={() => {
-              history.push('/')
-            }}
-            title="make another party blend"
-          />
+          <label className="back-button-container">
+            <Back
+              onClick={() => {
+                history.push('/')
+              }}
+              title="make another party blend"
+            />
+            <small>new blend</small>
+          </label>
         )}
         <SpotifyLogin
           onLogIn={handleSetLogin}
