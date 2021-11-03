@@ -13,6 +13,10 @@ module.exports = cors(async function (req, res) {
   }
   try {
     const { Redirect, User } = connectToDatabase()
+    if (req.body.password !== 'aeon') {
+      throw new Error('wrong password')
+    }
+
     // const { invitedBy: invitedById, ...body } = req.body
     const body = await Promise.all(
       [].concat(req.body).map(async ({ invitedBy: invitedById, ...b }) => {
