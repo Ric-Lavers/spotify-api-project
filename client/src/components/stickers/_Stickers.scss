@@ -1,10 +1,35 @@
+@mixin no-print {
+  @media print {
+    display: none;
+  }
+}
 .Stickers {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
   padding: 12px;
   @media print {
     padding: 0;
+  }
+  fieldset {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    justify-content: left;
+    align-content: flex-start;
+    input {
+      width: fit-content;
+    }
+    @include no-print;
+  }
+  label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    @include no-print;
+  }
+  .sticker-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
   }
 
   .sticker {

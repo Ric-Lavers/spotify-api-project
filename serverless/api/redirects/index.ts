@@ -13,7 +13,9 @@ module.exports = cors(async function (req, res) {
   }
   try {
     const { Redirect } = connectToDatabase()
-    const redirects = await Redirect.find(req.query)
+    const redirects = await Redirect.find(req.query).sort({
+      updated_at: -1,
+    })
 
     res.json(redirects)
   } catch (error) {
