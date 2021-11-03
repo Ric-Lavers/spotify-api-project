@@ -203,6 +203,12 @@ export const getRedirectForStickers = async (options = {}) => {
 
   return await serverFetch(`redirects?${search.toString()}`)
 }
+export const createRedirectForStickers = async (inputs = {}) => {
+  return await serverFetch(`redirects/create`, {
+    method: 'POST',
+    body: JSON.stringify(inputs),
+  })
+}
 
 export const refreshToken = async () => {
   try {
