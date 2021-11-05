@@ -4,17 +4,14 @@ import get from 'lodash.get'
 import { useHistory } from 'react-router-dom'
 
 import { formatFeatures } from 'helpers'
-import {
-  saveSpotifyPlaylistId,
-  getPartyPlaylist,
-  removeUserFromPlaylist,
-} from 'api/party-playlist'
+import { getPartyPlaylist, removeUserFromPlaylist } from 'api/party-playlist'
 
 import { ShareButtons } from 'components/share-buttons/ShareButtons'
 import { Kebab, Menu } from 'components/common/s-menu'
 import Tips from 'components/tips/Tips'
 import UserCircles from '../../components/common/UserCircles'
 import {
+  Status as LoadingStatus,
   PlaylistTable,
   SpotifyTrackGrid,
 } from '../../components/AnalysisPlaylists'
@@ -25,6 +22,7 @@ import {
   useSpotifyPlaylist,
 } from './PartyPlaylist.utils'
 import ShareIcon from 'images/share-icon.png'
+import LoadingStrip from 'images/custom-svgs/Loading'
 
 let sortKeys = [
   'danceability',
@@ -36,6 +34,7 @@ let sortKeys = [
   'tempo',
   'instrumentalness',
   'liveness',
+  'zScore',
 ]
 const PartyPlaylistGroup: React.FC<any> = memo(
   ({
@@ -104,14 +103,14 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       playlistId
     )
 
-    const [doing, setDoing] = useState('')
+    const [doing, setDoing] = useState('initialising')
     const [updating, setUpdating] = useState(false)
     const [spotifyLinks, setSpotifyLinkIds] = useState({})
     const currentSpotifyLinkId = (spotifyLinks || {})[sortKey]
 
     function initalisePlaylist() {
-      setData((s) => ({ ...s, loading: true }))
       setDoing('initialising')
+      setData((s) => ({ ...s, loading: true }))
       getPartyPlaylist(playlistId, { limit }, user.id)
         .then(async (data) => {
           setDoing('syncing your favourite tracks')
@@ -155,11 +154,11 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           setData((prev) => ({ ...prev, loading: false }))
         })
         .finally(() => {
-          setDoing('')
           setData((prev) => {
             prev.loading = false
             return prev
           })
+          setDoing('')
         })
     }
 
@@ -209,7 +208,6 @@ const PartyPlaylistGroup: React.FC<any> = memo(
     const initialising = React.useRef(true)
     useEffect(() => {
       if (spotify_user_id && topTrackIds && initialising.current) {
-        window.scrollTo(0, 0)
         initalisePlaylist()
         initialising.current = false
       }
@@ -254,7 +252,16 @@ const PartyPlaylistGroup: React.FC<any> = memo(
       setSpotifyLinkIds(spotifyLinkIds)
     }
     const [openShare, setOpenShare] = useState(false)
-
+    if (loading) {
+      return (
+        <LoadingStatus loading={loading}>
+          <div style={{ minWidth: '80vw' }}>
+            {doing}
+            <LoadingStrip />
+          </div>
+        </LoadingStatus>
+      )
+    }
     return (
       <div className="analysis-playlists PartyPlaylistGroup">
         {title && <h2> {title}</h2>}
@@ -262,23 +269,21 @@ const PartyPlaylistGroup: React.FC<any> = memo(
 
         {description && <p className="description">{description}</p>}
 
-        {!loading && (
-          <UserCircles users={users}>
-            <img
-              src={ShareIcon}
-              height="32px"
-              width="32px"
-              style={{
-                borderRadius: '50%',
-                background: 'white',
-                padding: 4,
-                marginLeft: 8,
-              }}
-              className="pointer"
-              onClick={() => setOpenShare(!openShare)}
-            />
-          </UserCircles>
-        )}
+        <UserCircles users={users}>
+          <img
+            src={ShareIcon}
+            height="32px"
+            width="32px"
+            style={{
+              borderRadius: '50%',
+              background: 'white',
+              padding: 4,
+              marginLeft: 8,
+            }}
+            className="pointer"
+            onClick={() => setOpenShare(!openShare)}
+          />
+        </UserCircles>
 
         {openShare && (
           <section style={{ marginTop: 16 }}>
@@ -294,6 +299,7 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           currentSpotifyLinkId={currentSpotifyLinkId}
           onSaveToSpotify={handleSaveToSpotify}
         />
+
         <PlaylistTable
           loading={loading}
           updating={updating}
@@ -311,11 +317,9 @@ const PartyPlaylistGroup: React.FC<any> = memo(
           limit={limit}
         />
 
-        {!loading && (
-          <section>
-            <Survay_01 />
-          </section>
-        )}
+        <section>
+          <Survay_01 />
+        </section>
       </div>
     )
   }

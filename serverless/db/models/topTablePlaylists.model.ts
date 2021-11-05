@@ -6,6 +6,12 @@ import {
   UserObjectPrivate,
   AudioFeaturesObject,
 } from '../../types/spotify-api'
+import {
+  calculateTrackAverages,
+  numberAudiofeatures,
+  scoreTrackAgainstAverages,
+} from '../../utils/getStandardDeviation'
+import { createZScoreAggregate } from '../queries/createZScoreAggregate'
 export interface TrackObjectWithFeatures extends TrackObjectFull {
   audioFeatures: AudioFeaturesObject[]
 }
@@ -53,6 +59,19 @@ const slugToId = async (partyBlendId: string): Promise<string> => {
   return partyBlendId
 }
 
+export const getUsersTracksAverages = async (partyBlendId, user_id) => {
+  const { Track } = connectToDatabase()
+  const tracks = await Track.find(
+    { playlistId: partyBlendId, user_ids: { $in: user_id } },
+    '-_id -playlistId'
+  )
+  const trackAverages = calculateTrackAverages(
+    tracks.map((t) => t.audioFeatures)
+  )
+
+  return trackAverages
+}
+
 /**
  * sort the playlist
  * initially set as with tracks with most users on top
@@ -60,7 +79,7 @@ const slugToId = async (partyBlendId: string): Promise<string> => {
 export const getTopTablePlaylistById = async (
   topTablePlaylistId: string,
   sort?: string,
-  direction: 'asc' | 'desc' | number = 1,
+  direction: 'asc' | 'desc' | 'ASC' | 'DESC' | number = 1,
   limit: number = 100,
   user_id?: string
 ) => {
@@ -96,6 +115,37 @@ export const getTopTablePlaylistById = async (
     u.updated_at = lastUpdates[u._id] || u.updated_at
   })
 
+  if (typeof direction !== 'number') {
+    if (direction === 'ASC') {
+      direction = 1
+    }
+    if (direction === 'DESC') {
+      direction = -1
+    }
+  }
+
+  //* sort by this score to get most similar
+  if (sort === 'zScore') {
+    const userAverages = await getUsersTracksAverages(partyBlendId, user_id)
+    const tracks = await Track.aggregate(
+      createZScoreAggregate(
+        partyBlendId,
+        numberAudiofeatures,
+        userAverages,
+        direction,
+        limit
+      )
+    )
+
+    tracks.forEach((track) => {
+      track.audioFeatures.zScore = track.zScores.total
+    })
+
+    data.tracks = tracks
+    return data
+  }
+  //TODO above might not even really be helpful
+
   const tracks = await Track.find(
     { playlistId: partyBlendId },
     '-_id -playlistId'
@@ -111,7 +161,6 @@ export const getTopTablePlaylistById = async (
     .limit(limit)
 
   data.tracks = tracks
-
   return data
 }
 
@@ -124,8 +173,6 @@ export const saveSpotifyPlaylistId = async (
   spotify_playlist_id: string,
   key: string = ''
 ) => {
-  console.log('saveSpotifyPlaylistId')
-
   const { User } = connectToDatabase()
 
   const partyBlendId = await slugToId(party_blend_id)
@@ -295,7 +342,7 @@ export const addTracksToTopTablePlaylist = async (
   )
 
   await list.save()
-  const result = await getTopTablePlaylistById(partyBlendId)
+  const result = await getTopTablePlaylistById(partyBlendId, userId)
   return result
 }
 
@@ -306,10 +353,10 @@ export const updateTracksToTopTablePlaylist = async (
   user: UserObjectPrivate
 ) => {
   const partyBlendId = await slugToId(party_blend_id)
-  const list = await getTopTablePlaylistById(partyBlendId)
+  const list = await getTopTablePlaylistById(partyBlendId, userId)
 
   //dont update if it hasn't been a day
-  const { Update, User, TopTracksPlaylist } = connectToDatabase()
+  const { Update, User } = connectToDatabase()
 
   const _user = await User.findOne({ id: user.id })
 
