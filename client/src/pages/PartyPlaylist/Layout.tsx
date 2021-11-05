@@ -30,7 +30,7 @@ const Layout = ({ children, enableBack = false }) => {
         {enableBack && (
           <Back
             onClick={() => {
-              history.push('/')
+              history.goBack()
             }}
             title="make another party blend"
           />

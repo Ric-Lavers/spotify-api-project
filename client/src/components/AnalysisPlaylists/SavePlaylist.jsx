@@ -93,11 +93,11 @@ export const SavePlaylist = ({
       <fieldset>
         <legend>{title}</legend>
         <Input
-          label="Name"
+          label="Title"
           type="text"
           name="name"
           value={name}
-          placeholder="Add a name"
+          placeholder="Add a title for you playlist"
         />
         <Input
           label="Description"
