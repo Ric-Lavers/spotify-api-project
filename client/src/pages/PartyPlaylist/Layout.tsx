@@ -31,11 +31,10 @@ const Layout = ({ children, enableBack = false }) => {
           <label className="back-button-container">
             <Back
               onClick={() => {
-                history.push('/')
+                history.goBack()
               }}
               title="make another party blend"
             />
-            <small>new blend</small>
           </label>
         )}
         <SpotifyLogin
