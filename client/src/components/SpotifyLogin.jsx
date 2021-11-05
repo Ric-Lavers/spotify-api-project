@@ -2,10 +2,8 @@ import React, { Component } from 'react'
 import onClickOutside from 'react-onclickoutside'
 
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
-import PartyBlendsLogo from '../images/party-blends.png'
 import { checkToken } from '../api/spotify'
 import { refreshToken } from 'api/party-playlist'
-import { serverFetch } from 'api/utils'
 import variables from '../styles/variables'
 import { ReactComponent as ChevronACS } from '../images/chevron-ACS.svg'
 import { ReactComponent as ChevronDESC } from '../images/chevron-DESC.svg'
@@ -221,12 +219,21 @@ const LoginOut = onClickOutside(({ name }) => {
       {name}{' '}
       <ChevronDESC
         height={12}
-        style={openMenu ? { transform: 'rotate(180deg)' } : {}}
+        style={
+          openMenu
+            ? { transform: 'rotate(0deg)' }
+            : { transform: 'rotate(270deg)' }
+        }
       />
       <Menu
         open={openMenu}
         className="logout-menu"
         list={[
+          {
+            label: 'privacy policy',
+            value: 'privacy-policy',
+            onClick: () => (window.location.pathname = 'privacy-policy'),
+          },
           {
             label: 'logout',
             value: 'logout',
