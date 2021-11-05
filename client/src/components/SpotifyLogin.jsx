@@ -8,7 +8,7 @@ import variables from '../styles/variables'
 import { ReactComponent as ChevronACS } from '../images/chevron-ACS.svg'
 import { ReactComponent as ChevronDESC } from '../images/chevron-DESC.svg'
 import { LOGIN_URL } from '../helpers'
-import Menu from '../components/common/s-menu/Menu'
+// import Menu from '../components/common/s-menu/Menu'
 
 const { colors } = variables
 
@@ -225,7 +225,7 @@ const LoginOut = onClickOutside(({ name }) => {
             : { transform: 'rotate(270deg)' }
         }
       />
-      <Menu
+      {/*  <Menu
         open={openMenu}
         className="logout-menu"
         list={[
@@ -240,7 +240,7 @@ const LoginOut = onClickOutside(({ name }) => {
             onClick: logout,
           },
         ]}
-      />
+      /> */}
     </div>
   )
 }, clickOutsideConfig)
