@@ -1,16 +1,10 @@
 import React, { Component } from 'react'
-import onClickOutside from 'react-onclickoutside'
-
 import SpotifyLogo from '../images/custom-svgs/SpotifyLogo'
-import PartyBlendsLogo from '../images/party-blends.png'
 import { checkToken } from '../api/spotify'
 import { refreshToken } from 'api/party-playlist'
-import { serverFetch } from 'api/utils'
 import variables from '../styles/variables'
-import { ReactComponent as ChevronACS } from '../images/chevron-ACS.svg'
-import { ReactComponent as ChevronDESC } from '../images/chevron-DESC.svg'
 import { LOGIN_URL } from '../helpers'
-import Menu from '../components/common/s-menu/Menu'
+import LogoutMenu from './LogoutMenu'
 
 const { colors } = variables
 
@@ -39,27 +33,6 @@ export const styles = {
     display: 'flex',
     position: 'relative',
   },
-  noLinkStyle: {
-    cursor: 'pointer',
-    position: 'relative',
-    color: 'inherit',
-    textDecoration: 'inherit',
-  },
-}
-
-const logout = () => {
-  const url = ' https://accounts.spotify.com/en/logout'
-  const spotifyLogoutWindow = window.open(
-    url,
-    'Spotify Logout',
-    'width=700,height=500,top=40,left=40'
-  )
-  setTimeout(() => {
-    spotifyLogoutWindow.close()
-    sessionStorage.clear()
-    localStorage.clear()
-    window.location.reload()
-  }, 1000)
 }
 
 class SpotifyLogin extends Component {
@@ -193,49 +166,10 @@ class SpotifyLogin extends Component {
               : `login to spotify`}
           </a>
         )}
-        <LoginOut name={display_name ? display_name : email} />
+        <LogoutMenu name={display_name ? display_name : email} />
       </div>
     )
   }
 }
-
-const clickOutsideConfig = {
-  handleClickOutside: () => LoginOut.handleClickOutside,
-}
-const LoginOut = onClickOutside(({ name }) => {
-  const [openMenu, setOpenMenu] = React.useState(false)
-  LoginOut.handleClickOutside = () => setOpenMenu(false)
-
-  if (!name) {
-    return null
-  }
-  return (
-    <div
-      style={styles.noLinkStyle}
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setOpenMenu(!openMenu)
-      }}
-    >
-      {name}{' '}
-      <ChevronDESC
-        height={12}
-        style={openMenu ? { transform: 'rotate(180deg)' } : {}}
-      />
-      <Menu
-        open={openMenu}
-        className="logout-menu"
-        list={[
-          {
-            label: 'logout',
-            value: 'logout',
-            onClick: logout,
-          },
-        ]}
-      />
-    </div>
-  )
-}, clickOutsideConfig)
 
 export default SpotifyLogin

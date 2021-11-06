@@ -8,6 +8,7 @@ import PartyPlaylistPage from './pages/PartyPlaylist'
 import variables from './styles/variables'
 import './styles/_index.scss'
 import Scratch from './pages/Scratch'
+import PrivacyPolicy from './pages/PrivacyPolicy'
 
 const { colors } = variables
 
@@ -21,7 +22,8 @@ const App = () => {
         >
           <GlobalUiState>
             <Switch>
-              <Route exact path="/scratch" render={() => <Scratch />} />
+              <Route exact path="/stickers" render={() => <Scratch />} />
+              <Route exact path="/privacy-policy" component={PrivacyPolicy} />
               <Route
                 path={['/:playlistId', '/']}
                 component={PartyPlaylistPage}
