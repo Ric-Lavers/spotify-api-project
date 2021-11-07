@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { useState, memo, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import get from 'lodash.get'
 import { timeSince, mix } from 'helpers'
@@ -46,7 +46,18 @@ export const UserCircle = ({
   const [timeSinceUpdate, setTimeSinceUpdate] = React.useState(
     timeSince(user.updated_at)
   )
-  const imageUrl = get(user, 'images[0].url', null)
+  const [imageUrl, setImageUrl] = useState(get(user, 'images[0].url', null))
+  useEffect(() => {
+    if (imageUrl) {
+      var tester = new Image()
+      tester.onload = () => {}
+      tester.onerror = () => {
+        setImageUrl(null)
+      }
+      tester.src = imageUrl
+    }
+  }, [imageUrl])
+
   const displayName = get(user, 'display_name', null)
 
   let updatedAt = new Date(user.updated_at)
@@ -105,7 +116,12 @@ export const UserCircle = ({
         <div
           className={`user-circle__txt ${size}`}
           style={{
-            backgroundColor: mix('1db954', 'ff0000', percentOfaMonth),
+            backgroundColor: '#1db954',
+            boxShadow: `2px 2px 2px ${mix(
+              '1db954',
+              'ff0000',
+              percentOfaMonth
+            )}`,
           }}
         >
           <span>{displayName[0].toUpperCase()}</span>
