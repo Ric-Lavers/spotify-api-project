@@ -1,5 +1,6 @@
 //@ts-nocheck
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { PartyBlendSticker } from 'images/PartyBlendSticker'
 import {
   getRedirectForStickers,
@@ -41,7 +42,13 @@ const Stickers: React.FC<{}> = () => {
 
   return (
     <div className="Stickers">
-      <CreateStickers useNewStickerForm={useNewStickerForm} loading={loading} />
+      <details>
+        <summary>add a sticker</summary>
+        <CreateStickers
+          useNewStickerForm={useNewStickerForm}
+          loading={loading}
+        />
+      </details>
       {stickers.map((sticker, i) => (
         <Sticker {...sticker} i={i} />
       ))}
@@ -81,8 +88,23 @@ const CreateStickers = ({ useNewStickerForm, loading }) => {
   )
 }
 
-const Sticker = ({ id, party_blend_id, slug, title }) => {
-  const [repeatBy, setRepeatBy] = useState<number>(1)
+const Sticker = ({ id, party_blend_id, slug, title, initialNumber = 0 }) => {
+  const history = useHistory()
+  const [initialRepeatBy = initialNumber] = new URLSearchParams(
+    window.location.search
+  ).getAll(String(id))
+  const [repeatBy, setRepeatBy] = useState<number>(Number(initialRepeatBy))
+
+  function handleRepeatByChange({ target: { value } }) {
+    const search = new URLSearchParams(window.location.search)
+    search.set(id, value)
+    if (value === '0') {
+      search.delete(id)
+    }
+
+    history.replace(`${window.location.pathname}?${search.toString()}`)
+    setRepeatBy(parseInt(value))
+  }
 
   return (
     <>
@@ -91,7 +113,7 @@ const Sticker = ({ id, party_blend_id, slug, title }) => {
         <input
           type="number"
           value={repeatBy}
-          onChange={({ target: { value } }) => setRepeatBy(parseInt(value))}
+          onChange={handleRepeatByChange}
           min="0"
         />
       </label>

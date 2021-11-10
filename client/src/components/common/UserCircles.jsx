@@ -46,6 +46,8 @@ export const UserCircle = ({
   const [timeSinceUpdate, setTimeSinceUpdate] = React.useState(
     timeSince(user.updated_at)
   )
+
+  /*use Successful image  */
   const [imageUrl, setImageUrl] = useState(get(user, 'images[0].url', null))
   useEffect(() => {
     if (imageUrl) {
@@ -57,6 +59,7 @@ export const UserCircle = ({
       tester.src = imageUrl
     }
   }, [imageUrl])
+  /*  */
 
   const displayName = get(user, 'display_name', null)
 

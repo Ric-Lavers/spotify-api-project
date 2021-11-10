@@ -8,6 +8,9 @@
   @media print {
     padding: 0;
   }
+  details {
+    @include no-print;
+  }
   fieldset {
     display: flex;
     gap: 8px;
