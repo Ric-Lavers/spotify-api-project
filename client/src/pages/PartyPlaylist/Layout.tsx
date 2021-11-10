@@ -31,7 +31,7 @@ const Layout = ({ children, enableBack = false }) => {
           <label className="back-button-container">
             <Back
               onClick={() => {
-                history.goBack()
+                history.push('/')
               }}
               title="make another party blend"
             />

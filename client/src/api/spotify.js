@@ -749,10 +749,13 @@ export const getHeapsTracks = async (trackIds) => {
   }
   let res = await Promise.all(arrayOfIds.map((ids) => getManyTracks(ids)))
 
-  return res.reduce((a, c) => {
-    a.tracks.concat(c.tracks)
-    return { tracks: [...a.tracks, ...c.tracks] }
-  })
+  return res.reduce(
+    (a, c) => {
+      a.tracks.concat(c.tracks)
+      return { tracks: [...a.tracks, ...c.tracks] }
+    },
+    { tracks: [] }
+  )
 }
 
 export const getArtists = async (artistIds) => {

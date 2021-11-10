@@ -356,8 +356,7 @@ export const updateTracksToTopTablePlaylist = async (
   const list = await getTopTablePlaylistById(partyBlendId, userId)
 
   //dont update if it hasn't been a day
-  const { Update, User } = connectToDatabase()
-
+  const { Update, User, Track } = connectToDatabase()
   const _user = await User.findOne({ id: user.id })
 
   const lastUpdate = await Update.findOne({
@@ -367,7 +366,16 @@ export const updateTracksToTopTablePlaylist = async (
   const aDayAgo = Date.now() - 1000 * 60 * 60 * 24
 
   if (lastUpdate && new Date(lastUpdate.updated_at).getTime() > aDayAgo) {
-    return list
+    //TODO below patches bad data from failed initial add
+    const hasTracks = await Track.find({
+      playlistId: partyBlendId,
+      user_ids: { $in: userId },
+    })
+    if (hasTracks.length !== 0) {
+      console.log('skipping update')
+
+      return list
+    }
   }
 
   //* replace the users tracks with new ones
