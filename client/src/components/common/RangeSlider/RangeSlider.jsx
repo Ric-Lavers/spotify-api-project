@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from "react"
-import { Range, getTrackBackground } from "react-range"
-import ErrorBoundary from "components/ErrorBoundary"
+import React, { useState, useEffect } from 'react'
+import { Range, getTrackBackground } from 'react-range'
+import ErrorBoundary from 'components/ErrorBoundary'
 
-const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
+const RangeSlider = ({
+  step = 0.01,
+  min = 0,
+  max = 1,
+  onRangeChange = () => void {},
+}) => {
   const [rangeValues, setRangeValues] = useState([min, max])
 
   useEffect(() => {
@@ -15,7 +20,7 @@ const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
     <ErrorBoundary>
       <div className="range-slider">
         <Range
-          step={0.01}
+          step={step}
           min={min}
           max={max}
           onChange={setRangeValues}
@@ -29,10 +34,10 @@ const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
                 style={{
                   background: getTrackBackground({
                     values: rangeValues,
-                    colors: ["#404040", "#1DB954", "#404040"],
+                    colors: ['#404040', '#1DB954', '#404040'],
                     min,
-                    max
-                  })
+                    max,
+                  }),
                 }}
               >
                 {children}
@@ -43,11 +48,11 @@ const RangeSlider = ({ min = 0, max = 1, onRangeChange = () => void {} }) => {
             return (
               <div
                 {...props}
-                data-value={props["aria-valuenow"]}
+                data-value={props['aria-valuenow']}
                 className="thumb"
                 style={{
                   ...props.style,
-                  backgroundColor: "#fff"
+                  backgroundColor: '#fff',
                 }}
               />
             )

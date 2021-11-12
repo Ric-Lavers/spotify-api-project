@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { PartyBlendSticker } from 'images/PartyBlendSticker'
+import { Range, getTrackBackground } from 'react-range'
 import {
   getRedirectForStickers,
   createRedirectForStickers,
@@ -39,6 +40,7 @@ const useStickersData = () => {
 
 const Stickers: React.FC<{}> = () => {
   const { stickers, loading, useNewStickerForm } = useStickersData()
+  const [cutlineColor, setCutlineColor] = useState('#010939')
 
   return (
     <div className="Stickers">
@@ -49,9 +51,20 @@ const Stickers: React.FC<{}> = () => {
           loading={loading}
         />
       </details>
+      <label for="colorPicker">
+        cut line colour:
+        <input
+          onChange={({ target: { value } }) => setCutlineColor(value)}
+          type="color"
+          value={cutlineColor}
+          id="colorPicker"
+        ></input>
+      </label>
+
       {stickers.map((sticker, i) => (
-        <Sticker {...sticker} i={i} />
+        <Sticker {...sticker} i={i} cutlineColor={cutlineColor} />
       ))}
+      <CallToActionSticker />
     </div>
   )
 }
@@ -88,7 +101,14 @@ const CreateStickers = ({ useNewStickerForm, loading }) => {
   )
 }
 
-const Sticker = ({ id, party_blend_id, slug, title, initialNumber = 0 }) => {
+const Sticker = ({
+  id,
+  party_blend_id,
+  slug,
+  title,
+  initialNumber = 0,
+  cutlineColor,
+}) => {
   const history = useHistory()
   const [initialRepeatBy = initialNumber] = new URLSearchParams(
     window.location.search
@@ -125,6 +145,7 @@ const Sticker = ({ id, party_blend_id, slug, title, initialNumber = 0 }) => {
               <div key={ii} className="sticker">
                 <div className="sticker_svg">
                   <PartyBlendSticker
+                    cutlineColor={cutlineColor}
                     qrCodeHref={`${process.env.REACT_APP_BASE_SERVER_URL}redirects/${id}`}
                   />
                 </div>
@@ -136,8 +157,86 @@ const Sticker = ({ id, party_blend_id, slug, title, initialNumber = 0 }) => {
               </div>
             ))}
       </div>
+      <p style={{ pageBreakAfter: 'always' }}>&nbsp;</p>
     </>
   )
 }
+const CallToActionSticker = ({}) => {
+  const [phrase, setPhrase] = useState('')
+  const [repeatBy, setRepeatBy] = useState(0)
+  const [width, setWidth] = useState(300)
+
+  return (
+    <div>
+      <form className="phrases-form">
+        <label for="myHouse">
+          Pick a Phrase
+          <input
+            list="phrases"
+            id="select-phrases"
+            name="phrase"
+            placeholder="call to action"
+            onChange={({ target: { value } }) => setPhrase(value)}
+          />
+        </label>
+        <label>
+          Repeat count:
+          <input
+            type="number"
+            value={repeatBy}
+            onChange={({ target: { value } }) => setRepeatBy(parseInt(value))}
+            min="0"
+          />
+        </label>
+        <br />
+        <label>
+          width:
+          <input
+            type="number"
+            value={width}
+            onChange={({ target: { value } }) => setWidth(parseInt(value))}
+            min="100"
+            max="600"
+          />
+        </label>
+        <datalist id="phrases">
+          {phrases.map((p) => (
+            <option key={p} value={p} />
+          ))}
+        </datalist>
+      </form>
+
+      <br />
+
+      <div
+        className="phrases-container"
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, ${width}px)`,
+        }}
+      >
+        {phrase &&
+          Array(repeatBy)
+            .fill('')
+            .map((_, ii) => (
+              <div style={{ maxWidth: width }} className="sticker">
+                <Phrase phrase={phrase} />
+              </div>
+            ))}
+      </div>
+    </div>
+  )
+}
+
+const Phrase = ({ phrase }) => <div className="phrase">{phrase}</div>
+
+const phrases = [
+  'share & contribute',
+  ' contribute your music',
+  'your music, and ours',
+  ' our playlist with you',
+  ' with you, we party',
+  'we party, to your music',
+  ' party, to our music',
+]
 
 export default Stickers

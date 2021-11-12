@@ -3,7 +3,19 @@
     display: none;
   }
 }
+
 .Stickers {
+  .phrase {
+    font-family: 'Spartan', sans-serif;
+    font-size: 58px;
+    line-height: 0.95;
+    letter-spacing: -6px;
+  }
+  .phrases-form {
+    display: inline-flex;
+    gap: 16px;
+    @include no-print;
+  }
   padding: 12px;
   @media print {
     padding: 0;
@@ -33,6 +45,14 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     padding: 12px;
+  }
+  .phrases-container {
+    width: 100%;
+    display: inline-grid;
+    grid-template-columns: repeat(auto-fit, 300px);
+    @media print {
+      display: inline-grid !important;
+    }
   }
 
   .sticker {
