@@ -157,7 +157,7 @@ const Sticker = ({
               </div>
             ))}
       </div>
-      <p style={{ pageBreakAfter: 'always' }}>&nbsp;</p>
+      {repeatBy >= 1 && <p style={{ pageBreakAfter: 'always' }}>&nbsp;</p>}
     </>
   )
 }
