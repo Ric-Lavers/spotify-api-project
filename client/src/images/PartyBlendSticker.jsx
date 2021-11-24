@@ -5,6 +5,7 @@ export const PartyBlendSticker = ({
   qrCodeHref = 'https://www.party-blends.com/615ff54081fdcb0009e85448',
   cutlineColor = '#010939',
 }) => {
+  console.log('some test')
   return (
     <>
       <svg
