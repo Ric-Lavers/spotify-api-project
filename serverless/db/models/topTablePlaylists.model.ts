@@ -1,5 +1,6 @@
 import { Types } from 'mongoose'
 import get from 'lodash.get'
+import Axios from 'axios'
 import { connectToDatabase } from '../connectToDB'
 import {
   TrackObjectFull,
@@ -90,7 +91,7 @@ export const getTopTablePlaylistById = async (
   let data = await TopTracksPlaylist.findById(partyBlendId)
     .populate(
       'users',
-      'created_at updated_at display_name id images _id spotify_playlist_id'
+      'created_at updated_at display_name id images _id spotify_playlist_id image'
     )
     .then((d) => {
       d.users.map((u) => {
@@ -283,10 +284,22 @@ export const addTracksToTopTablePlaylist = async (
   const { User, Update, Track, TopTracksPlaylist } = connectToDatabase()
   const list = await TopTracksPlaylist.findById(partyBlendId)
 
-  const u = await User.findOneAndUpdate({ id: user.id }, user, {
-    upsert: true,
-    new: true,
-  })
+  let image: { image?: Buffer } = {}
+  if (get(user, 'images[0].url')) {
+    let { data: imageBuffer } = await Axios.get(user.images[0].url, {
+      responseType: 'arraybuffer',
+    })
+    image.image = imageBuffer
+  }
+
+  const u = await User.findOneAndUpdate(
+    { id: user.id },
+    { ...user, ...image },
+    {
+      upsert: true,
+      new: true,
+    }
+  )
   const userExists = !!list.user_ids.find((id) => id === user.id)
 
   if (userExists) {
