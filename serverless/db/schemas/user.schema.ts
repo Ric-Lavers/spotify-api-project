@@ -14,6 +14,7 @@ export const userSchema = new Schema(
     followers: Object,
     href: String,
     images: [Object],
+    image: Buffer,
     product: String,
     type: String,
     uri: String,

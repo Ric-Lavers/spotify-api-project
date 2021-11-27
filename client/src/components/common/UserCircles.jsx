@@ -3,6 +3,13 @@ import Skeleton from 'react-loading-skeleton'
 import get from 'lodash.get'
 import { timeSince, mix } from 'helpers'
 
+function bufferToImageSrc(arr) {
+  //arr = new Uint8Array(arr) if it's an ArrayBuffer
+  return `data:image/png;base64,${btoa(
+    arr.reduce((data, byte) => data + String.fromCharCode(byte), '')
+  )}`
+}
+
 const UserCircles = memo(({ users, size, loading = false, children }) => {
   if (loading) {
     return (
@@ -54,9 +61,15 @@ export const UserCircle = ({
       var tester = new Image()
       tester.onload = () => {}
       tester.onerror = () => {
-        setImageUrl(null)
+        if (user.image) {
+          setImageUrl(bufferToImageSrc(user.image.data))
+        } else {
+          setImageUrl(null)
+        }
       }
       tester.src = imageUrl
+    } else if (user.image) {
+      setImageUrl(bufferToImageSrc(user.image.data))
     }
   }, [imageUrl])
   /*  */
