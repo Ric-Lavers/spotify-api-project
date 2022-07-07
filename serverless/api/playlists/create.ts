@@ -9,12 +9,8 @@ module.exports = cors(async function (req, res) {
       res.send()
       return
     }
-    const time_range = req.query.time_range ? `-${req.query.time_range}` : ''
 
-    let playlist = await createNewTopTablePlaylist(
-      `${get(req, 'body.user.id')}${time_range}`,
-      req.body
-    )
+    let playlist = await createNewTopTablePlaylist(req.body.user.id, req.body)
 
     res.status(200).json(playlist)
   } catch (error) {

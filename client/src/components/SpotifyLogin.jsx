@@ -42,6 +42,21 @@ export const styles = {
 
 const refreshToken = (refresh_token) => {}
 
+const logout = () => {
+  const url = ' https://accounts.spotify.com/en/logout'
+  const spotifyLogoutWindow = window.open(
+    url,
+    'Spotify Logout',
+    'width=700,height=500,top=40,left=40'
+  )
+  setTimeout(() => {
+    spotifyLogoutWindow.close()
+    sessionStorage.clear()
+    localStorage.clear()
+    window.location.reload()
+  }, 2000)
+}
+
 class SpotifyLogin extends Component {
   state = {
     tokenPresent: null,
@@ -54,8 +69,8 @@ class SpotifyLogin extends Component {
 
   componentDidMount() {
     const { spotifyToken } = sessionStorage
-
-    if (spotifyToken) this.checkToken(spotifyToken)
+    const { hasAgreed } = localStorage
+    if (spotifyToken || hasAgreed) this.checkToken(spotifyToken)
     this.setToken()
   }
 
@@ -69,6 +84,7 @@ class SpotifyLogin extends Component {
         'refresh_token'
       )
       sessionStorage.spotifyToken = access_token
+      localStorage.hasAgreed = true
       sessionStorage.refresh_token = refresh_token
       window.location.replace(window.origin + window.location.pathname)
     }
@@ -97,14 +113,16 @@ class SpotifyLogin extends Component {
         return true
       } catch (error) {
         // timed out or bad token
-        window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
+        // window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
         this.setState({ tokenPresent: true, tokenValid: false })
         onLogIn(false)
       }
     } else {
       // no token
       this.setState({ tokenPresent: false })
-      window.location.href = LOGIN_URL
+      if (localStorage.hasAgreed) {
+        window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
+      }
     }
   }
 
@@ -154,7 +172,9 @@ class SpotifyLogin extends Component {
           >
             {sessionStorage.getItem('spotifyToken')
               ? this.state.tokenPresent
-                ? 'spotify auth timed out login again'
+                ? tokenValid
+                  ? 'spotify auth timed out login again'
+                  : ''
                 : ''
               : `login to spotify`}
           </a>

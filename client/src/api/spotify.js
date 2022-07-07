@@ -116,7 +116,7 @@ export const checkToken = async (
   } catch (error) {
     console.error(error.message)
     if (redirect) {
-      window.location.replace(LOGIN_URL)
+      window.location.href = `${LOGIN_URL}?path=${window.location.pathname}`
     }
     return error
   }
@@ -777,6 +777,16 @@ export const getArtists = async (artistIds) => {
   isOk(res)
   is204(res)
   return res.json()
+}
+
+export const removePlaylist = async (playlistId) => {
+  await fetch(`${baseUrl}/playlists/${playlistId}/followers`, {
+    ...headers,
+    method: 'DELETE',
+  })
+}
+export const removePlaylists = async (plalistIds) => {
+  await Promise.all([].concat(plalistIds).map(removePlaylist))
 }
 
 export default {

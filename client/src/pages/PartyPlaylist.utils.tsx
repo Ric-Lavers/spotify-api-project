@@ -84,7 +84,8 @@ export const createTopTracksPlaylist = async (
   allTopTracks: AllTopTracks
 ) => {
   try {
-    const { _id: topTablePlaylistId } = await createPartyPlaylist(
+    // const { _id: topTablePlaylistId } =
+    return await createPartyPlaylist(
       user,
       body,
       allTopTracks.short_term,
@@ -96,13 +97,13 @@ export const createTopTracksPlaylist = async (
     //   allTopTracks.medium_term,
     //   'medium_term'
     // )
-    const data = await addToPartyPlaylist(
-      user,
-      topTablePlaylistId,
-      allTopTracks.long_term,
-      'long_term'
-    )
-    return data
+    // const data = await addToPartyPlaylist(
+    //   user,
+    //   topTablePlaylistId,
+    //   allTopTracks.long_term,
+    //   'long_term'
+    // )
+    // return data
   } catch (error) {
     console.log('error creating top table', error)
   }
@@ -114,7 +115,7 @@ export const addTopTracksToPlaylist = async (
   allTopTracks: AllTopTracks
 ) => {
   try {
-    await addToPartyPlaylist(
+    return await addToPartyPlaylist(
       user,
       topTablePlaylistId,
       allTopTracks.short_term,
@@ -143,7 +144,7 @@ export const updateTopTracksPlaylist = async (
   allTopTracks: AllTopTracks
 ) => {
   try {
-    await updatePartyPlaylist(
+    return await updatePartyPlaylist(
       user,
       topTablePlaylistId,
       allTopTracks.short_term,
@@ -155,13 +156,13 @@ export const updateTopTracksPlaylist = async (
     //   allTopTracks.medium_term,
     //   'medium_term'
     // )
-    const data = await updatePartyPlaylist(
-      user,
-      topTablePlaylistId,
-      allTopTracks.long_term,
-      'long_term'
-    )
-    return data
+    // const data = await updatePartyPlaylist(
+    //   user,
+    //   topTablePlaylistId,
+    //   allTopTracks.long_term,
+    //   'long_term'
+    // )
+    // return data
   } catch (error) {
     console.log('error updating top table', error)
   }
@@ -183,7 +184,6 @@ export const formatUserPlaylists = (
     created_at: Date
     description: string
     title: string
-    user_ids: string[]
   }[]
 ): {
   value: string

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import onClickOutside from 'react-onclickoutside'
+
 import { ReactComponent as MoreChevron } from 'images/spotify-menu-more.svg'
 
 const MenuButton = ({
@@ -6,42 +8,72 @@ const MenuButton = ({
   label,
   value,
   currentPlaylistId,
-  isParent = false,
+  list,
+  open,
 }) => {
+  const isParent = !!list
+  const [childOpen, setOpenChild] = useState(false)
+  const handleClick = () => {
+    if (!isParent) {
+      onClick(value)
+    } else {
+      setOpenChild(!childOpen)
+    }
+  }
+
   return (
-    <button onClick={() => onClick(value)} role="menuitem" tabindex="-1">
-      <span
-        className={currentPlaylistId === value ? 'highlight' : ''}
-        as="span"
-        dir="auto"
-      >
-        {label}
-      </span>
-      {isParent && (
-        <span>
-          <MoreChevron />
+    <>
+      <button onClick={() => handleClick()} role="menuitem" tabindex="-1">
+        <span
+          className={currentPlaylistId === value ? 'highlight' : ''}
+          as="span"
+          dir="auto"
+        >
+          {label}
         </span>
+        {isParent && (
+          <span>
+            <MoreChevron
+              style={childOpen ? { transform: 'rotate(180deg)' } : {}}
+            />
+          </span>
+        )}
+      </button>
+      {isParent && childOpen && (
+        <Menu isChild open={childOpen} list={list} onClick={onClick} />
       )}
-    </button>
+    </>
   )
 }
 
-const Menu = ({ list, onClick, currentPlaylistId, open }) => {
+const Menu = ({
+  list,
+  onClick,
+  currentPlaylistId,
+  open,
+  onClickOutside = () => {},
+  isChild = false,
+}) => {
+  Menu.handleClickOutside = () => onClickOutside(false)
+  if (!open) {
+    return null
+  }
   return (
     <>
       <div
         id="context-menu"
-        className={`s-menu ${open &&
-          'open'}`} /* data-placement="bottom-start" */
+        className={`${isChild ? 's-menu-child' : 's-menu'} ${open && 'open'} `}
       >
         <ul tabindex="0" role="menu">
-          {list.map(({ label, value }) => (
+          {list.map(({ label, value, list }) => (
             <li key={value} role="presentation">
               <MenuButton
                 onClick={onClick}
                 label={label}
                 value={value}
                 currentPlaylistId={currentPlaylistId}
+                list={list}
+                open={open}
               />
             </li>
           ))}
@@ -50,5 +82,8 @@ const Menu = ({ list, onClick, currentPlaylistId, open }) => {
     </>
   )
 }
+const clickOutsideConfig = {
+  handleClickOutside: () => Menu.handleClickOutside,
+}
 
-export default Menu
+export default onClickOutside(Menu, clickOutsideConfig)

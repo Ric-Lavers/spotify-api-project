@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 
-import { topTableSchema } from './topTable.schema'
 const Schema = mongoose.Schema
 mongoose.set('useCreateIndex', true)
 
@@ -18,8 +17,9 @@ export const userSchema = new Schema(
     product: String,
     type: String,
     uri: String,
+    explicit_content: Object,
 
-    spotify_playlist_id: String,
+    spotify_playlist_id: { type: Object, default: {} },
 
     // track_short_term: [{ type: mongoose.Schema.Types.ObjectId, ref: "topTable" }],
     // track_medium_term: [

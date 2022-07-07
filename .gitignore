@@ -64,3 +64,5 @@ typings/
 
 # feel free to add this back in once your spotify keys are not exposed in package.json
 spotify-login
+
+.vercel

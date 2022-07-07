@@ -2,15 +2,16 @@ export * from './handlePlay'
 export * from './formatFeatures'
 export * from './mix'
 export * from './timeSince'
+export * from './htmlDecode'
 
 let LOGIN_URL
 if (process.env.REACT_APP_ENV === 'PROD') {
   LOGIN_URL =
     process.env.REACT_APP_LOGIN_URL_PROD ||
     'https://serverless-one-xi.vercel.app/api/login'
-} else if (process.env.REACT_APP_ENV === 'STAG') {
+} else if (process.env.REACT_APP_ENV === 'STG') {
   LOGIN_URL =
-    process.env.REACT_APP_LOGIN_URL_PROD ||
+    process.env.REACT_APP_LOGIN_URL_STG ||
     'https://serverless-1qy6p9wlj.vercel.app/api/login'
 } else {
   LOGIN_URL =

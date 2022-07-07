@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import get from 'lodash.get'
 import { useLocation } from 'react-router-dom'
+import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { GlobalUiState, GlobalContext } from './globalContext'
 import { SearchResultsContext } from './components/Player/Search'
@@ -30,11 +31,13 @@ const App = () => {
   return (
     <ErrorBoundary>
       <Router>
-        <GlobalUiState>
-          <Layout>
-            <Route exact path="/" render={() => <MainPage />} />
-            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
+        <SkeletonTheme
+          color={colors.spotify.spotifyGreyMenu}
+          highlightColor={colors.spotify.spotifyGreyMenu}
+        >
+          <GlobalUiState>
             <Route
+              exact
               path={[
                 '/party-playlist/:playlistId',
                 '/party-playlist',
@@ -43,15 +46,36 @@ const App = () => {
               ]}
               component={PartyPlaylistPage}
             />
-            <Route exact path="/analysis" component={AnalysisPlaylistsPage} />
+            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
             <Route
-              path="/analysis/:playlistId"
-              component={AnalysisPlaylistsPage}
+              exact
+              path="/"
+              render={() => (
+                <Layout>
+                  <MainPage />
+                </Layout>
+              )}
             />
-            <Route path="/discogs-callback" component={DiscogsCallbackPage} />
-            <Route path="*" render={() => <div />} />
-          </Layout>
-        </GlobalUiState>
+            <Route
+              exact
+              path={['/analysis', '/analysis/:playlistId']}
+              render={() => (
+                <Layout>
+                  <AnalysisPlaylistsPage />
+                </Layout>
+              )}
+            />
+            <Route
+              exact
+              path="/discogs-callback"
+              render={() => (
+                <Layout>
+                  <DiscogsCallbackPage />
+                </Layout>
+              )}
+            />
+          </GlobalUiState>
+        </SkeletonTheme>
       </Router>
     </ErrorBoundary>
   )

@@ -1,0 +1,4 @@
+[context.stage] # “staging” is a branch name
+  #command = "echo 'staging'"
+  #base = "stage"
+  environment = { REACT_APP_BASE_SERVER_URL = "https://staging-party-blends.vercel.app/api/", REACT_APP_LOGIN_URL_STG = "https://staging-party-blends.vercel.app/api/login", REACT_APP_ENV = "STG" }

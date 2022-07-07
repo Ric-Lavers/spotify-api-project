@@ -1,7 +1,8 @@
 import React from 'react'
 
+export type Statuses = 'loading' | 'error' | 'success' | ''
 interface Props {
-  status: 'loading' | 'error' | 'success'
+  status: Statuses
 }
 
 const EmojiLoader: React.FC<Props> = ({ status }) => {

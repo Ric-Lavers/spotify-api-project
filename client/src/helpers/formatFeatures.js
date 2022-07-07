@@ -1,4 +1,5 @@
 import React from 'react'
+import Skeleton from 'react-loading-skeleton'
 //https://developer.spotify.com/documentation/web-api/reference/#object-audiofeaturesobject
 import UserCircles from '../components/common/UserCircles'
 import PopularityMeter from 'images/custom-svgs/PopularityMeter'
@@ -24,12 +25,25 @@ const keys = [
 ]
 //audio_features are badly named its a col
 const blockRaw = ['mode', 'key', 'order', 'users']
-export function formatFeatures(key, audio_features, raw = false) {
+export function formatFeatures(key, audio_features, raw = false, updating) {
   // i'm using this for averages now too which is has removed string types
+
+  if (updating && !key.match('users')) {
+    return <Skeleton width={30} />
+  }
   if (raw && !blockRaw.includes(key)) {
     return audio_features[key]
   }
+
   switch (key) {
+    case 'users':
+      return (
+        <UserCircles
+          users={audio_features['users']}
+          size="small"
+          loading={updating}
+        />
+      )
     case 'key':
       return keys[audio_features[key]]
     case 'mode':
@@ -42,8 +56,7 @@ export function formatFeatures(key, audio_features, raw = false) {
       return millisToMinutesAndSeconds(audio_features[key])
     case 'popularity':
       return <PopularityMeter popularity={audio_features[key]} />
-    case 'users':
-      return <UserCircles users={audio_features['users']} size="small" />
+
     case 'download':
       return (
         <div className="download-links">
