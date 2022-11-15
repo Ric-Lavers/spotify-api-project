@@ -82,7 +82,7 @@ export const useSkipTrack = () => {
   /**
    * skips the track when its included in the block list
    */
-  const skipTrack = async (skipList, item, currentGenres) => {
+  const skipTrack = async (skipList, item = {}, currentGenres) => {
     const toSkipId = (a, b) => [a, b].join(' - ')
 
     const trackSkipId = toSkipId(item.id, item.name)
@@ -109,13 +109,13 @@ export const useSkipTrack = () => {
       await controls('next')
     }
   }
-
+  const itemId = item && item.id
   useEffect(() => {
     if (!item.id) return
     getGenres().then((genres) => {
       skipTrack(skipList, item, genres)
     })
-  }, [item.id])
+  }, [itemId])
 
   return {
     currentTrack,

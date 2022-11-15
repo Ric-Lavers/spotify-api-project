@@ -75,7 +75,7 @@ const PlayerAPI = () => {
         <ActionButton
           Icon={() => <AnalysisPlaylistsIcon height={24} wdith={24} />}
           tooltip="Analysis your playlists"
-          action={() => {
+          action={(e) => {
             window.location.pathname = '/analysis'
           }}
           className={`device-button pointer ${touched}`}

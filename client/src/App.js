@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Route,
+  useLocation,
+  Switch,
+} from 'react-router-dom'
 import get from 'lodash.get'
-import { useLocation } from 'react-router-dom'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { GlobalUiState, GlobalContext } from './globalContext'
@@ -36,44 +40,46 @@ const App = () => {
           highlightColor={colors.spotify.spotifyGreyMenu}
         >
           <GlobalUiState>
-            <Route
-              exact
-              path={[
-                '/party-playlist/:playlistId',
-                '/party-playlist',
-                '/party-blends/:playlistId',
-                '/party-blends',
-              ]}
-              component={PartyPlaylistPage}
-            />
-            {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
-            <Route
-              exact
-              path="/"
-              render={() => (
-                <Layout>
-                  <MainPage />
-                </Layout>
-              )}
-            />
-            <Route
-              exact
-              path={['/analysis', '/analysis/:playlistId']}
-              render={() => (
-                <Layout>
-                  <AnalysisPlaylistsPage />
-                </Layout>
-              )}
-            />
-            <Route
-              exact
-              path="/discogs-callback"
-              render={() => (
-                <Layout>
-                  <DiscogsCallbackPage />
-                </Layout>
-              )}
-            />
+            <Switch>
+              <Route
+                exact
+                path={[
+                  '/party-playlist/:playlistId',
+                  '/party-playlist',
+                  '/party-blends/:playlistId',
+                  '/party-blends',
+                ]}
+                component={PartyPlaylistPage}
+              />
+              {/* <Route exact path="/scratch" render={() => <Scratch />} /> */}
+              <Route
+                exact
+                path="/"
+                render={() => (
+                  <Layout>
+                    <MainPage />
+                  </Layout>
+                )}
+              />
+              <Route
+                exact
+                path={['/analysis', '/analysis/:playlistId']}
+                render={() => (
+                  <Layout>
+                    <AnalysisPlaylistsPage />
+                  </Layout>
+                )}
+              />
+              <Route
+                exact
+                path="/discogs-callback"
+                render={() => (
+                  <Layout>
+                    <DiscogsCallbackPage />
+                  </Layout>
+                )}
+              />
+            </Switch>
           </GlobalUiState>
         </SkeletonTheme>
       </Router>

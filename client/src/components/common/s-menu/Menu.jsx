@@ -46,44 +46,51 @@ const MenuButton = ({
   )
 }
 
-const Menu = ({
-  list,
-  onClick,
-  currentPlaylistId,
-  open,
-  onClickOutside = () => {},
-  isChild = false,
-}) => {
-  Menu.handleClickOutside = () => onClickOutside(false)
-  if (!open) {
-    return null
+class Menu extends React.Component {
+  handleClickOutside = () =>
+    this.props.onClickOutside && this.props.onClickOutside(false)
+
+  render() {
+    const {
+      list,
+      onClick,
+      currentPlaylistId,
+      open,
+      isChild = false,
+    } = this.props
+    if (!open) {
+      return null
+    }
+
+    return (
+      <>
+        <div
+          id="context-menu"
+          className={`${isChild ? 's-menu-child' : 's-menu'} ${
+            open && 'open'
+          } `}
+        >
+          <ul tabindex="0" role="menu">
+            {list.map(({ label, value, list }) => (
+              <li key={value} role="presentation">
+                <MenuButton
+                  onClick={onClick}
+                  label={label}
+                  value={value}
+                  currentPlaylistId={currentPlaylistId}
+                  list={list}
+                  open={open}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </>
+    )
   }
-  return (
-    <>
-      <div
-        id="context-menu"
-        className={`${isChild ? 's-menu-child' : 's-menu'} ${open && 'open'} `}
-      >
-        <ul tabindex="0" role="menu">
-          {list.map(({ label, value, list }) => (
-            <li key={value} role="presentation">
-              <MenuButton
-                onClick={onClick}
-                label={label}
-                value={value}
-                currentPlaylistId={currentPlaylistId}
-                list={list}
-                open={open}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
-  )
 }
 const clickOutsideConfig = {
   handleClickOutside: () => Menu.handleClickOutside,
 }
 
-export default onClickOutside(Menu, clickOutsideConfig)
+export default Menu //onClickOutside(Menu, clickOutsideConfig)
