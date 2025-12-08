@@ -286,7 +286,7 @@ const fetchNextItems = async (next, items = []) => {
     const data = await getHref(next)
 
     items = [...items, ...data.items]
-    if (data.next) {
+    if (data.next && data.offset <= 250) {
       return await fetchNextItems(data.next, items)
     } else {
       return items
@@ -308,8 +308,8 @@ export const getAllPlaylistsTracks = async (
     const data = await (isTopTrack
       ? getTopTracks({ time_range: playlistId })
       : isSavedTracks
-      ? getMeSavedTracks()
-      : getPlaylistsTracks(playlistId))
+        ? getMeSavedTracks()
+        : getPlaylistsTracks(playlistId))
 
     if (data.next) {
       const items = await fetchNextItems(data.next)
@@ -372,7 +372,7 @@ export const createUserPlaylist = async (
     const data = await res.json()
 
     return data
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export const updateUserPlaylistTracks = async (playlistId, uris) => {
@@ -418,7 +418,7 @@ export const addTracksToPlaylist = async (playlist_id, uris) => {
     const data = await res.json()
 
     return data
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export const createUserPlaylistWithTracks = async (
@@ -449,7 +449,7 @@ export const createUserPlaylistWithTracks = async (
     // const playlistTracks = await getAllPlaylistsTracks(playlist_id)
 
     return newPlaylist
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export const getRecentlyPlayed = async () => {
@@ -644,7 +644,7 @@ export const transferDevice = async (deviceId) => {
         device_ids: [deviceId],
       }),
     })
-  } catch (error) {}
+  } catch (error) { }
 }
 
 /**
@@ -709,12 +709,11 @@ export const getManyAudioFeatures = async (trackIds) => {
     ...data,
     audio_features: data.audio_features.map((af) => ({
       ...af,
-      camelot: `${
-        getKey({
-          mode: af['mode'],
-          pitchClass: af['key'],
-        }).camelotPosition
-      }${af['mode'] === 1 ? 'B' : 'A'}`,
+      camelot: `${getKey({
+        mode: af['mode'],
+        pitchClass: af['key'],
+      }).camelotPosition
+        }${af['mode'] === 1 ? 'B' : 'A'}`,
     })),
   }
 
