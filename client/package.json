@@ -20,7 +20,7 @@
     "react-scripts": "3.4.4",
     "react-share": "^4.4.0",
     "tiny-human-time": "^1.2.0",
-    "typescript": "4.4.4"
+    "typescript": "4.9.5"
   },
   "scripts": {
     "start:prod": "REACT_APP_ENV=PROD react-scripts start",
