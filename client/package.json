@@ -53,5 +53,8 @@
     "@types/react": "16.14.0",
     "sass": "^1.77.0",
     "react-testing-library": "^5.9.0"
+  },
+  "overrides": {
+    "@types/babel__traverse": "7.18.2"
   }
 }
