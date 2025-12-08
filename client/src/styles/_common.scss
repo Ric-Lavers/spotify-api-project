@@ -212,7 +212,8 @@ input[type='checkbox'] {
     transform: scale(1.06);
   }
   &:disabled {
-    color: lighten(black, 50%);
+    color: color.adjust(black, $lightness: 50%);
+    
   }
 }
 
@@ -224,7 +225,7 @@ input[type='checkbox'] {
     background-color: $spotify-green-dark;
   }
   &:disabled {
-    color: lighten($spotify-bg, 50%);    
+    color: color.adjust($spotify-bg, $lightness: 50%);
     background-color: color.adjust($spotify-green, $lightness: 20%);
   }
 }
