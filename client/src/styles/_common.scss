@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .flex {
   display: flex;
 }
@@ -215,14 +217,15 @@ input[type='checkbox'] {
 }
 
 .s-submit {
+  
   color: $spotify-bg;
   background-color: $spotify-green;
   &.secondary {
     background-color: $spotify-green-dark;
   }
   &:disabled {
-    color: lighten($spotify-bg, 50%);
-    background-color: lighten($spotify-green, 20%);
+    color: lighten($spotify-bg, 50%);    
+    background-color: color.adjust($spotify-green, $lightness: 20%);
   }
 }
 .action-btn-group {
