@@ -27,8 +27,8 @@
     "start:stg": "REACT_APP_ENV=STAG react-scripts start",
     "start:dev": "REACT_APP_ENV=DEV react-scripts start",
     "dev": "REACT_APP_ENV=DEV react-scripts start",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts start --openssl-legacy-provide",
+    "build": "react-scripts build --openssl-legacy-provide",
     "lint": "eslint src",
     "test": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "eject": "react-scripts eject"
