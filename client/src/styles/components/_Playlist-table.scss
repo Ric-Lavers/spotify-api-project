@@ -29,12 +29,12 @@
       // .ASC::after {
       //   height: 12px;
       //   padding-left: $sm;
-      //   content: url('../images/chevron-ACS.svg');
+      //   content: url('/images/chevron-ACS.svg');
       // }
       // .DESC::after {
       //   height: 12px;
       //   padding-left: $sm;
-      //   content: url('../images/chevron-DESC.svg');
+      //   content: url('/images/chevron-DESC.svg');
       // }
       .length {
         font-weight: normal;
@@ -63,12 +63,12 @@
 .ASC::before {
   height: 12px;
   padding-right: $sm;
-  content: url('../images/chevron-ACS.svg');
+  content: url('/images/chevron-ACS.svg');
 }
 .DESC::before {
   height: 12px;
   padding-right: $sm;
-  content: url('../images/chevron-DESC.svg');
+  content: url('/images/chevron-DESC.svg');
 }
 
 .spotify-track {
