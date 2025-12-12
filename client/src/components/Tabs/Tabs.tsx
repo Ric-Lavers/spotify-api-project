@@ -2,24 +2,20 @@ import React, { useState, useEffect } from 'react'
 
 //TODO ?refactor then move
 
-export const Tabs: React.FC<{
-  tabList: {
-    label: string
-    id: string
-    content: React.ReactNode
-    onClick?: (id: string, options: { openTab: string }) => void
-  }[]
-  style: object
-  enableChevrons: boolean
-  enableLocal: boolean
-}> = ({
+export const Tabs = ({
   children: ToggleInactive,
   tabList = [
-    { label: 'Skip list', id: 'skipList', content: <>skip list content</> },
+    {
+      label: 'Skip list',
+      id: 'skipList',
+      content: <>skip list content</>,
+      onClick: (...p) => void {},
+    },
     {
       label: 'Add current',
       id: 'addCurrent',
       content: <>add current content</>,
+      onClick: (...p) => void {},
     },
   ],
   style = {},
@@ -55,7 +51,7 @@ export const Tabs: React.FC<{
   return (
     <div className="tabs">
       <nav className="tabs-menu" style={style}>
-        {tabList.map(({ label, id, onClick = () => void {} }) => (
+        {tabList.map(({ label, id, onClick }) => (
           <button
             key={`${id}-tab`}
             className={
@@ -70,6 +66,7 @@ export const Tabs: React.FC<{
                 setOpenTab('minimize')
               } else {
                 setOpenTab(id)
+
                 onClick(id, { openTab })
               }
             }}
