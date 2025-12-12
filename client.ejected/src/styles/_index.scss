@@ -1,0 +1,58 @@
+@import url('https://use.typekit.net/rje0nrm.css');
+@import 'variables';
+@import 'breakpoints';
+@import 'common';
+@import 'App';
+
+@import './components/Player';
+@import './components/Devices';
+@import './components/Playlists';
+@import './components/Results';
+@import './components/Top-table';
+@import './components/toolTip';
+@import './components/AnalysisPlaylists';
+@import '../components/common/RangeSlider/RangeSlider';
+@import './components/Playlist-table';
+@import './components/S-Menu';
+@import './components/SkipList';
+@import './components/UserCircles';
+@import './components/ShareButtons';
+@import './components/Checkbox-list';
+@import '../components/stickers/Stickers';
+@import '../components/tips/Tips';
+
+body {
+  scroll-behavior: smooth;
+}
+.dev {
+  border: 1px solid lime;
+}
+
+.pagination {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  padding: $sm 0;
+
+  svg {
+    cursor: pointer;
+    height: $lg;
+    width: $lg;
+    fill: white;
+
+    text {
+      fill: black;
+    }
+  }
+}
+
+.arrow-icon {
+  cursor: pointer;
+  height: $lg;
+  width: $lg;
+  fill: white;
+
+  text {
+    fill: black;
+  }
+}

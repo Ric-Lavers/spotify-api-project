@@ -1,0 +1,32 @@
+.share-buttons {
+  display: inline-flex;
+  image {
+    cursor: pointer;
+  }
+  .mobile-share-buttons {
+    display: none;
+    @media (hover: none) {
+      display: inherit;
+    }
+  }
+  .copy-to-clipboard {
+    background-color: white;
+    height: 42px;
+    width: 42px;
+    padding: 4px;
+    margin-right: 1px;
+    border-radius: 50%;
+    position: relative;
+    line-height: 1;
+    span {
+      color: $spotify-green;
+      font-size: 16px;
+      small {
+        font-size: 12px;
+      }
+    }
+  }
+}
+.qr-code {
+  margin-top: 8px;
+}

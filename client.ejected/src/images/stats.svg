@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" stroke='#FFFFFF' fill='#FFFFFF' opactity="0.8">
+	<defs>
+		<style>.a{fill:#fff;}</style>
+	</defs>
+
+	<path opactity="0.8" fill="#FFF" d="M88.06,82.54v6.52H11.94V82.54Z"/>
+	<path opactity="0.8" fill="#FFF" d="M87.84,77.59H77V13.29a4.83,4.83,0,0,1,4.83-4.83H83a4.83,4.83,0,0,1,4.83,4.83Z"/>
+	<path opactity="0.8" fill="#FFF" d="M23,77.68H12.19V15.24A4.83,4.83,0,0,1,17,10.42h1.14A4.82,4.82,0,0,1,23,15.24Z"/>
+	<path opactity="0.8" fill="#FFF" d="M44.45,77.64H33.82V30.37a4.83,4.83,0,0,1,4.83-4.83h1a4.83,4.83,0,0,1,4.83,4.83Z"/>
+	<path opactity="0.8" fill="#FFF" d="M60.28,40.84h1.11a4.83,4.83,0,0,1,4.83,4.83V77.53H55.45V45.67A4.83,4.83,0,0,1,60.28,40.84Z"/>
+</svg>

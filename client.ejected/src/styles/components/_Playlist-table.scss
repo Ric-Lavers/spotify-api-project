@@ -1,0 +1,120 @@
+.table-container {
+  max-width: 100vw;
+  display: flex;
+  justify-content: center;
+}
+.playlist-table {
+  display: block;
+  overflow-x: auto;
+  thead {
+    .table-average {
+      text-align: center;
+      font-size: $md;
+    }
+
+    th {
+      padding: 0 $sm;
+      margin-right: 23px;
+      white-space: nowrap;
+      &:not(.table-average) {
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        line-height: 18px; //16px;
+        text-transform: uppercase;
+        color: rgb(179, 179, 179);
+        border-bottom: 1px solid rgba($spotify-white, 0.1);
+      }
+      // .ASC::after {
+      //   height: 12px;
+      //   padding-left: $sm;
+      //   content: url('/images/chevron-ACS.svg');
+      // }
+      // .DESC::after {
+      //   height: 12px;
+      //   padding-left: $sm;
+      //   content: url('/images/chevron-DESC.svg');
+      // }
+      .length {
+        font-weight: normal;
+      }
+    }
+  }
+  tbody {
+    tr {
+      &:not(.updating) {
+        @media (hover: hover) {
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+          }
+        }
+      }
+    }
+  }
+  //rgb(88, 144, 208)
+
+  td {
+    font-size: 0.8em;
+    border: 0px;
+    padding: 8px 8px 8px;
+  }
+}
+.ASC::before {
+  height: 12px;
+  padding-right: $sm;
+  content: url('/images/chevron-ACS.svg');
+}
+.DESC::before {
+  height: 12px;
+  padding-right: $sm;
+  content: url('/images/chevron-DESC.svg');
+}
+
+.spotify-track {
+  min-width: 220px;
+  display: flex;
+  img,
+  .img {
+    margin-right: 16px;
+  }
+
+  .track-grid {
+    text-align: left;
+    align-items: center;
+    column-gap: 8px;
+    display: grid;
+    grid-template:
+      'title title'
+      'badges subtitle' / auto 1fr;
+    .title {
+      color: #fff;
+      grid-area: title;
+      user-select: none;
+
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: normal;
+      line-height: 24px;
+      text-transform: none;
+    }
+    .sub-title {
+      grid-area: subtitle;
+      grid-column-start: badges;
+      color: rgb(179, 179, 179);
+
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: normal;
+      line-height: 16px;
+      text-transform: none;
+    }
+    .ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+.limit {
+}

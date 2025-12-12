@@ -1,0 +1,140 @@
+.analysis-playlists {
+  scroll-behavior: smooth;
+  &.PartyPlaylistGroup {
+    // width: 100%;
+    text-align: center;
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .description {
+      margin-top: 0;
+    }
+    .actions {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      .kebab-btn {
+        position: relative;
+      }
+      .s-menu {
+        left: inherit;
+        right: 16px;
+        z-index: 6;
+      }
+    }
+    table {
+      text-align: left;
+    }
+  }
+  .stat-check-list {
+    // display: grid;
+    // grid-template-columns: 1fr 1fr 1fr 1fr;
+    // grid-gap: 14px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    // flex-grow: 1;
+    font-size: 0.7em;
+    text-align: right;
+    margin: 0 21px;
+    justify-content: space-between;
+    max-width: 600px;
+  }
+  .stat-checkbox {
+    min-width: 120px;
+    padding: 0 7px;
+    margin: 0 7px;
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+  }
+  .test {
+    position: relative;
+    .left {
+      position: absolute;
+      left: 0;
+    }
+  }
+
+  .playlist-info {
+    display: flex;
+    padding: 0 21px;
+    h4 {
+      margin: 0 auto;
+      // flex: 2;
+    }
+    img {
+      flex: 1;
+      max-height: 100px;
+      max-width: 100px;
+    }
+  }
+  
+  .user-playlists {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: $sm;
+    .loading-status {
+      font-size: $lg;
+    }
+  }
+
+  select {
+    text-overflow: ellipsis;
+  }
+  // SavePlaylist
+  .add-playlist {
+    fieldset {
+      border-radius: $sm;
+    }
+    text-align: left;
+    font-size: 0.7em;
+    display: flex;
+    flex-direction: column;
+    textarea,
+    input[type='text'] {
+      min-width: 300px;
+    }
+    input {
+      margin-top: 7px;
+      margin-bottom: 7px;
+    }
+  }
+}
+
+input[type='checkbox'] {
+  cursor: pointer;
+}
+.currently-playing {
+  background-color: black;
+  display: inline-flex;
+  justify-content: center;
+  border-radius: $sm;
+  text-align: left;
+  legend {
+    font-size: medium;
+  }
+  a {
+    text-decoration: none;
+    color: $spotify-green;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .user-circles {
+    margin-left: 32px;
+  }
+}
+.title-head {
+  padding: 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  span {
+    width: 32px;
+  }
+}

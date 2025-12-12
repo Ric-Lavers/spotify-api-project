@@ -1,0 +1,36 @@
+.Tips {
+  width: 80%;
+  max-width: 425px;
+  min-height: 160px;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 16px 32px;
+  padding: 16px;
+  font-size: medium;
+  border-radius: $sm;
+  text-align: left;
+  &_title {
+    border-bottom: 1px solid $spotify-white;
+  }
+  &_description {
+    font-size: large;
+  }
+
+  &_footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+  a {
+    text-decoration: none;
+    color: $spotify-green;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .user-circles {
+    margin-left: 32px;
+  }
+}

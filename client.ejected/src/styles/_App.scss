@@ -1,0 +1,120 @@
+.App {
+  text-align: center;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.logo-container {
+  height: 100%;
+  width: 100%;
+  animation: App-logo-spin infinite 20s linear;
+  border: 2px solid white;
+}
+.App-logo {
+  animation: logo-spin-reverse infinite 20s linear;
+  height: 25vmin;
+}
+.hooks {
+  fill: white;
+  animation: logo-spin infinite 20s linear;
+  margin-top: -25vmin;
+}
+
+.App-header {
+  background-color: rgb(18, 18, 18);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: left;
+
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: $lg 0;
+}
+.party-blends {
+  background-color: rgb(18, 18, 18);
+  min-height: 100vh;
+  color: white;
+  font-size: calc(10px + 2vmin);
+  text-align: center;
+  footer {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(white, 0.6);
+    padding: 8px 16px;
+    background-color: $spotify-bg;
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    a {
+      text-decoration: none;
+    }
+    img {
+      margin-left: 4px;
+    }
+    @media (max-width: 650px) {
+      // display: block;
+    }
+  }
+}
+.party-blends-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  padding: 0 $lg;
+  .back-button-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  &.home {
+    justify-content: center;
+  }
+  .back-button-container {
+    position: relative;
+    small {
+      position: absolute;
+      left: 40px;
+      white-space: nowrap;
+    }
+  }
+
+  .desktop-spacer {
+    width: 32px;
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: left;
+  }
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes logo-spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
